@@ -1,0 +1,29 @@
+button.delete, button.edit, button.search, 
+button.create, button.mail {
+	text-indent: 3000px;
+	width: 25px;
+	height: 25px;
+	/*border-radius: 3px;
+	border: solid gray 1px;*/
+	background-color: transparent;
+}
+button.delete {
+	background-image: url("../img/button/delete.png");
+	background-position: center;
+}
+button.edit {
+	background-image: url("../img/button/edit.png");
+	background-position: center;
+}
+button.create {
+	background-image: url("../img/button/create.png");
+	background-position: center;
+}
+button.search {
+	background-image: url("../img/button/search.png");
+	background-position: center;
+}
+button.mail {
+	background-image: url("../img/button/mail.png");
+	background-position: center;
+}
