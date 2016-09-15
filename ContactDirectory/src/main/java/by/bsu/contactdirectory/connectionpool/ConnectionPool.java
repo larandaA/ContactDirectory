@@ -130,7 +130,9 @@ public class ConnectionPool {
         	Connection cn = connections.takeLast();
         	try {
 	        	if (!cn.isValid(VALIDATION_TIMEOUT)) {
-	        		//((PoolConnection)cn).closeConnection();
+	        	    try {
+                        ((PoolConnection) cn).closeConnection();
+                    } catch (SQLException ex) {}
 	        		cn = createConnection();
 	        	}
         	} catch (SQLException ex) {

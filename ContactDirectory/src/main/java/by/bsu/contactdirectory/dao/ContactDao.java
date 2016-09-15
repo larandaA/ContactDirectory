@@ -27,8 +27,8 @@ public class ContactDao extends AbstractDao {
 	    private static final String SELECT = "SELECT `contact`.`id`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
 	            "`name`, `marital_status`, `web_site`, `email`, `place_of_work` FROM `contact` LEFT JOIN `country` ON `contact`.`country_id` = `country`.`id`";
     private static final String SELECT_LIST = SELECT + " LIMIT ?, ?;";
-    private static final String SELECT_BY_BIRTHDAY = SELECT + "WHERE EXTRACT(DAY FROM `birthdate`) = EXTRACT(DAY FROM curdate()) " +
-    		"AND EXTRACT(MONTH FROM `birthdate`) = EXTRACT(MONTH FROM curdate()) LIMIT ?, ?;";
+    private static final String SELECT_BY_BIRTHDAY = SELECT + " WHERE EXTRACT(DAY FROM `birthdate`) = EXTRACT(DAY FROM curdate()) " +
+    		"AND EXTRACT(MONTH FROM `birthdate`) = EXTRACT(MONTH FROM curdate());";
     private static final String SELECT_SINGLE = SELECT + " WHERE `contact`.`id` = ? LIMIT 1;";
     private static final String UPDATE = "UPDATE `contact` SET `first_name` = ?, `last_name` = ?, `patronymic` = ?, `birth_date` = ?, " +
             "`gender` = ?, `country_id` = (SELECT `name` FROM `country` WHERE `id` = ?), `marital_status` = ?, " +
@@ -169,11 +169,9 @@ public class ContactDao extends AbstractDao {
         return contactList;
     }
     
-    public List<Contact> findContactListByBirthday(int offset, int amount) throws DaoException {
+    public List<Contact> findContactListByBirthday() throws DaoException {
         LinkedList<Contact> contactList = new LinkedList<Contact>();
         try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(SELECT_BY_BIRTHDAY)) {
-            st.setInt(1, offset);
-            st.setLong(2, amount);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 contactList.add(parse(rs));

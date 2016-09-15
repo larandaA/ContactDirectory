@@ -11,12 +11,12 @@
 
 <form method="post">
 	Emails: <br />
-	<input type="text" value="${emails}" name="emails" autocomplete="off" placeholder="Email" required> <br />
+	<input type="text" value="${emails}" name="emails" autocomplete="off" placeholder="Email" required readonly> <br />
 	Topic: <br />
 	<input type="text" value="" name="topic" autocomplete="off" placeholder="Topic"> <br />
 	Template <br />
 	Message: <br />
-	<input type="text" value="" name="text" autocomplete="off" placeholder="Text" required> <br />
+	<textarea cols="30" rows="10" required name="text" placeholder="Text"></textarea> <br />
 	<button formaction="SendMail">Send</button>
 </form>
 <form>
