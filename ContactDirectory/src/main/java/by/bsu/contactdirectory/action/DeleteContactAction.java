@@ -21,7 +21,7 @@ public class DeleteContactAction implements Action {
 			try {
 				int id = Integer.parseInt(buf);
 				contactService.deleteContact(id);
-				response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
+				response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
 			} catch (IllegalArgumentException ex) {
 				response.sendError(400, "Illegal argument");
 			}

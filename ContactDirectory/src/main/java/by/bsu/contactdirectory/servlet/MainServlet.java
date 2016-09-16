@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 //import javax.servlet.annotation.WebServlet;
 
 import by.bsu.contactdirectory.connectionpool.ConnectionPool;
+import by.bsu.contactdirectory.dailymailing.DailyMailingStarter;
 
 /**
  * Created by Alexandra on 04.09.2016.
@@ -20,6 +21,7 @@ public class MainServlet extends HttpServlet {
     public void init()throws ServletException {
         super.init();
         ConnectionPool.start(getServletContext().getRealPath("WEB-INF/resources/db.properties"));
+        DailyMailingStarter.start();
     }
 
     @Override

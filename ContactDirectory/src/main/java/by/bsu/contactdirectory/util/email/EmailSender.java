@@ -25,6 +25,7 @@ public class EmailSender {
             message.setSubject(topic);
             message.setText(text);
 
+            System.out.println("sending email to admin");
             Transport.send(message);
 
         }catch (MessagingException mex) {
@@ -52,6 +53,7 @@ public class EmailSender {
             message.setSubject(topic);
             message.setText(text);
 
+            System.out.println("sending email to group");
             Transport.send(message);
         }catch (MessagingException mex) {
             mex.printStackTrace();

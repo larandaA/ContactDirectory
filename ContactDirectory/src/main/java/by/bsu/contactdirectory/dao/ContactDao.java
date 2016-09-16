@@ -24,7 +24,7 @@ public class ContactDao extends AbstractDao {
     private static final String CREATE = "INSERT INTO `contact`(`first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
             "`country_id`, `marital_status`, `web_site`, `email`, `place_of_work`) VALUES (?, ?, ?, ?, ?, " +
             "(SELECT `id` FROM `country` WHERE `name` = ? LIMIT 1), ?, ?, ?, ?);";
-	    private static final String SELECT = "SELECT `contact`.`id`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
+    private static final String SELECT = "SELECT `contact`.`id`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
 	            "`name`, `marital_status`, `web_site`, `email`, `place_of_work` FROM `contact` LEFT JOIN `country` ON `contact`.`country_id` = `country`.`id`";
     private static final String SELECT_LIST = SELECT + " LIMIT ?, ?;";
     private static final String SELECT_BY_BIRTHDAY = SELECT + " WHERE EXTRACT(DAY FROM `birthdate`) = EXTRACT(DAY FROM curdate()) " +
@@ -41,7 +41,7 @@ public class ContactDao extends AbstractDao {
 
     public static ContactDao getInstance() { return instance; }
 
-    private Contact parse(ResultSet rs) throws SQLException{
+    static Contact parse(ResultSet rs) throws SQLException{
         Contact contact = new Contact();
 
         contact.setId(rs.getInt(1));

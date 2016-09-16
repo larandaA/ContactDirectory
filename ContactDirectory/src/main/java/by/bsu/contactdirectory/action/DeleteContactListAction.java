@@ -22,7 +22,7 @@ public class DeleteContactListAction implements Action {
 				ids.add(Integer.parseInt(strIds[i]));
 			}
 			contactService.deleteContactList(ids);
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
+			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
 		}
 		else {
 			response.sendError(400, "No contacts selected");

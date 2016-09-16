@@ -21,29 +21,44 @@ public class SaveContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getSession().removeAttribute("page");
+		request.getSession().removeAttribute("searchObject");
+
 		Contact contact = new Contact();
 		contact.setFirstName(request.getParameter("firstName"));
 		contact.setLastName(request.getParameter("lastName"));
 		contact.setPatronymic(request.getParameter("patronymic"));		
 		String buf = request.getParameter("gender");
-		if (buf == null) {
+		if (buf == null || buf.isEmpty()) {
 			contact.setGender(null);
 		} else {
-			contact.setGender(Gender.valueOf(buf.toUpperCase()));
+			try {
+				contact.setGender(Gender.valueOf(buf.toUpperCase()));
+			} catch (IllegalArgumentException ex) {
+				//
+				response.sendError(400, "Invalid parameters");
+				return;
+			}
 		}
 		contact.setCitizenship(request.getParameter("citizenship"));
 		buf = request.getParameter("maritalStatus");
-		if (buf == null) {
+		if (buf == null || buf.isEmpty()) {
 			contact.setMaritalStatus(null);
 		} else {
-			contact.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
+			try {
+				contact.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
+			} catch (IllegalArgumentException ex) {
+				//
+				response.sendError(400, "Invalid parameters");
+				return;
+			}
 		}		
 		contact.setEmail(request.getParameter("email"));
 		contact.setWebSite(request.getParameter("webSite"));
 		contact.setPlaceOfWork(request.getParameter("placeOfWork"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		buf = request.getParameter("birthDate");
-		if (buf == null) {
+		if (buf == null || buf.isEmpty()) {
 			contact.setBirthDate(null);
 		} else {
 			try{
@@ -51,8 +66,9 @@ public class SaveContactAction implements Action {
 				birthDate.setTime(dateFormat.parse(buf));
 				contact.setBirthDate(birthDate);
 			} catch (ParseException ex) {
-				ex.printStackTrace();
-				contact.setBirthDate(null);
+				//
+				response.sendError(400, "Invalid parameters");
+				return;
 			}
 		}
 		Address address = new Address();

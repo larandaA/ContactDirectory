@@ -1,14 +1,13 @@
 package by.bsu.contactdirectory.dailymailing;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
 import static org.quartz.JobBuilder.*;
-import static org.quartz.TriggerBuilder.*;
-import static org.quartz.SimpleScheduleBuilder.*;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+
+import org.quartz.TriggerBuilder;
 
 import by.bsu.contactdirectory.service.EmailService;
 
@@ -19,31 +18,38 @@ public class DailyMailingStarter {
 
     static class DailyMailJob implements Job {
 
-        private EmailService emailService;
+        private static EmailService emailService = new EmailService();
 
-        public DailyMailJob() {
-            this.emailService = new EmailService();
-        }
+        public DailyMailJob() { }
 
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            emailService.sendBirthdayList();
+            //emailService.sendBirthdayList();
+            System.out.println("Hello");
         }
     }
 
     public static void start() {
 
+
         JobDetail job = newJob(DailyMailJob.class)
                 .withIdentity("dailyMailing", "dailyEvents")
                 .build();
 
-        Trigger trigger = newTrigger()
+        Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "group1")
                 .startNow()
-                .withSchedule(dailyAtHourAndMinute(15, 0))
+                //.withSchedule(dailyAtHourAndMinute(19, 23))
+                .withSchedule(simpleSchedule()
+                        .withIntervalInSeconds(5)
+                        .repeatForever())
                 .build();
-
-        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        scheduler.start();
-        scheduler.scheduleJob(job, trigger);
+        try {
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            scheduler.start();
+            scheduler.scheduleJob(job, trigger);
+            System.out.println("Started job");
+        } catch (SchedulerException ex) {
+            ex.printStackTrace();
+        }
     }
 }
