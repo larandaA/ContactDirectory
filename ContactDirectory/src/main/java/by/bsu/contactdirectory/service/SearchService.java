@@ -23,7 +23,7 @@ public class SearchService {
         try {
             resultAmount = SearchDao.getInstance().count(so, condition);
         } catch (DaoException ex) {
-
+            ex.printStackTrace();
         }
         return resultAmount == 0;
     }
@@ -49,7 +49,7 @@ public class SearchService {
             int offset = (page - 1) * ContactService.contactAmountPerPage;
             contacts = SearchDao.getInstance().search(so, condition, offset, ContactService.contactAmountPerPage);
         } catch (DaoException ex) {
-            //
+            ex.printStackTrace();
             contacts = new LinkedList<>();
         }
 
@@ -71,9 +71,6 @@ public class SearchService {
         so.setFirstName(preparedStringField(so.getFirstName()));
         so.setLastName(preparedStringField(so.getLastName()));
         so.setPatronymic(preparedStringField(so.getPatronymic()));
-        so.setWebSite(preparedStringField(so.getWebSite()));
-        so.setEmail(preparedStringField(so.getEmail()));
-        so.setPlaceOfWork(preparedStringField(so.getPlaceOfWork()));
         so.setCity(preparedStringField(so.getCity()));
         so.setLocalAddress(preparedStringField(so.getLocalAddress()));
         so.setIndex(preparedStringField(so.getIndex()));
@@ -99,21 +96,21 @@ public class SearchService {
         StringBuilder st = new StringBuilder();
 
         if(so.getFirstName() != null) {
-            st.append("`first_name` LIKE ?");
+            st.append("`first_name` LIKE ? ESCAPE '!'");
         }
 
         if(so.getLastName() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`last_name` LIKE ?");
+            st.append("`last_name` LIKE ? ESCAPE '!'");
         }
 
         if(so.getPatronymic() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`patronymic` LIKE ?");
+            st.append("`patronymic` LIKE ? ESCAPE '!'");
         }
 
         if(so.getBirthDateBigger() != null) {
@@ -150,28 +147,6 @@ public class SearchService {
             }
             st.append("`marital_status` = ?");
         }
-
-        if(so.getWebSite() != null) {
-            if (st.length() != 0) {
-                st.append(" AND ");
-            }
-            st.append("`web_site` LIKE ?");
-        }
-
-        if(so.getEmail() != null) {
-            if (st.length() != 0) {
-                st.append(" AND ");
-            }
-            st.append("`email` LIKE ?");
-        }
-
-        if(so.getPlaceOfWork() != null) {
-            if (st.length() != 0) {
-                st.append(" AND ");
-            }
-            st.append("`place_of_work` LIKE ?");
-        }
-
         if(so.getCountry() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
@@ -183,21 +158,21 @@ public class SearchService {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`city` LIKE ?");
+            st.append("`city` LIKE ? ESCAPE '!'");
         }
 
         if(so.getLocalAddress() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`local_address` LIKE ?");
+            st.append("`local_address` LIKE ? ESCAPE '!'");
         }
 
         if(so.getIndex() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`index` LIKE ?");
+            st.append("`index` LIKE ? ESCAPE '!'");
         }
 
         System.out.println(st.toString());

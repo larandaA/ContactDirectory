@@ -45,9 +45,6 @@ public class SearchContactsAction implements Action {
 				return;
 			}
 		}
-		so.setEmail(request.getParameter("email"));
-		so.setWebSite(request.getParameter("webSite"));
-		so.setPatronymic(request.getParameter("placeOfWork"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		buf = request.getParameter("birthDateBigger");
 		if (buf != null && !buf.isEmpty()) {

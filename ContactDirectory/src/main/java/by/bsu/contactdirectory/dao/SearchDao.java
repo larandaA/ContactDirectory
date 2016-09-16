@@ -17,12 +17,13 @@ public class SearchDao extends AbstractDao {
 
     private static SearchDao instance = new SearchDao();
 
-    private static final String SELECT = "SELECT `contact`.`id`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
-            "`citizenship`.`name`, `marital_status`, `web_site`, `email`, `place_of_work` FROM `contact` " +
+    private static final String FROM = "FROM `contact` " +
             "LEFT JOIN `country` as `citizenship` ON `contact`.`country_id` = `citizenship`.`id` " +
             "LEFT JOIN `address` ON `contact`.`id` = `address`.`contact_id` " +
             "LEFT JOIN `country` as `addr_country` ON `address`.`country_id` = `addr_country`.`id`";
-    private static final String COUNT = "SELECT COUNT(`contact`.`id`) FROM `contact` LEFT JOIN `country` ON `contact`.`country_id` = `country`.`id`";
+    private static final String COUNT = "SELECT COUNT(`contact`.`id`) " + FROM;
+    private static final String SELECT = "SELECT `contact`.`id`, `first_name`, `last_name`, `patronymic`, `birth_date`, `gender`, " +
+            "`citizenship`.`name`, `marital_status`, `web_site`, `email`, `place_of_work` " + FROM;
     private static final String LIMIT = " LIMIT ?, ?;";
 
     private SearchDao() {}
@@ -63,18 +64,6 @@ public class SearchDao extends AbstractDao {
             st.setString(i++, so.getMaritalStatus().toString());
         }
 
-        if(so.getWebSite() != null) {
-            st.setString(i++, "%" + so.getWebSite() + "%");
-        }
-
-        if(so.getEmail() != null) {
-            st.setString(i++, "%" + so.getEmail() +"%");
-        }
-
-        if(so.getPlaceOfWork() != null) {
-            st.setString(i++, "%" + so.getPlaceOfWork() + "%");
-        }
-
         if(so.getCountry() != null) {
             st.setString(i++, so.getCountry());
         }
@@ -95,7 +84,7 @@ public class SearchDao extends AbstractDao {
 
     public int count(SearchObject so, String condition) throws DaoException {
         int amount = 0;
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(COUNT + condition + " ESCAPE '!';")) {
+        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(COUNT + condition + ";")) {
             setParameters(so, st);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
@@ -109,7 +98,7 @@ public class SearchDao extends AbstractDao {
 
     public List<Contact> search(SearchObject so, String condition, int offset, int amount) throws DaoException {
         LinkedList<Contact> contactList = new LinkedList<Contact>();
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(SELECT + condition + " ESCAPE '!' " + LIMIT)) {
+        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(SELECT + condition + LIMIT)) {
             int idx = setParameters(so, st);
             st.setInt(idx++, offset);
             st.setInt(idx++, amount);

@@ -15,9 +15,6 @@ public class SearchObject {
     private Gender gender;
     private String citizenship;
     private MaritalStatus maritalStatus;
-    private String webSite;
-    private String email;
-    private String placeOfWork;
     private String country;
     private String city;
     private String localAddress;
@@ -85,30 +82,6 @@ public class SearchObject {
 
     public void setMaritalStatus(MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
-    }
-
-    public String getWebSite() {
-        return webSite;
-    }
-
-    public void setWebSite(String webSite) {
-        this.webSite = webSite;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPlaceOfWork() {
-        return placeOfWork;
-    }
-
-    public void setPlaceOfWork(String placeOfWork) {
-        this.placeOfWork = placeOfWork;
     }
 
     public String getCountry() {
