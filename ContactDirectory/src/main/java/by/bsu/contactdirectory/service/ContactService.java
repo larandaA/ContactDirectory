@@ -12,6 +12,7 @@ import by.bsu.contactdirectory.dao.PhotoDao;
 import by.bsu.contactdirectory.entity.Attachment;
 import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.entity.Phone;
+import by.bsu.contactdirectory.util.preparator.ContactPreparator;
 import by.bsu.contactdirectory.util.validator.ContactValidator;
 
 public class ContactService {
@@ -104,6 +105,7 @@ public class ContactService {
 		if (!ContactValidator.validate(contact)) {
 			return false;
 		}
+		ContactPreparator.prepare(contact);
 		try {
 			int id = ContactDao.getInstance().create(contact);
 			//add address

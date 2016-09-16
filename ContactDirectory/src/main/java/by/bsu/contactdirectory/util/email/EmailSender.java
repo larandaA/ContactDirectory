@@ -1,7 +1,10 @@
 package by.bsu.contactdirectory.util.email;
 
 
+import java.util.Locale;
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
@@ -19,7 +22,41 @@ public class EmailSender {
 
     private static boolean inited = false;
 
-    public static void init(String username, String password, String adminEmail, Properties props) {
+    public static String getUsername() {
+        return username;
+    }
+
+    public static void setUsername(String username) {
+        EmailSender.username = username;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static void setPassword(String password) {
+        EmailSender.password = password;
+    }
+
+    public static String getAdminEmail() {
+        return adminEmail;
+    }
+
+    public static void setAdminEmail(String adminEmail) {
+        EmailSender.adminEmail = adminEmail;
+    }
+
+    public static Properties getProps() {
+        return props;
+    }
+
+    public static void setProps(Properties props) {
+        EmailSender.props = props;
+    }
+
+    public static void init(String pathToProperties) {
+        //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(pathToProperties);
+        //parseResourceBundle(resourceBundle);
         EmailSender.username = "javatestar@gmail.com";
         EmailSender.password = "testTEST12";
         EmailSender.adminEmail = "larandaansil@gmail.com";
@@ -29,6 +66,10 @@ public class EmailSender {
         EmailSender.props.put("mail.smtp.host", "smtp.gmail.com");
         EmailSender.props.put("mail.smtp.port", "587");
         EmailSender.inited = true;
+    }
+
+    private static void parseResourceBundle(ResourceBundle resourceBundle) {
+        ResourceBundleParser.parse(resourceBundle);
     }
 
 
