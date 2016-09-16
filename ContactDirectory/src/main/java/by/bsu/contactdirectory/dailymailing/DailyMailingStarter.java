@@ -20,34 +20,40 @@ public class DailyMailingStarter {
 
         private static EmailService emailService = new EmailService();
 
-        public DailyMailJob() { }
+        public DailyMailJob() {
+            System.out.println("create job");
+        }
+
+
 
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            //emailService.sendBirthdayList();
+          //  emailService.sendBirthdayList();
             System.out.println("Hello");
+
         }
     }
 
     public static void start() {
 
+        try {
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            scheduler.start();
 
-        JobDetail job = newJob(DailyMailJob.class)
+            JobDetail job = newJob(DailyMailJob.class)
                 .withIdentity("dailyMailing", "dailyEvents")
                 .build();
-
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "group1")
                 .startNow()
                 //.withSchedule(dailyAtHourAndMinute(19, 23))
                 .withSchedule(simpleSchedule()
-                        .withIntervalInSeconds(5)
+                        .withIntervalInSeconds(40)
                         .repeatForever())
                 .build();
-        try {
-            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-            scheduler.start();
+
             scheduler.scheduleJob(job, trigger);
-            System.out.println("Started job");
+
+            System.out.println("Started job: " + scheduler.isStarted());
         } catch (SchedulerException ex) {
             ex.printStackTrace();
         }

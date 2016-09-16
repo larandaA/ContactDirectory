@@ -20,8 +20,8 @@ class ResourceBundleParser {
 
     private static final int DEFAULT_MINIMUM_CONNECTIONS = 10;
     private static final int DEFAULT_MAXIMUM_CONNECTIONS = 50;
-    private static final String DEFAULT_USER = "root";
-    private static final String DEFAULT_PASSWORD = "";
+    private static final String DEFAULT_USER = "alex_ryzhevich";
+    private static final String DEFAULT_PASSWORD = "password";
     private static final String DEFAULT_USE_UNICODE = "true";
     private static final String DEFAULT_CHARSET_ENCODING = "UTF-8";
 
