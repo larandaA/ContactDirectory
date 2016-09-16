@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class EmailService {
 
-    private String adminEmail = "aleksandraryzhevich@mail.ru";
-
     public boolean sendEmails(String emails, String topic, String text) {
         if (emails == null || emails.isEmpty()) {
             return false;
@@ -31,7 +29,7 @@ public class EmailService {
                 return false;
             }
         }
-        return EmailSender.sendMany(adminEmail, emailArray, text, topic);
+        return EmailSender.sendEmailsToContacts(emailArray, text, topic);
     }
 
     public boolean sendBirthdayList() {
@@ -46,7 +44,7 @@ public class EmailService {
                     message.append(contact.getFirstName() + contact.getLastName() + "\n");
                 }
             }
-            return EmailSender.sendSingle(adminEmail, adminEmail, message.toString(), "Daily notification from ContactDirectory");
+            return EmailSender.sendEmailToAdmin(message.toString(), "Daily notification from ContactDirectory");
         } catch (DaoException ex) {
             //
             return false;

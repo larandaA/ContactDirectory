@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.connectionpool.ConnectionPool;
 import by.bsu.contactdirectory.dailymailing.DailyMailingStarter;
+import by.bsu.contactdirectory.util.email.EmailSender;
 
 /**
  * Created by Alexandra on 04.09.2016.
@@ -21,7 +22,9 @@ public class MainServlet extends HttpServlet {
     public void init()throws ServletException {
         super.init();
         ConnectionPool.start(getServletContext().getRealPath("WEB-INF/resources/db.properties"));
+        EmailSender.init(null, null, null, null);
         DailyMailingStarter.start();
+
     }
 
     @Override
