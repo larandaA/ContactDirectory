@@ -12,12 +12,13 @@
 <body>
 <h1>Contacts</h1>
 <p> Page ${currentPage} </p>
+<h3 id="errorMessage"></h3>
 <form>
 <button formaction="SearchEdit" class="search">Search</button>
 <button formaction="CreateContact" class="create">Create</button>
 </form>
 
-<form method="post">
+<form method="post" onsubmit="return validateContactList();">
 <button formaction="MailEdit" class="mail">Email</button>
 <button formaction="DeleteContactList" class="delete">Delete</button>
 
@@ -71,5 +72,6 @@
 </jstl:if>
 >Next</button>
 </form>
+<script src="js/contact_list_validate.js"></script>
 </body>
 </html>

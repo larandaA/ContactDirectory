@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class AddressValidator {
 
     private static final String SYMBOL_PATTERN = "^[a-zA-z]+([ '-][a-zA-Z]+)*$";
-    private static final String COMBINED_PATTERN = "^[a-zA-Z0-9' -\\.]+$";
+    private static final String COMBINED_PATTERN = "^[a-zA-Z0-9' -\\./]+$";
 
     private static Pattern symbolPattern = Pattern.compile(SYMBOL_PATTERN);
     private static Pattern combinedPattern = Pattern.compile(COMBINED_PATTERN);

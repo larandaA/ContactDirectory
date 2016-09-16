@@ -8,17 +8,8 @@
     <title>Contact info</title>
 </head>
 <body>
-<datalist id="genders">
-	<jstl:forEach items="${genders}" var="gend">
-		<option value="${gend.toString()}">
-	</jstl:forEach>
-</datalist>
-<datalist id="countries">
-	<jstl:forEach items="${countries}" var="country">
-		<option value="${country}">
-	</jstl:forEach>
-</datalist>
-<form method="post">
+<h3 id="errorMessage"></h3>
+<form method="post" onsubmit="return validateContactInfo();">
 Photo: ${contact.photo.path} <br />
 <input type=hidden name="id" value="${contact.id}">
 First name: <input type="text" value="${contact.firstName}" name="firstName" placeholder="First Name" autocomplete="off" required> <br />
@@ -117,5 +108,7 @@ Attachments: <br />
 </table>
 <button formaction="${action}">Save</button>
 </form>
+<script src="js/validation.js"></script>
+<script src="js/contact_info_validate.js"></script>
 </body>
 </html>

@@ -9,7 +9,8 @@
 </head>
 <body>
 <h1>Search</h1>
-<form>
+<h3 id="errorMessage"></h3>
+<form method="post" onsubmit="return validateSearch();">
 First name: <input type="text" value="" name="firstName" placeholder="First Name" autocomplete="off"> <br />
 Last name: <input type="text" value="" name="lastName" placeholder="Last Name" autocomplete="off"> <br />
 Patronymic: <input type="text" value="" name="patronymic" placeholder="Patronymic" autocomplete="off"> <br />
@@ -46,6 +47,7 @@ Country:
  Index: <input type="text" name="index" value="" placeholder="Index" autocomplete="off"> <br />
 <button formaction="SearchContacts">Search</button>
 </form>
-
+<script src="js/validation.js"></script>
+<script src="js/search_validate.js"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@ public class PhoneValidator {
         if (!validateOperatorCode(phone.getOperatorCode())) {
             return false;
         }
-        if (!validateCountryuCode(phone.getCountryCode())) {
+        if (!validateCountryCode(phone.getCountryCode())) {
             return false;
         }
 
@@ -41,7 +41,7 @@ public class PhoneValidator {
         return true;
     }
 
-    public static boolean validateCountryuCode(Integer code) {
+    public static boolean validateCountryCode(Integer code) {
         if (code == null) {
             return true;
         }

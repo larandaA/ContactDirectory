@@ -53,7 +53,6 @@ public class ContactValidator {
 				}
 			}
 		}
-		
 		return true;
 	}
 	
