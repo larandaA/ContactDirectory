@@ -46,8 +46,8 @@ public class AttachmentDao extends AbstractDao {
         return attachment;
     }
 
-    public void create(Attachment attachment) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(CREATE)) {
+    void create(Attachment attachment, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(CREATE)) {
             st.setString(1, attachment.getPath());
             if (attachment.getComment() == null) {
             	st.setNull(2, Types.VARCHAR);
@@ -58,13 +58,11 @@ public class AttachmentDao extends AbstractDao {
             st.setString(4, attachment.getName());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 
-    public void update(Attachment attachment) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(UPDATE)) {
+    void update(Attachment attachment, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(UPDATE)) {
             st.setString(1, attachment.getName());
             if (attachment.getComment() == null) {
             	st.setNull(2, Types.VARCHAR);
@@ -73,8 +71,6 @@ public class AttachmentDao extends AbstractDao {
             }
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 

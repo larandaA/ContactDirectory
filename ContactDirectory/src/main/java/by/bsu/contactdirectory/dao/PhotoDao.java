@@ -32,25 +32,21 @@ public class PhotoDao extends AbstractDao {
         return photo;
     }
 
-    public void create(Photo photo) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(CREATE)) {
+    void create(Photo photo, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(CREATE)) {
             st.setString(1, photo.getPath());
             st.setInt(2, photo.getContactId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 
-    public void update(Photo photo) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(UPDATE)) {
+    void update(Photo photo, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(UPDATE)) {
             st.setString(1, photo.getPath());
             st.setInt(2, photo.getContactId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 

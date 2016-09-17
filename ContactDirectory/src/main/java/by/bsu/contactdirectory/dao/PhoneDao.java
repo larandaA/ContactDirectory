@@ -52,8 +52,8 @@ public class PhoneDao extends AbstractDao {
         return phone;
     }
 
-    public void create(Phone phone) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(CREATE)) {
+    public void create(Phone phone, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(CREATE)) {
             if (phone.getCountryCode() == null) {
             	st.setNull(1, Types.INTEGER);
             } else {
@@ -82,13 +82,11 @@ public class PhoneDao extends AbstractDao {
             st.setInt(6, phone.getContactId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 
-    public void update(Phone phone) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(UPDATE)) {
+    void update(Phone phone, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(UPDATE)) {
             if (phone.getCountryCode() == null) {
             	st.setNull(1, Types.INTEGER);
             } else {
@@ -117,8 +115,6 @@ public class PhoneDao extends AbstractDao {
             st.setInt(6, phone.getId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 

@@ -21,6 +21,14 @@ INSERT INTO `contact`(`first_name`, `last_name`, `patronymic`, `birth_date`, `ge
 INSERT INTO `address`(`country_id`, `city`, `local_address`, `index`, `contact_id`) VALUES (3, "Berlin", NULL, "7456GH", 3);
 INSERT INTO `address`(`country_id`, `city`, `local_address`, `index`, `contact_id`) VALUES (1, "Moscow", NULL, "234553", 1);
 INSERT INTO `address`(`country_id`, `city`, `local_address`, `index`, `contact_id`) VALUES (4, "Minsk", NULL, "220047", 4);
+INSERT INTO `address`(`country_id`, `city`, `local_address`, `index`, `contact_id`) VALUES (2, "London", NULL, NULL, 2);
+
+#-----------------PHOTOS------------------------
+
+INSERT INTO `photo`(`contact_id`, `path`) values (1, 'img/contacts/default.jpg');
+INSERT INTO `photo`(`contact_id`, `path`) values (2, 'img/contacts/default.jpg');
+INSERT INTO `photo`(`contact_id`, `path`) values (3, 'img/contacts/default.jpg');
+INSERT INTO `photo`(`contact_id`, `path`) values (4, 'img/contacts/default.jpg');
 
 #----------------PHONE NUMBERS---------------------
 

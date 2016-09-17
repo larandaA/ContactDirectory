@@ -10,7 +10,8 @@
 <body>
 <h3 id="errorMessage"></h3>
 <form method="post" onsubmit="return validateContactInfo();">
-Photo: ${contact.photo.path} <br />
+Photo: <br />
+<img id="photoPreview" src="${contact.photo.path}" /> <br />
 <input type=hidden name="id" value="${contact.id}">
 First name: <input type="text" value="${contact.firstName}" name="firstName" placeholder="First Name" autocomplete="off" required> <br />
 Last name: <input type="text" value="${contact.lastName}" name="lastName" placeholder="Last Name" autocomplete="off" required> <br />

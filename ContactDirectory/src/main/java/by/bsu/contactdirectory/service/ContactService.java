@@ -12,6 +12,7 @@ import by.bsu.contactdirectory.dao.PhotoDao;
 import by.bsu.contactdirectory.entity.Attachment;
 import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.entity.Phone;
+import by.bsu.contactdirectory.entity.Photo;
 import by.bsu.contactdirectory.util.preparator.ContactPreparator;
 import by.bsu.contactdirectory.util.validator.ContactValidator;
 
@@ -106,9 +107,42 @@ public class ContactService {
 			return false;
 		}
 		ContactPreparator.prepare(contact);
+
+		/// remove this
+		if (contact.getPhoto() == null) {
+			Photo photo = new Photo();
+			photo.setContactId(contact.getId());
+			photo.setPath("img/contacts/default.jpg");
+			contact.setPhoto(photo);
+		}
+
 		try {
-			int id = ContactDao.getInstance().create(contact);
-			//add address
+			ContactDao.getInstance().create(contact);
+
+		} catch (DaoException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean updateContact(Contact contact) {
+		if (!ContactValidator.validate(contact)) {
+			return false;
+		}
+		ContactPreparator.prepare(contact);
+
+		/// remove this
+		if (contact.getPhoto() == null) {
+			System.out.println("adding defailt photo");
+			Photo photo = new Photo();
+			photo.setContactId(contact.getId());
+			photo.setPath("img/contacts/default.jpg");
+			contact.setPhoto(photo);
+		}
+
+		try {
+			ContactDao.getInstance().update(contact);
 		} catch (DaoException ex) {
 			ex.printStackTrace();
 			return false;

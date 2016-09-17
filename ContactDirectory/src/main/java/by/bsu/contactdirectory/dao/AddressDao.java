@@ -39,8 +39,8 @@ public class AddressDao extends AbstractDao {
         return address;
     }
 
-    public void create(Address address) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(CREATE)) {
+    void create(Address address, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(CREATE)) {
             if(address.getCountry() == null) {
             	st.setNull(1, Types.VARCHAR);
             } else {
@@ -64,13 +64,11 @@ public class AddressDao extends AbstractDao {
             st.setInt(5, address.getContactId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 
-    public void update(Address address) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(UPDATE)) {
+    void update(Address address, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(UPDATE)) {
             if(address.getCountry() == null) {
             	st.setNull(1, Types.VARCHAR);
             } else {
@@ -94,8 +92,6 @@ public class AddressDao extends AbstractDao {
             st.setInt(5, address.getContactId());
 
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 

@@ -1,8 +1,6 @@
 package by.bsu.contactdirectory.dao;
 
-import by.bsu.contactdirectory.entity.Contact;
-import by.bsu.contactdirectory.entity.Gender;
-import by.bsu.contactdirectory.entity.MaritalStatus;
+import by.bsu.contactdirectory.entity.*;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -81,9 +79,14 @@ public class ContactDao extends AbstractDao {
 
     public int create(Contact contact) throws DaoException {
         int id = 0;
-        try (Connection cn = getConnection(); 
-        		PreparedStatement st = cn.prepareStatement(CREATE); 
-        		PreparedStatement st2 = cn.prepareStatement(LAST_ID)) {
+        Connection cn = null;
+        PreparedStatement st = null;
+        PreparedStatement st2 = null;
+        try {
+            cn = getConnection();
+            cn.setAutoCommit(false);
+            st = cn.prepareStatement(CREATE);
+            st2 = cn.prepareStatement(LAST_ID);
             st.setString(1, contact.getFirstName());
             st.setString(2, contact.getLastName());
             System.out.println(contact.getPatronymic());
@@ -131,11 +134,45 @@ public class ContactDao extends AbstractDao {
             ResultSet rs = st2.executeQuery();
             rs.next();
             id = rs.getInt(1);
+
+            if (contact.getAddress() != null) {
+                contact.getAddress().setContactId(id);
+                AddressDao.getInstance().create(contact.getAddress(), cn);
+            }
+            if (contact.getPhoto() != null) {
+                contact.getPhoto().setContactId(id);
+                PhotoDao.getInstance().create(contact.getPhoto(), cn);
+            }
+            if (contact.getAttachments() != null) {
+                for (Attachment attachment : contact.getAttachments()) {
+                    attachment.setContactId(id);
+                    AttachmentDao.getInstance().create(attachment, cn);
+                }
+            }
+            if (contact.getPhones() != null) {
+                for (Phone phone : contact.getPhones()) {
+                    phone.setContactId(id);
+                    PhoneDao.getInstance().create(phone, cn);
+                }
+            }
+
+            cn.commit();
+            cn.setAutoCommit(true);
         } catch (SQLException ex) {
+            try {
+                cn.rollback();
+                cn.setAutoCommit(true);
+            } catch (SQLException ex2) {}
         	ex.printStackTrace();
             throw new DaoException(ex);
         }
-        System.out.println("Success add");
+        finally {
+            try {
+                st.close();
+                st2.close();
+                cn.close();
+            } catch (SQLException ex) {}
+        }
         return id;
     }
 
@@ -183,7 +220,12 @@ public class ContactDao extends AbstractDao {
     }
 
     public void update(Contact contact) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(UPDATE)) {
+        Connection cn = null;
+        PreparedStatement st = null;
+        try {
+            cn = getConnection();
+            cn.setAutoCommit(false);
+            st = cn.prepareStatement(UPDATE);
             st.setString(1, contact.getFirstName());
             st.setString(2, contact.getLastName());
             if (contact.getPatronymic() == null) {
@@ -229,8 +271,47 @@ public class ContactDao extends AbstractDao {
             st.setInt(11, contact.getId());
 
             st.executeUpdate();
+
+            if (contact.getAddress() != null) {
+                AddressDao.getInstance().update(contact.getAddress(), cn);
+            }
+            if (contact.getPhoto() != null) {
+                PhotoDao.getInstance().update(contact.getPhoto(), cn);
+            }
+            if (contact.getAttachments() != null) {
+                for (Attachment attachment : contact.getAttachments()) {
+                    if (attachment.getId() == 0) {
+                        AttachmentDao.getInstance().create(attachment, cn);
+                    } else {
+                        AttachmentDao.getInstance().update(attachment, cn);
+                    }
+                }
+            }
+            if (contact.getPhones() != null) {
+                for (Phone phone : contact.getPhones()) {
+                    if (phone.getId() == 0) {
+                        PhoneDao.getInstance().create(phone, cn);
+                    } else {
+                        PhoneDao.getInstance().update(phone, cn);
+                    }
+                }
+            }
+
+            cn.commit();
+            cn.setAutoCommit(true);
         } catch (SQLException ex) {
+            try {
+                cn.rollback();
+                cn.setAutoCommit(true);
+            } catch (SQLException ex2) {}
+            ex.printStackTrace();
             throw new DaoException(ex);
+        }
+        finally {
+            try {
+                st.close();
+                cn.close();
+            } catch (SQLException ex) {}
         }
     }
 
