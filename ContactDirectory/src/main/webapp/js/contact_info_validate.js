@@ -5,6 +5,15 @@
 function validateContactInfo() {
     var errMsg = document.getElementById("errorMessage");
 
+    var uploadPhoto = document.getElementById("uploadPhoto");
+    if (uploadPhoto.files[0] != undefined) {
+        if (!uploadPhoto.files[0].name.match(/.*\.jpg/)
+            && !uploadPhoto.files[0].name.match(/.*\.png/)) {
+            errMsg.textContent = "Choose an image for contact photo!";
+            return false;
+        }
+    }
+
     var elems = document.getElementsByName("firstName");
     for (i = 0; i < elems.length; i++) {
         alert(elems[i]);

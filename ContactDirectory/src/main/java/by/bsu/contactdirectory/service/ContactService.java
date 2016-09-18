@@ -108,14 +108,6 @@ public class ContactService {
 		}
 		ContactPreparator.prepare(contact);
 
-		/// remove this
-		if (contact.getPhoto() == null) {
-			Photo photo = new Photo();
-			photo.setContactId(contact.getId());
-			photo.setPath("img/contacts/default.jpg");
-			contact.setPhoto(photo);
-		}
-
 		try {
 			ContactDao.getInstance().create(contact);
 
@@ -131,15 +123,6 @@ public class ContactService {
 			return false;
 		}
 		ContactPreparator.prepare(contact);
-
-		/// remove this
-		if (contact.getPhoto() == null) {
-			System.out.println("adding defailt photo");
-			Photo photo = new Photo();
-			photo.setContactId(contact.getId());
-			photo.setPath("img/contacts/default.jpg");
-			contact.setPhoto(photo);
-		}
 
 		try {
 			ContactDao.getInstance().update(contact);

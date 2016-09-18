@@ -1,9 +1,6 @@
 package by.bsu.contactdirectory.action;
 
-import by.bsu.contactdirectory.entity.Address;
-import by.bsu.contactdirectory.entity.Contact;
-import by.bsu.contactdirectory.entity.Gender;
-import by.bsu.contactdirectory.entity.MaritalStatus;
+import by.bsu.contactdirectory.entity.*;
 import by.bsu.contactdirectory.service.ContactService;
 
 import javax.servlet.ServletException;
@@ -62,7 +59,7 @@ public class UpdateContactAction implements Action {
 		contact.setEmail(request.getParameter("email"));
 		contact.setWebSite(request.getParameter("webSite"));
 		contact.setPlaceOfWork(request.getParameter("placeOfWork"));
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		buf = request.getParameter("birthDate");
 		if (buf == null || buf.isEmpty()) {
 			contact.setBirthDate(null);
@@ -84,6 +81,10 @@ public class UpdateContactAction implements Action {
 		address.setIndex(request.getParameter("index"));
 		address.setContactId(contact.getId());
 		contact.setAddress(address);
+
+		Photo photo = new Photo();
+		photo.setContactId(contact.getId());
+		contact.setPhoto(photo);
 
 		if (contactService.updateContact(contact)){
 			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");

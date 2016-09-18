@@ -11,6 +11,7 @@
 <h3 id="errorMessage"></h3>
 <form method="post" onsubmit="return validateContactInfo();">
 Photo: <br />
+<input type="file" name="photo" id="uploadPhoto" accept="image/*"> <br />
 <img id="photoPreview" src="${contact.photo.path}" /> <br />
 <input type=hidden name="id" value="${contact.id}">
 First name: <input type="text" value="${contact.firstName}" name="firstName" placeholder="First Name" autocomplete="off" required> <br />
@@ -111,5 +112,6 @@ Attachments: <br />
 </form>
 <script src="js/validation.js"></script>
 <script src="js/contact_info_validate.js"></script>
+<script src="js/image_preview.js"></script>
 </body>
 </html>

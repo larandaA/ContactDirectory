@@ -1,9 +1,6 @@
 package by.bsu.contactdirectory.util.preparator;
 
-import by.bsu.contactdirectory.entity.Address;
-import by.bsu.contactdirectory.entity.Attachment;
-import by.bsu.contactdirectory.entity.Contact;
-import by.bsu.contactdirectory.entity.Phone;
+import by.bsu.contactdirectory.entity.*;
 
 /**
  * Created by Alexandra on 16.09.2016.
@@ -22,6 +19,7 @@ public class ContactPreparator {
         contact.setPlaceOfWork(prepareString(contact.getPlaceOfWork()));
 
         prepareAddress(contact.getAddress());
+        preparePhoto(contact.getPhoto());
         if (contact.getPhones() != null) {
             contact.getPhones().forEach(ContactPreparator::preparePhone);
         }
@@ -43,6 +41,12 @@ public class ContactPreparator {
 
     private static void preparePhone(Phone phone) {
         phone.setComment(prepareString(phone.getComment()));
+    }
+
+    private static void preparePhoto(Photo photo) {
+        if (photo.getPath() == null || photo.getPath().isEmpty()) {
+            photo.setPath("img/contacts/default.jpg");
+        }
     }
 
     private static String prepareString(String string) {

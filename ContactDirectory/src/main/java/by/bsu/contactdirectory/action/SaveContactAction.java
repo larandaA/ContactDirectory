@@ -9,10 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import by.bsu.contactdirectory.entity.Address;
-import by.bsu.contactdirectory.entity.Contact;
-import by.bsu.contactdirectory.entity.Gender;
-import by.bsu.contactdirectory.entity.MaritalStatus;
+import by.bsu.contactdirectory.entity.*;
 import by.bsu.contactdirectory.service.ContactService;
 
 public class SaveContactAction implements Action {
@@ -56,7 +53,7 @@ public class SaveContactAction implements Action {
 		contact.setEmail(request.getParameter("email"));
 		contact.setWebSite(request.getParameter("webSite"));
 		contact.setPlaceOfWork(request.getParameter("placeOfWork"));
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		buf = request.getParameter("birthDate");
 		if (buf == null || buf.isEmpty()) {
 			contact.setBirthDate(null);
@@ -77,6 +74,9 @@ public class SaveContactAction implements Action {
 		address.setLocalAddress(request.getParameter("localAddress"));
 		address.setIndex(request.getParameter("index"));
 		contact.setAddress(address);
+
+		Photo photo = new Photo();
+		contact.setPhoto(photo);
 		
 		if (contactService.createContact(contact)){
 			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");

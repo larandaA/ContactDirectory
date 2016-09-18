@@ -29,4 +29,8 @@
     <welcome-file-list>
     <welcome-file>MainServlet</welcome-file>
   </welcome-file-list>
+    <context-param>
+        <param-name>Log4jConfigLocation</param-name>
+        <param-value>file://WEB-INF/log4j2.xml</param-value>
+    </context-param>
 </web-app>

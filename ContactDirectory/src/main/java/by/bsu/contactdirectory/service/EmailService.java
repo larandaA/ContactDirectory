@@ -46,7 +46,7 @@ public class EmailService {
             }
             return EmailSender.sendEmailToAdmin(message.toString(), "Daily notification from ContactDirectory");
         } catch (DaoException ex) {
-            //
+            ex.printStackTrace();
             return false;
         }
     }
