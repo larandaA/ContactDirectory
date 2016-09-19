@@ -46,7 +46,7 @@
 		<td>${contact.address.country} ${contact.address.city} ${contact.address.localAddress} ${contact.address.index}</td>
 		<td>${contact.placeOfWork}</td>
 		<td>
-			<form method="post" onsubmit="event.stopPropagation(); return true;">
+			<form method="post" class="singleContactForm">
 				<input type="hidden" name="id" value="${contact.id}">
 				<button formaction="EditContact" class="edit">Edit</button>
 				<button formaction="DeleteContact" class="delete">Delete</button>
