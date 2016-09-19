@@ -44,8 +44,8 @@ public class ConnectionPool {
         }
 
         //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
-        //parseResourceBundle(resourceBundle);
-        parseResourceBundle(null);
+        parseProperties(propertiesPath);
+        //parseResourceBundle(null);
 
         try{
             initConnections();
@@ -73,8 +73,8 @@ public class ConnectionPool {
         }
     }
 
-    private void parseResourceBundle(ResourceBundle resourceBundle){
-        ResourceBundleParser.parse(this, resourceBundle);
+    private void parseProperties(String pathToProperties){
+        PoolPropertiesParser.parse(this, pathToProperties);
     }
 
     public static ConnectionPool getInstance() {

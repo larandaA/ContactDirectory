@@ -1,13 +1,11 @@
 package by.bsu.contactdirectory.util.email;
 
 
-import java.util.Locale;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
 
 /**
@@ -56,20 +54,20 @@ public class EmailSender {
 
     public static void init(String pathToProperties) {
         //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(pathToProperties);
-        //parseResourceBundle(resourceBundle);
-        EmailSender.username = "javatestar@gmail.com";
+        parseProperties(pathToProperties);
+        /*EmailSender.username = "javatestar@gmail.com";
         EmailSender.password = "testTEST12";
         EmailSender.adminEmail = "larandaansil@gmail.com";
         EmailSender.props = new Properties();
         EmailSender.props.put("mail.smtp.auth", "true");
         EmailSender.props.put("mail.smtp.starttls.enable", "true");
         EmailSender.props.put("mail.smtp.host", "smtp.gmail.com");
-        EmailSender.props.put("mail.smtp.port", "587");
+        EmailSender.props.put("mail.smtp.port", "587");*/
         EmailSender.inited = true;
     }
 
-    private static void parseResourceBundle(ResourceBundle resourceBundle) {
-        ResourceBundleParser.parse(resourceBundle);
+    private static void parseProperties(String pathToProperties) {
+        EmailPropertiesParser.parse(pathToProperties);
     }
 
 
