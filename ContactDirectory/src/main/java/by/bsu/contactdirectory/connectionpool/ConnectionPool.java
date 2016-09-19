@@ -43,9 +43,9 @@ public class ConnectionPool {
             throw new RuntimeException("Driver is not loaded");
         }
 
-        //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
-        //parseResourceBundle(resourceBundle);
-        parseResourceBundle(null);
+        ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
+        parseResourceBundle(resourceBundle);
+        //parseResourceBundle(null);
 
         try{
             initConnections();

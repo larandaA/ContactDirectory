@@ -21,7 +21,7 @@ public class MainServlet extends HttpServlet {
     @Override
     public void init()throws ServletException {
         super.init();
-        ConnectionPool.start(getServletContext().getRealPath("WEB-INF/resources/db.properties"));
+        ConnectionPool.start(getServletContext().getRealPath("WEB-INF/resources/db"));
         EmailSender.init(getServletContext().getRealPath("WEB-INF/resources/email"));
         DailyMailingStarter.start();
 

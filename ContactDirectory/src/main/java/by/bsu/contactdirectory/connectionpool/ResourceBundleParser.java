@@ -26,26 +26,26 @@ class ResourceBundleParser {
     private static final String DEFAULT_CHARSET_ENCODING = "UTF-8";
 
     static void parse(ConnectionPool cp, ResourceBundle resourceBundle){
-       // try {
-       //     cp.setMinimumConnections(Integer.valueOf(resourceBundle.getString(MINIMUM_CONNECTIONS_KEY)));
-       // }catch (IllegalFormatException ex){
+        try {
+            cp.setMinimumConnections(Integer.valueOf(resourceBundle.getString(MINIMUM_CONNECTIONS_KEY)));
+        } catch (IllegalFormatException ex){
             cp.setMinimumConnections(DEFAULT_MINIMUM_CONNECTIONS);
-       // }
-      //  try {
-      //      cp.setMaximumConnections(Integer.valueOf(resourceBundle.getString(MAXIMUM_CONNECTIONS_KEY)));
-      //  }catch (IllegalFormatException ex){
+        }
+        try {
+            cp.setMaximumConnections(Integer.valueOf(resourceBundle.getString(MAXIMUM_CONNECTIONS_KEY)));
+        } catch (IllegalFormatException ex){
             cp.setMaximumConnections(DEFAULT_MAXIMUM_CONNECTIONS);
-      //  }
+        }
 
-      //  String databaseUrl = resourceBundle.getString(DATABASE_URL_KEY);
-     //   if (databaseUrl != null) {
-      //      cp.setUrl(FIRST_PART_URL + databaseUrl);
-            cp.setUrl(FIRST_PART_URL + "localhost:3306/alexandra_ryzhevich_db");
-       // }else{
-      //      throw new RuntimeException("Not set database url");
-       // }
+        String databaseUrl = resourceBundle.getString(DATABASE_URL_KEY);
+        if (databaseUrl != null) {
+            cp.setUrl(FIRST_PART_URL + databaseUrl);
+            //cp.setUrl(FIRST_PART_URL + "localhost:3306/alexandra_ryzhevich_db");
+        }else{
+            throw new RuntimeException("Not set database url");
+        }
 
-       /* String user = resourceBundle.getString(USER_KEY);
+        String user = resourceBundle.getString(USER_KEY);
         if (user == null || user.isEmpty()){
             user = DEFAULT_USER;
         }
@@ -60,13 +60,13 @@ class ResourceBundleParser {
         String charsetEncidung = resourceBundle.getString(CHARSET_ENCODING_KEY);
         if (charsetEncidung == null || charsetEncidung.isEmpty()){
             charsetEncidung = DEFAULT_CHARSET_ENCODING;
-        }*/
+        }
 
         Properties connectionProperties = new Properties();
-        connectionProperties.setProperty(USER_KEY, DEFAULT_USER/*user*/);
-        connectionProperties.setProperty(PASSWORD_KEY, DEFAULT_PASSWORD/*password*/);
-        connectionProperties.setProperty(USE_UNICODE_KEY, DEFAULT_USE_UNICODE/*useUnicode*/);
-        connectionProperties.setProperty(CHARSET_ENCODING_KEY, DEFAULT_CHARSET_ENCODING/*charsetEncidung*/);
+        connectionProperties.setProperty(USER_KEY, /*DEFAULT_USER*/user);
+        connectionProperties.setProperty(PASSWORD_KEY, /*DEFAULT_PASSWORD*/password);
+        connectionProperties.setProperty(USE_UNICODE_KEY, /*DEFAULT_USE_UNICODE*/useUnicode);
+        connectionProperties.setProperty(CHARSET_ENCODING_KEY, /*DEFAULT_CHARSET_ENCODING*/charsetEncidung);
         cp.setConnectionProperties(connectionProperties);
     }
 
