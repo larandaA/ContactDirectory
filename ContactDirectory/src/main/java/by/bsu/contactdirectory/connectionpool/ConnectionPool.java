@@ -43,8 +43,8 @@ public class ConnectionPool {
             throw new RuntimeException("Driver is not loaded");
         }
 
-        ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
-        parseResourceBundle(resourceBundle);
+        //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
+        parseProperties(propertiesPath);
         //parseResourceBundle(null);
 
         try{
@@ -73,8 +73,8 @@ public class ConnectionPool {
         }
     }
 
-    private void parseResourceBundle(ResourceBundle resourceBundle){
-        ResourceBundleParser.parse(this, resourceBundle);
+    private void parseProperties(String pathToProperties){
+        PoolPropertiesParser.parse(this, pathToProperties);
     }
 
     public static ConnectionPool getInstance() {
