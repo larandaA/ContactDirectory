@@ -22,12 +22,12 @@ public class ContactService {
 
 	public ContactService() {}
 	
-	public int getPageAmount() {
+	public int getPageAmount() throws ServiceServerException {
 		int amount = 0;
 		try {
 			amount = ContactDao.getInstance().count();
 		} catch (DaoException ex) {
-			
+			throw new ServiceServerException(ex);
 		}
 		if (amount % contactAmountPerPage == 0) {
 			return amount / contactAmountPerPage;
@@ -35,26 +35,25 @@ public class ContactService {
 		return amount / contactAmountPerPage + 1;
 	}
 	
-	public List<Contact> getContactList(int page) {
+	public List<Contact> getContactList(int page) throws ServiceServerException {
 		List<Contact> contacts = null;
 		int offset = (page - 1) * contactAmountPerPage;
 		try {
 			contacts = ContactDao.getInstance().findContactList(offset, contactAmountPerPage);
 		} catch (DaoException ex) {
-			//add log
-			contacts = new LinkedList<Contact>();
+			throw new ServiceServerException(ex);
 		}
 		for(Contact contact : contacts) {
 			try {
 				contact.setAddress(AddressDao.getInstance().findById(contact.getId()));
 			} catch (DaoException ex) {
-				//add log
+				throw new ServiceServerException(ex);
 			}
 		}
 		return contacts;
 	}
 	
-	public Contact getContact(int id) {
+	public Contact getContact(int id) throws ServiceServerException {
 		Contact contact = null;
 		try {
 			contact = ContactDao.getInstance().findContactById(id);
@@ -62,49 +61,50 @@ public class ContactService {
 				return null;
 			}
 		} catch (DaoException ex) {
-			//add log
-			return null;
+			throw new ServiceServerException(ex);
 		}
 		try {
 			contact.setAddress(AddressDao.getInstance().findById(contact.getId()));
 		} catch (DaoException ex) {
-			//add log
+			throw new ServiceServerException(ex);
 		}
 		try {
 			contact.setPhoto(PhotoDao.getInstance().findById(contact.getId()));
 		} catch (DaoException ex) {
-			//add log
+			throw new ServiceServerException(ex);
 		}
 		try {
 			contact.setPhones(PhoneDao.getInstance().findByContact(contact.getId(), 0, 5));
 		} catch (DaoException ex) {
 			contact.setPhones(new LinkedList<Phone>());
-			//add log
+			throw new ServiceServerException(ex);
 		}
 		try {
 			contact.setAttachments(AttachmentDao.getInstance().findByContact(contact.getId(), 0, 5));
 		} catch (DaoException ex) {
 			contact.setAttachments(new LinkedList<Attachment>());
-			//add log
+			throw new ServiceServerException(ex);
 		}
 		return contact;
 	}
 	
-	public void deleteContact(int id) {
+	public void deleteContact(int id) throws ServiceServerException {
 		try {
 			ContactDao.getInstance().delete(id);
 		} catch (DaoException ex) {
-			//
+			throw new ServiceServerException(ex);
 		}
 	}
 	
-	public void deleteContactList(List<Integer> ids) {
-		ids.forEach(this::deleteContact);
+	public void deleteContactList(List<Integer> ids) throws ServiceServerException {
+		for(Integer id : ids) {
+			deleteContact(id);
+		}
 	}
 	
-	public boolean createContact(Contact contact) {
+	public void createContact(Contact contact) throws ServiceServerException, ServiceClientException {
 		if (!ContactValidator.validate(contact)) {
-			return false;
+			throw new ServiceClientException("Contact parameters for creating are not valid.");
 		}
 		ContactPreparator.prepare(contact);
 
@@ -112,24 +112,20 @@ public class ContactService {
 			ContactDao.getInstance().create(contact);
 
 		} catch (DaoException ex) {
-			ex.printStackTrace();
-			return false;
+			throw new ServiceServerException(ex);
 		}
-		return true;
 	}
 
-	public boolean updateContact(Contact contact) {
+	public void updateContact(Contact contact) throws ServiceServerException, ServiceClientException {
 		if (!ContactValidator.validate(contact)) {
-			return false;
+			throw new ServiceClientException("Contact parameters for updating are not valid.");
 		}
 		ContactPreparator.prepare(contact);
 
 		try {
 			ContactDao.getInstance().update(contact);
 		} catch (DaoException ex) {
-			ex.printStackTrace();
-			return false;
+			throw new ServiceServerException(ex);
 		}
-		return true;
 	}
 }

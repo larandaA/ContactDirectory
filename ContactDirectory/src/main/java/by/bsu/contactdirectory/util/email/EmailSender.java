@@ -1,11 +1,13 @@
 package by.bsu.contactdirectory.util.email;
 
 
+import java.io.IOException;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 import javax.mail.*;
 import javax.mail.internet.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -17,6 +19,8 @@ public class EmailSender {
     private static String password;
     private static String adminEmail;
     private static Properties props;
+
+    private static Logger logger;
 
     private static boolean inited = false;
 
@@ -53,8 +57,14 @@ public class EmailSender {
     }
 
     public static void init(String pathToProperties) {
+        logger = LogManager.getLogger(EmailSender.class);
         //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(pathToProperties);
-        parseProperties(pathToProperties);
+        if (parseProperties(pathToProperties)) {
+            EmailSender.inited = true;
+            logger.info("Email sender is successfully inited.");
+        } else {
+            logger.error("Can't initialize email sender.");
+        }
         /*EmailSender.username = "javatestar@gmail.com";
         EmailSender.password = "testTEST12";
         EmailSender.adminEmail = "larandaansil@gmail.com";
@@ -63,18 +73,21 @@ public class EmailSender {
         EmailSender.props.put("mail.smtp.starttls.enable", "true");
         EmailSender.props.put("mail.smtp.host", "smtp.gmail.com");
         EmailSender.props.put("mail.smtp.port", "587");*/
-        EmailSender.inited = true;
     }
 
-    private static void parseProperties(String pathToProperties) {
-        EmailPropertiesParser.parse(pathToProperties);
-    }
-
-
-    public static boolean sendEmailToAdmin(String text, String topic) {
-        if (!inited) {
-            //add
+    private static boolean parseProperties(String pathToProperties) {
+        try {
+            EmailPropertiesParser.parse(pathToProperties);
+        } catch(IOException ex) {
             return false;
+        }
+        return true;
+    }
+
+
+    public static void sendEmailToAdmin(String text, String topic) throws EmailSenderException {
+        if (!inited) {
+            throw new EmailSenderException("Email configurations are not set.");
         }
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -92,16 +105,13 @@ public class EmailSender {
             Transport.send(message);
 
         } catch (MessagingException mex) {
-            mex.printStackTrace();
-            return false;
+            throw new EmailSenderException(mex);
         }
-        return true;
     }
 
-    public static boolean sendEmailsToContacts(String[] to, String text, String topic) {
+    public static void sendEmailsToContacts(String[] to, String text, String topic) throws EmailSenderException {
         if (!inited) {
-            //add
-            return false;
+            throw new EmailSenderException("Email configurations are not set.");
         }
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -122,11 +132,8 @@ public class EmailSender {
 
             Transport.send(message);
         }catch (MessagingException mex) {
-            mex.printStackTrace();
-            return false;
+            throw new EmailSenderException(mex);
         }
-
-        return true;
     }
 
 }

@@ -9,12 +9,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.bsu.contactdirectory.service.ServiceClientException;
+import by.bsu.contactdirectory.service.ServiceServerException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.bsu.contactdirectory.entity.*;
 import by.bsu.contactdirectory.service.ContactService;
 
 public class SaveContactAction implements Action {
 	
 	private ContactService contactService = new ContactService();
+	private static Logger logger = LogManager.getLogger(SaveContactAction.class);
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,8 +38,9 @@ public class SaveContactAction implements Action {
 			try {
 				contact.setGender(Gender.valueOf(buf.toUpperCase()));
 			} catch (IllegalArgumentException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid gender got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -45,8 +52,9 @@ public class SaveContactAction implements Action {
 			try {
 				contact.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
 			} catch (IllegalArgumentException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid marital status got:"+ buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}		
@@ -63,8 +71,9 @@ public class SaveContactAction implements Action {
 				birthDate.setTime(dateFormat.parse(buf));
 				contact.setBirthDate(birthDate);
 			} catch (ParseException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid birth date got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -78,10 +87,18 @@ public class SaveContactAction implements Action {
 		Photo photo = new Photo();
 		contact.setPhoto(photo);
 		
-		if (contactService.createContact(contact)){
+		try {
+			contactService.createContact(contact);
+			logger.info("New contact created successfully.");
 			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
-		} else {
-			response.sendError(400, "Invalid parameters");
+		} catch (ServiceServerException ex) {
+			logger.error("Failed to create contact." + ex);
+			request.setAttribute("errorMessage", "Internal server error. Sorry.");
+			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+		} catch (ServiceClientException ex) {
+			logger.error("Validation failed.");
+			request.setAttribute("errorMessage", "Invalid parameters.");
+			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		}
 	}
 

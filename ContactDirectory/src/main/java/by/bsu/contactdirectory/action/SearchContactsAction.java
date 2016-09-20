@@ -5,6 +5,11 @@ import by.bsu.contactdirectory.entity.MaritalStatus;
 import by.bsu.contactdirectory.entity.SearchObject;
 import by.bsu.contactdirectory.service.SearchService;
 
+import by.bsu.contactdirectory.service.ServiceServerException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchContactsAction implements Action {
 
 	private SearchService searchService = new SearchService();
+	private static Logger logger = LogManager.getLogger(SearchContactsAction.class);
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,8 +35,9 @@ public class SearchContactsAction implements Action {
 			try {
 				so.setGender(Gender.valueOf(buf.toUpperCase()));
 			} catch (IllegalArgumentException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid gender got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -40,8 +47,9 @@ public class SearchContactsAction implements Action {
 			try {
 				so.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
 			} catch (IllegalArgumentException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid marital status got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -53,8 +61,9 @@ public class SearchContactsAction implements Action {
 				birthDateBigger.setTime(dateFormat.parse(buf));
 				so.setBirthDateBigger(birthDateBigger);
 			} catch (ParseException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid birth date bigger limit got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -65,8 +74,9 @@ public class SearchContactsAction implements Action {
 				birthDateLess.setTime(dateFormat.parse(buf));
 				so.setBirthDateLess(birthDateLess);
 			} catch (ParseException ex) {
-				//
-				response.sendError(400, "Invalid parameters");
+				logger.error("Invalid birth date less limit got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -77,11 +87,17 @@ public class SearchContactsAction implements Action {
 
 		request.getSession().removeAttribute("searchObject");
 		request.getSession().removeAttribute("page");
-		if (!searchService.isResultEmpty(so)) {
-			request.getSession().setAttribute("searchObject", so);
+		try {
+			if (!searchService.isResultEmpty(so)) {
+				request.getSession().setAttribute("searchObject", so);
+			}
+			logger.info("Search object successfully created.");
+			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
+		} catch (ServiceServerException ex) {
+			logger.error("Failed to count result amount.", ex);
+			request.setAttribute("errorMessage", "Internal server error.");
+			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		}
-
-		response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
 	}
 
 }

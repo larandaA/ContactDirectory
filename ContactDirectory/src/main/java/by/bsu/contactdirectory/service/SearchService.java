@@ -16,24 +16,24 @@ public class SearchService {
 
     private String lastCondition;
 
-    public boolean isResultEmpty(SearchObject so) {
+    public boolean isResultEmpty(SearchObject so) throws ServiceServerException {
         prepareSearchObject(so);
         String condition = buildCondition(so);
-        int resultAmount = 0;
+        int resultAmount;
         try {
             resultAmount = SearchDao.getInstance().count(so, condition);
         } catch (DaoException ex) {
-            ex.printStackTrace();
+            throw new ServiceServerException(ex);
         }
         return resultAmount == 0;
     }
 
-    public int getPageAmount(SearchObject so) {
-        int amount = 0;
+    public int getPageAmount(SearchObject so) throws ServiceServerException {
+        int amount;
         try {
             amount = SearchDao.getInstance().count(so, lastCondition);
         } catch (DaoException ex) {
-
+            throw new ServiceServerException(ex);
         }
         if (amount % ContactService.contactAmountPerPage == 0) {
             return amount / ContactService.contactAmountPerPage;
@@ -41,7 +41,7 @@ public class SearchService {
         return amount / ContactService.contactAmountPerPage + 1;
     }
 
-    public List<Contact> searchContacts(SearchObject so, int page) {
+    public List<Contact> searchContacts(SearchObject so, int page) throws ServiceServerException {
         String condition = buildCondition(so);
         lastCondition = condition;
         List<Contact> contacts;
@@ -49,15 +49,14 @@ public class SearchService {
             int offset = (page - 1) * ContactService.contactAmountPerPage;
             contacts = SearchDao.getInstance().search(so, condition, offset, ContactService.contactAmountPerPage);
         } catch (DaoException ex) {
-            ex.printStackTrace();
-            contacts = new LinkedList<>();
+            throw new ServiceServerException(ex);
         }
 
         for(Contact contact : contacts) {
             try {
                 contact.setAddress(AddressDao.getInstance().findById(contact.getId()));
             } catch (DaoException ex) {
-                //add log
+                throw new ServiceServerException(ex);
             }
         }
 

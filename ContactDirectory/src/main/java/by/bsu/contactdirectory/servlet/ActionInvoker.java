@@ -20,7 +20,7 @@ public class ActionInvoker {
 	
 	public static void invoke(String action, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Action handler = actions.get(action);
-		if(handler == null) {
+		if (handler == null) {
 			try {
 				Class cl = Class.forName("by.bsu.contactdirectory.action." + action.substring(1) + "Action");
 				Action newHandler = (Action)cl.newInstance();

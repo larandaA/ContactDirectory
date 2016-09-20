@@ -6,24 +6,38 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.bsu.contactdirectory.service.ServiceServerException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.bsu.contactdirectory.service.ContactService;
 
 public class DeleteContactAction implements Action {
 	
 	private ContactService contactService = new ContactService();
+	private static Logger logger = LogManager.getLogger(DeleteContactAction.class);
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String buf = request.getParameter("id");
 		if (buf == null) {
-			response.sendError(400, "No contact selected");
+			logger.error("Null id got.");
+			request.setAttribute("errorMessage", "No contact selected.");
+			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		} else {
 			try {
 				int id = Integer.parseInt(buf);
 				contactService.deleteContact(id);
+				logger.info("Contact deleted. Id: " + id);
 				response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
 			} catch (IllegalArgumentException ex) {
-				response.sendError(400, "Illegal argument");
+				logger.error("Illegal id got: " + buf);
+				request.setAttribute("errorMessage", "Invalid parameter.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			} catch (ServiceServerException ex) {
+				logger.error("Can't delete contact.", ex);
+				request.setAttribute("errorMessage", "Internal server error. Sorry.");
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 			}
 		}		
 	}

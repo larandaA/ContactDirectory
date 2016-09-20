@@ -8,13 +8,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.bsu.contactdirectory.service.ServiceServerException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.entity.SearchObject;
 import by.bsu.contactdirectory.service.ContactService;
 import by.bsu.contactdirectory.service.SearchService;
 
 public class ContactListAction implements Action {
-	
+
+	private static Logger logger = LogManager.getLogger(ContactListAction.class);
 	private ContactService contactService = new ContactService();
 	private SearchService searchService = new SearchService();
 
@@ -26,8 +31,9 @@ public class ContactListAction implements Action {
 			try {
 				page = Integer.parseInt(buf);
 			} catch (IllegalArgumentException ex) {
-				//
-				response.sendError(400, "No such page");
+				logger.error("Can't go to page.", ex);
+				request.setAttribute("errorMessage", "No such page: " + buf);
+				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 				return;
 			}
 		} else {
@@ -40,21 +46,23 @@ public class ContactListAction implements Action {
 		int pageAmount = 0;
 		List<Contact> contacts = null;
 		Object soObject = request.getSession().getAttribute("searchObject");
-		if (soObject == null) {
-			contacts = contactService.getContactList(page);
-			/*if (contacts.isEmpty()) {
-				response.sendError(400, "No such page");
-				return;
-			}*/
-			pageAmount = contactService.getPageAmount();
-		} else {
-			SearchObject so = (SearchObject) soObject;
-			contacts = searchService.searchContacts(so, page);
-			/*if (contacts.isEmpty()) {
-				response.sendError(400, "No such page");
-				return;
-			}*/
-			pageAmount = searchService.getPageAmount(so);
+		try {
+			if (soObject == null) {
+				contacts = contactService.getContactList(page);
+				pageAmount = contactService.getPageAmount();
+
+				logger.info("Requesting contact list from page: " + page);
+			} else {
+				SearchObject so = (SearchObject) soObject;
+				contacts = searchService.searchContacts(so, page);
+				pageAmount = searchService.getPageAmount(so);
+
+				logger.info("Requesting for search result from page: " + page);
+			}
+		} catch (ServiceServerException ex) {
+			logger.error("Can't get contact list", ex);
+			request.setAttribute("errorMessage", "Server internal error, sorry.");
+			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		}
 
 

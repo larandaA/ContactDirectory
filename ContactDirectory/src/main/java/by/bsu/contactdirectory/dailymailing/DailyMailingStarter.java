@@ -1,5 +1,6 @@
 package by.bsu.contactdirectory.dailymailing;
 
+import by.bsu.contactdirectory.service.ServiceServerException;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -18,21 +19,26 @@ import org.apache.logging.log4j.Logger;
  */
 public class DailyMailingStarter {
 
+    private static Logger logger;
+
     public static class DailyMailJob implements Job {
 
         private static EmailService emailService = new EmailService();
 
         public DailyMailJob() { }
 
-
-
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            emailService.sendBirthdayList();
+            try {
+                emailService.sendBirthdayList();
+                DailyMailingStarter.logger.info("Email to admin has been sent.");
+            } catch (ServiceServerException ex) {
+                DailyMailingStarter.logger.error(ex);
+            }
         }
     }
 
     public static void start() {
-        Logger logger = LogManager.getLogger(DailyMailingStarter.class);
+        logger = LogManager.getLogger(DailyMailingStarter.class);
         try {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
@@ -40,7 +46,7 @@ public class DailyMailingStarter {
             JobDetail job = newJob(DailyMailJob.class)
                 .withIdentity("dailyMailing", "dailyEvents")
                 .build();
-        Trigger trigger = TriggerBuilder.newTrigger()
+            Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "group1")
                 .startNow()
            //     .withSchedule(dailyAtHourAndMinute(20, 47))
@@ -50,8 +56,9 @@ public class DailyMailingStarter {
                 .build();
 
             scheduler.scheduleJob(job, trigger);
+            logger.info("Daily mailing started.");
         } catch (SchedulerException ex) {
-            ex.printStackTrace();
+            logger.error(ex);
         }
     }
 

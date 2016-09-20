@@ -4,6 +4,7 @@ import by.bsu.contactdirectory.dao.ContactDao;
 import by.bsu.contactdirectory.dao.DaoException;
 import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.util.email.EmailSender;
+import by.bsu.contactdirectory.util.email.EmailSenderException;
 import by.bsu.contactdirectory.util.validator.ContactValidator;
 
 import java.util.List;
@@ -13,26 +14,30 @@ import java.util.List;
  */
 public class EmailService {
 
-    public boolean sendEmails(String emails, String topic, String text) {
+    public void sendEmails(String emails, String topic, String text) throws ServiceClientException, ServiceServerException {
         if (emails == null || emails.isEmpty()) {
-            return false;
+            throw new ServiceClientException();
         }
         if (topic == null || topic.isEmpty()) {
-            return false;
+            throw new ServiceClientException();
         }
         if (text == null || text.isEmpty()) {
-            return false;
+            throw new ServiceClientException();
         }
         String[] emailArray = emails.split(", ");
         for (String email : emailArray) {
             if (!ContactValidator.validateEmail(email)) {
-                return false;
+                throw new ServiceClientException("One of emails is not valid.");
             }
         }
-        return EmailSender.sendEmailsToContacts(emailArray, text, topic);
+        try {
+            EmailSender.sendEmailsToContacts(emailArray, text, topic);
+        } catch (EmailSenderException ex) {
+            throw new ServiceServerException(ex);
+        }
     }
 
-    public boolean sendBirthdayList() {
+    public void sendBirthdayList() throws ServiceServerException {
         try {
             StringBuilder message = new StringBuilder("");
             List<Contact> contacts = ContactDao.getInstance().findContactListByBirthday();
@@ -44,10 +49,13 @@ public class EmailService {
                     message.append(contact.getFirstName() + contact.getLastName() + "\n");
                 }
             }
-            return EmailSender.sendEmailToAdmin(message.toString(), "Daily notification from ContactDirectory");
+            try {
+                EmailSender.sendEmailToAdmin(message.toString(), "Daily notification from ContactDirectory");
+            } catch (EmailSenderException ex) {
+                throw new ServiceServerException(ex);
+            }
         } catch (DaoException ex) {
-            ex.printStackTrace();
-            return false;
+            throw new ServiceServerException(ex);
         }
     }
 }

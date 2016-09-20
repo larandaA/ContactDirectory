@@ -18,9 +18,10 @@
 <button formaction="CreateContact" class="create">Create</button>
 </form>
 
-<form method="post" onsubmit="return validateContactList();">
+<form method="post" id="contactListForm" onsubmit="return validateContactList();">
 <button formaction="MailEdit" class="mail">Email</button>
 <button formaction="DeleteContactList" class="delete">Delete</button>
+</form>
 
 <table class="cd-table">
 	<tr>
@@ -36,7 +37,7 @@
 		<jstl:url value="EditContact" var="editUrl">
 			<jstl:param name="id" value="${contact.id}"/>
 		</jstl:url>
-		<td><input type="checkbox" name="checked" value="${contact.id}"></td>
+		<td><input type="checkbox" form="contactListForm" name="checked" value="${contact.id}"></td>
 		<td><a href="${editUrl}">${contact.firstName} ${contact.lastName}</a></td>
 		<td>
 		<jstl:if test="${not empty contact.birthDate}">
@@ -55,7 +56,6 @@
 	</tr>
 	</jstl:forEach>
 </table>
-</form>
 <form>
 <input type="hidden" name="page" value="${previousPage}">
 <button formaction="ContactList" 

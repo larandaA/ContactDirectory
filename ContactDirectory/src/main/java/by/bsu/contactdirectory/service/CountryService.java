@@ -10,14 +10,24 @@ public class CountryService {
 	
 	public CountryService() {}
 	
-	public List<String> getCountryNames() {
+	public List<String> getCountryNames() throws ServiceServerException {
 		List<String> countries = null;
 		try {
 			countries = CountryDao.getInstance().getNames();
 		} catch (DaoException ex) {
-			countries = new LinkedList<>();
+			throw new ServiceServerException(ex);
 		}
 		return countries;
+	}
+
+	public List<Integer> getCountryCodes() throws ServiceServerException {
+		List<Integer> codes = null;
+		try {
+			codes = CountryDao.getInstance().getCodes();
+		} catch (DaoException ex) {
+			throw new ServiceServerException(ex);
+		}
+		return codes;
 	}
 
 }
