@@ -36,6 +36,7 @@ public class CreateContactAction implements Action {
 		logger.info("Requesting create contact page.");
         request.setAttribute("marital", MaritalStatus.values());
         request.setAttribute("genders", Gender.values());
+		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
 

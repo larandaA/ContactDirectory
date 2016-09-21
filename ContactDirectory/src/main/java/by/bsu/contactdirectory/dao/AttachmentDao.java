@@ -97,12 +97,10 @@ public class AttachmentDao extends AbstractDao {
         return attachment;
     }
 
-    public List<Attachment> findByContact(int contactId, int offset, int amount) throws DaoException {
+    public List<Attachment> findByContact(int contactId) throws DaoException {
         LinkedList<Attachment> phones = new LinkedList<Attachment>();
         try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(SELECT_LIST)) {
             st.setInt(1, contactId);
-            st.setInt(2, offset);
-            st.setInt(3, amount);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 phones.add(parse(rs));

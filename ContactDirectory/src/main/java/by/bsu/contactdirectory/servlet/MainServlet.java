@@ -18,9 +18,12 @@ import by.bsu.contactdirectory.util.email.EmailSender;
 //@WebServlet("/")
 public class MainServlet extends HttpServlet {
 
+    public static String appPath ="";
+
     @Override
     public void init()throws ServletException {
         super.init();
+        appPath = getServletContext().getRealPath("");
         ConnectionPool.start("db.properties");
         EmailSender.init("email.properties");
         DailyMailingStarter.start();

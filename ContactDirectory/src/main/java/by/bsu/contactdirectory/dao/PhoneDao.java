@@ -25,7 +25,7 @@ public class PhoneDao extends AbstractDao {
     private static final String DELETE = "DELETE FROM `phone` WHERE `id` = ?;";
     private static final String SELECT = "SELECT `phone`.`id`, `code`, `operator_code`, `phone_number`, `type`, `comment`, " +
             "`contact_id` FROM `phone` LEFT JOIN `country` ON `phone`.`country_id` = `country`.`id`";
-    private static final String SELECT_LIST = SELECT + " WHERE `contact_id` = ? LIMIT ?, ?;";
+    private static final String SELECT_LIST = SELECT + " WHERE `contact_id` = ?;";
     private static final String SELECT_SINGLE = SELECT + " WHERE `phone`.`id` = ? LIMIT 1;";
 
     private PhoneDao() {}
@@ -141,12 +141,10 @@ public class PhoneDao extends AbstractDao {
         return phone;
     }
 
-    public List<Phone> findByContact(int contactId, int offset, int amount) throws DaoException {
+    public List<Phone> findByContact(int contactId) throws DaoException {
         LinkedList<Phone> phones = new LinkedList<Phone>();
         try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(SELECT_LIST)){
             st.setInt(1, contactId);
-            st.setInt(2, offset);
-            st.setInt(3, amount);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 phones.add(parse(rs));

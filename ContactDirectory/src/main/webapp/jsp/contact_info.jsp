@@ -9,10 +9,21 @@
 </head>
 <body>
 <h3 id="errorMessage"></h3>
-<form method="post" onsubmit="return validateContactInfo();">
+<form method="post" onsubmit="return validateContactInfo();" enctype="multipart/form-data">
 Photo: <br />
-<input type="file" name="photo" id="uploadPhoto" accept="image/*"> <br />
-<img id="photoPreview" src="${contact.photo.path}" /> <br />
+<input type="file" name="photo" id="uploadPhoto" accept="image/*">
+<a href="${contact.photo.path}" download=""><button type="button">Download</button></a>
+<button type="button" id="deletePhoto">Delete</button>
+<input type="hidden" id="defaultPhoto" value="${defaultPhoto}">
+<input type="hidden" id="deletePhotoWithPath" name="deletePhotoWithPath" value="" autocomplete="off">
+	<br />
+<jstl:if test="${not empty contact.photo.path}">
+	<img id="photoPreview" src="${contact.photo.path}" />
+</jstl:if>
+<jstl:if test="${empty contact.photo.path}">
+	<img id="photoPreview" src="${defaultPhoto}" />
+</jstl:if>
+ <br />
 <input type=hidden name="id" value="${contact.id}">
 First name: <input type="text" value="${contact.firstName}" name="firstName" placeholder="First Name" autocomplete="off" required> <br />
 Last name: <input type="text" value="${contact.lastName}" name="lastName" placeholder="Last Name" autocomplete="off" required> <br />
@@ -84,7 +95,7 @@ Phone numbers: <br />
 	</tr>
 	<jstl:forEach items="${contact.phones}" var="phone">
 	<tr>
-		<td>-</a></td>
+		<td>-</td>
 		<td>${phone.countryCode} (${phone.operatorCode}) ${phone.phoneNumber}</td>
 		<td>${phone.type}</td>
 		<td>${phone.comment}</td>
@@ -101,17 +112,17 @@ Attachments: <br />
 	</tr>
 	<jstl:forEach items="${contact.attachments}" var="attachment">
 	<tr>
-		<td>-</a></td>
+		<td>-</td>
 		<td>${attachment.name}</td>
 		<td>${dateFormat.format(attachment.downloadDate.getTime())}</td>
 		<td>${attachment.comment}</td>
 	</tr>
 	</jstl:forEach>
 </table>
-<button formaction="${action}">Save</button>
+<button id formaction="${action}">Save</button>
 </form>
 <script src="js/validation.js"></script>
 <script src="js/contact_info_validate.js"></script>
-<script src="js/image_preview.js"></script>
+<script src="js/photo_manipul.js"></script>
 </body>
 </html>

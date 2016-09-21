@@ -74,13 +74,13 @@ public class ContactService {
 			throw new ServiceServerException(ex);
 		}
 		try {
-			contact.setPhones(PhoneDao.getInstance().findByContact(contact.getId(), 0, 5));
+			contact.setPhones(PhoneDao.getInstance().findByContact(contact.getId()));
 		} catch (DaoException ex) {
 			contact.setPhones(new LinkedList<Phone>());
 			throw new ServiceServerException(ex);
 		}
 		try {
-			contact.setAttachments(AttachmentDao.getInstance().findByContact(contact.getId(), 0, 5));
+			contact.setAttachments(AttachmentDao.getInstance().findByContact(contact.getId()));
 		} catch (DaoException ex) {
 			contact.setAttachments(new LinkedList<Attachment>());
 			throw new ServiceServerException(ex);
