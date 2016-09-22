@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.bsu.contactdirectory.entity.PhoneType;
 import by.bsu.contactdirectory.service.ServiceServerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +68,7 @@ public class EditContactAction implements Action {
 		}
 	    request.setAttribute("marital", MaritalStatus.values());
 	    request.setAttribute("genders", Gender.values());
+		request.setAttribute("types", PhoneType.values());
 		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
 		logger.info("Contact info requested. Id: " + buf);
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);

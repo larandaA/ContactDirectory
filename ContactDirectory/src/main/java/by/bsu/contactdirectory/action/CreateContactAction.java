@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.bsu.contactdirectory.entity.PhoneType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,7 @@ public class CreateContactAction implements Action {
 		logger.info("Requesting create contact page.");
         request.setAttribute("marital", MaritalStatus.values());
         request.setAttribute("genders", Gender.values());
+		request.setAttribute("types", PhoneType.values());
 		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}

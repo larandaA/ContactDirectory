@@ -10,7 +10,6 @@ var combinedReg = /[a-zA-Z0-9' -\./]+$/;
 
 var phoneNumberReg = /^[0]*[1-9][0-9]{4,8}$/;
 var operatorCodeReg = /^[0]*[1-9][0-9]{0,4}$/;
-var countryCodeReg = /^[0]*[1-9][0-9]{0,3}$/;
 
 
 
@@ -101,11 +100,4 @@ function validateOperatorCode(code) {
         return true;
     }
     return operatorCodeReg.test(code);
-}
-
-function validateCountryCode(code) {
-    if (code == null || code.length == 0) {
-        return true;
-    }
-    return countryCodeReg.test(code);
 }

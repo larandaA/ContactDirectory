@@ -86,7 +86,9 @@ Country:
  Local address: <input type="text" name="localAddress" value="${contact.address.localAddress}" placeholder="Local address" autocomplete="off">
  Index: <input type="text" name="index" value="${contact.address.index}" placeholder="Index" autocomplete="off"> <br />
 Phone numbers: <br />
-<table>
+<button type="button" id="deleteCheckedPhones" >Delete</button>
+<button type="button" id="createNewPhone" >Create</button>
+<table id="phoneTable">
 	<tr>
 		<th>-</th>
 		<th>Number</th>
@@ -95,13 +97,19 @@ Phone numbers: <br />
 	</tr>
 	<jstl:forEach items="${contact.phones}" var="phone">
 	<tr>
-		<td>-</td>
+		<td><input type="checkbox" name="phoneChecked"></td>
 		<td>${phone.countryCode} (${phone.operatorCode}) ${phone.phoneNumber}</td>
-		<td>${phone.type}</td>
+		<td>${phone.type.toString()}</td>
 		<td>${phone.comment}</td>
+		<td>
+			<input type="hidden" name="updatePhone" value="" autocomplete="off">
+			<input type="hidden" name="phoneId" value="${phone.id}">
+			<button type="button" class="editPhone">Edit</button><button type="button" class="deletePhone">Delete</button>
+		</td>
 	</tr>
 	</jstl:forEach>
 </table>
+<div id="phoneChanges"></div>
 Attachments: <br />
 <table>
 	<tr>
@@ -121,8 +129,33 @@ Attachments: <br />
 </table>
 <button id formaction="${action}">Save</button>
 </form>
+<div id="phoneFormDiv">
+	<form id="phoneForm">
+		<h4 id="phoneFormErrorMes"></h4>
+		Country code: <br />
+		<select name="countryCode">
+			<option value=""> Choose country code </option>
+			<jstl:forEach items="${codes}" var="code">
+				<option value="${code}"> ${code} </option>
+			</jstl:forEach>
+		</select> <br />
+		Operator code: <br />
+		<input type="text" name="operatorCode" value="" autocomplete="off"> <br />
+		Phone number: <br />
+		<input type="text" name="phoneNumber" value="" autocomplete="off"> <br />
+		Type:
+		<jstl:forEach items="${types}" var="type">
+			<input type="radio" name="phoneType" id="r${type.toString()}" value="${type.toString()}"/><label for="r${type.toString()}"> ${type.toString()} </label>
+		</jstl:forEach> <br />
+		Comment: <br />
+		<textarea cols="30" rows="3" name="phoneComment"></textarea> <br />
+		<button type="button" id="cancelPhoneForm">Cancel</button>
+		<button type="button" id="savePhone">Save</button>
+	</form>
+</div>
 <script src="js/validation.js"></script>
 <script src="js/contact_info_validate.js"></script>
 <script src="js/photo_manipul.js"></script>
+<script src="js/phone_manipul.js"></script>
 </body>
 </html>

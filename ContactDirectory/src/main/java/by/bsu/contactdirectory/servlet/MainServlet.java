@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import by.bsu.contactdirectory.connectionpool.ConnectionPool;
 import by.bsu.contactdirectory.dailymailing.DailyMailingStarter;
 import by.bsu.contactdirectory.util.email.EmailSender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by Alexandra on 04.09.2016.
@@ -19,11 +21,13 @@ import by.bsu.contactdirectory.util.email.EmailSender;
 public class MainServlet extends HttpServlet {
 
     public static String appPath ="";
+    Logger logger = LogManager.getLogger(MainServlet.class);
 
     @Override
     public void init()throws ServletException {
         super.init();
         appPath = getServletContext().getRealPath("");
+        logger.info(String.format("Path to servlet: %s", appPath));
         ConnectionPool.start("db.properties");
         EmailSender.init("email.properties");
         DailyMailingStarter.start();
