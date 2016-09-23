@@ -1,6 +1,7 @@
 package by.bsu.contactdirectory.entity;
 
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,8 +23,8 @@ public class Contact {
 
     private Photo photo;
     private Address address;
-    private List<Phone> phones;
-    private List<Attachment> attachments;
+    private List<Phone> phones = new LinkedList<>();
+    private List<Attachment> attachments = new LinkedList<>();
 
     public Photo getPhoto() {
         return photo;

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class SaveContactAction implements Action {
 			logger.info("New contact created successfully.");
 			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
 		} catch (ServiceServerException ex) {
-			logger.error("Failed to create contact." + ex);
+			logger.error("Failed to create contact.", ex);
 			request.setAttribute("errorMessage", "Internal server error. Sorry.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		} catch (ServiceClientException ex) {
@@ -160,11 +161,20 @@ public class SaveContactAction implements Action {
 			case "index":
 				contact.getAddress().setIndex(value);
 				break;
+			case "createPhone":
+				Phone phone = parsePhone(value);
+				if (phone != null) {
+					contact.getPhones().add(phone);
+				}
+				break;
 		}
 	}
 
 	private void processFile(FileItem item, Contact contact) throws IOException, ActionException {
         String paramName = item.getFieldName();
+		if (item.getName() == null || item.getName().isEmpty()) {
+			return;
+		}
 		String extension = FilenameUtils.getExtension(item.getName());
 		String filename = "";
 		String uploadPath = MainServlet.appPath;
@@ -193,6 +203,54 @@ public class SaveContactAction implements Action {
 			}
 		}
 
+	}
+
+	private Phone parsePhone(String value) throws ActionException {
+		if (value == null || value.isEmpty()) {
+			return null;
+		}
+		String[] params = value.split("\\|");
+		if(params.length != 6) {
+			throw new ActionException(String.format("Invalid phone parameters: %s", Arrays.deepToString(params)));
+		}
+		Phone phone = new Phone();
+		if (!params[0].isEmpty()) {
+			try {
+				phone.setId(Integer.parseInt(params[0]));
+			} catch (NumberFormatException ex) {
+				throw new ActionException(String.format("Invalid phone id: %s", params[0]));
+			}
+		}
+		if (!params[1].isEmpty()) {
+			try {
+				phone.setCountryCode(Integer.parseInt(params[1]));
+			} catch (NumberFormatException ex) {
+				throw new ActionException(String.format("Invalid country code: %s", params[1]));
+			}
+		}
+		if (!params[2].isEmpty()) {
+			try {
+				phone.setOperatorCode(Integer.parseInt(params[2]));
+			} catch (NumberFormatException ex) {
+				throw new ActionException(String.format("Invalid operator code: %s", params[2]));
+			}
+		}
+		if (!params[3].isEmpty()) {
+			try {
+				phone.setPhoneNumber(Integer.parseInt(params[3]));
+			} catch (NumberFormatException ex) {
+				throw new ActionException(String.format("Invalid phone number: %s", params[3]));
+			}
+		}
+		if (!params[4].isEmpty()) {
+			try {
+				phone.setType(PhoneType.valueOf(params[4].toUpperCase()));
+			} catch (IllegalArgumentException ex) {
+				throw new ActionException(String.format("Invalid phone type: %s", params[4]));
+			}
+		}
+		phone.setComment(params[5]);
+		return phone;
 	}
 
 

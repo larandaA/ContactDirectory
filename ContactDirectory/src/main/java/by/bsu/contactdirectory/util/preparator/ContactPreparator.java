@@ -44,6 +44,9 @@ public class ContactPreparator {
     }
 
     private static void preparePhoto(Photo photo) {
+        if (photo == null) {
+            return;
+        }
         if (photo.getPath() == null || photo.getPath().isEmpty()) {
             photo.setPath("img/contacts/default.jpg");
         }
