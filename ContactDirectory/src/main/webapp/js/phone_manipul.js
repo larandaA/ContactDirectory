@@ -237,7 +237,3 @@ function deletePhone(evt) {
     trPar.removeChild(tr);
 
 }
-
-
-
-

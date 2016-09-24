@@ -41,7 +41,8 @@ public class AttachmentDao extends AbstractDao {
         attachment.setDownloadDate(downloadDate);
 
         attachment.setComment(rs.getString(4));
-        attachment.setName(rs.getString(5));
+        attachment.setContactId(rs.getInt(5));
+        attachment.setName(rs.getString(6));
 
         return attachment;
     }

@@ -34,7 +34,6 @@ public class UpdateContactAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-
 		Contact contact = new Contact();
 		Address address = new Address();
 		contact.setAddress(address);
@@ -85,92 +84,6 @@ public class UpdateContactAction implements Action {
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		}
 
-
-		/*
-		Contact contact = new Contact();
-		String buf = request.getParameter("id");
-		try {
-			contact.setId(Integer.parseInt(buf));
-		} catch (IllegalFormatException ex) {
-			logger.error("Invalid contact id got: " + buf);
-			request.setAttribute("errorMessage", "Invalid parameter.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		}
-		contact.setFirstName(request.getParameter("firstName"));
-		contact.setLastName(request.getParameter("lastName"));
-		contact.setPatronymic(request.getParameter("patronymic"));
-		buf = request.getParameter("gender");
-		if (buf == null || buf.isEmpty()) {
-			contact.setGender(null);
-		} else {
-			try {
-				contact.setGender(Gender.valueOf(buf.toUpperCase()));
-			} catch (IllegalArgumentException ex) {
-				logger.error("Invalid gender got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		contact.setCitizenship(request.getParameter("citizenship"));
-		buf = request.getParameter("maritalStatus");
-		if (buf == null || buf.isEmpty()) {
-			contact.setMaritalStatus(null);
-		} else {
-			try {
-				contact.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
-			} catch (IllegalArgumentException ex) {
-				logger.error("Invalid marital status got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		contact.setEmail(request.getParameter("email"));
-		contact.setWebSite(request.getParameter("webSite"));
-		contact.setPlaceOfWork(request.getParameter("placeOfWork"));
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		buf = request.getParameter("birthDate");
-		if (buf == null || buf.isEmpty()) {
-			contact.setBirthDate(null);
-		} else {
-			try{
-				Calendar birthDate = Calendar.getInstance();
-				birthDate.setTime(dateFormat.parse(buf));
-				contact.setBirthDate(birthDate);
-			} catch (ParseException ex) {
-				logger.error("Invalid birth date got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		Address address = new Address();
-		address.setCountry(request.getParameter("country"));
-		address.setCity(request.getParameter("city"));
-		address.setLocalAddress(request.getParameter("localAddress"));
-		address.setIndex(request.getParameter("index"));
-		address.setContactId(contact.getId());
-		contact.setAddress(address);
-
-		Photo photo = new Photo();
-		photo.setContactId(contact.getId());
-		contact.setPhoto(photo);
-		try {
-			contactService.updateContact(contact);
-			logger.info("Contact updated successfully. Id: " + contact.getId());
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
-		} catch (ServiceClientException ex) {
-			logger.error("Validation failed.", ex);
-			request.setAttribute("errorMessage", "Invalid parameter.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-		} catch (ServiceServerException ex) {
-			logger.error("Failed to supdate contact.", ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-		}*/
-		
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response, Contact contact, List<Integer> deletePhones, List<Integer> deleteAttachments, List<String> deleteFiles) throws IOException, ActionException {

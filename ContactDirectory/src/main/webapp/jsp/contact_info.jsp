@@ -90,10 +90,11 @@ Phone numbers: <br />
 <button type="button" id="createNewPhone" >Create</button>
 <table id="phoneTable">
 	<tr>
-		<th>-</th>
+		<th></th>
 		<th>Number</th>
 		<th>Type</th>
 		<th>Comment</th>
+		<th></th>
 	</tr>
 	<jstl:forEach items="${contact.phones}" var="phone">
 	<tr>
@@ -111,22 +112,33 @@ Phone numbers: <br />
 </table>
 <div id="phoneChanges"></div>
 Attachments: <br />
-<table>
+<button type="button" id="deleteCheckedAtts" >Delete</button>
+<button type="button" id="createNewAtt" >Create</button>
+<table id="attTable">
 	<tr>
-		<th>-</th>
+		<th></th>
 		<th>Name</th>
 		<th>Upload date</th>
 		<th>Comment</th>
+		<th></th>
 	</tr>
 	<jstl:forEach items="${contact.attachments}" var="attachment">
 	<tr>
-		<td>-</td>
+		<td><input type="checkbox" name="attChecked"></td>
 		<td>${attachment.name}</td>
 		<td>${dateFormat.format(attachment.downloadDate.getTime())}</td>
 		<td>${attachment.comment}</td>
+		<td>
+			<input type="hidden" name="updateAtt" value="" autocomplete="off">
+			<input type="hidden" name="attId" value="${attachment.id}">
+			<input type="hidden" name="attPath" value="${attachment.path}">
+			<input type="file" name="attFile${attachment.id}">
+			<button type="button" class="editAtt">Edit</button><button type="button" class="deleteAtt">Delete</button>
+		</td>
 	</tr>
 	</jstl:forEach>
 </table>
+<div id="attChanges"></div>
 <button id formaction="${action}">Save</button>
 </form>
 <div id="phoneFormDiv">
@@ -153,9 +165,23 @@ Attachments: <br />
 		<button type="button" id="savePhone">Save</button>
 	</form>
 </div>
+<div id="attFormDiv">
+	<form id="attForm">
+		<h4 id="attFormErrorMes"></h4>
+		Name: <br />
+		<input type="text" name="attName" value="" autocomplete="off"> <br />
+		<a id="downloadAttFile" href="" download=""><button type="button">Download</button> </a> <br />
+		<button type="button" id="deleteAttFile">Delete</button> <br />
+		Comment: <br />
+		<textarea cols="30" rows="3" name="attComment"></textarea> <br />
+		<button type="button" id="cancelAttForm">Cancel</button>
+		<button type="button" id="saveAtt">Save</button>
+	</form>
+</div>
 <script src="js/validation.js"></script>
 <script src="js/contact_info_validate.js"></script>
 <script src="js/photo_manipul.js"></script>
 <script src="js/phone_manipul.js"></script>
+<script src="js/att_man3.js"></script>
 </body>
 </html>
