@@ -219,7 +219,7 @@ public class ContactDao extends AbstractDao {
         return contactList;
     }
 
-    public void update(Contact contact) throws DaoException {
+    public void update(Contact contact, List<Integer> deletePhones, List<Integer> deleteAttachments) throws DaoException {
         Connection cn = null;
         PreparedStatement st = null;
         try {
@@ -293,6 +293,20 @@ public class ContactDao extends AbstractDao {
                         PhoneDao.getInstance().create(phone, cn);
                     } else {
                         PhoneDao.getInstance().update(phone, cn);
+                    }
+                }
+            }
+            if (deletePhones != null) {
+                for (Integer id : deletePhones) {
+                    if(id != null && id > 0) {
+                        PhoneDao.getInstance().delete(id, cn);
+                    }
+                }
+            }
+            if (deleteAttachments != null) {
+                for (Integer id : deleteAttachments) {
+                    if(id != null && id > 0) {
+                        AttachmentDao.getInstance().delete(id, cn);
                     }
                 }
             }

@@ -13,6 +13,7 @@ import by.bsu.contactdirectory.entity.Attachment;
 import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.entity.Phone;
 import by.bsu.contactdirectory.entity.Photo;
+import by.bsu.contactdirectory.util.file.FileDeleteManager;
 import by.bsu.contactdirectory.util.preparator.ContactPreparator;
 import by.bsu.contactdirectory.util.validator.ContactValidator;
 
@@ -116,16 +117,17 @@ public class ContactService {
 		}
 	}
 
-	public void updateContact(Contact contact) throws ServiceServerException, ServiceClientException {
+	public void updateContact(Contact contact, List<String> deleteFiles, List<Integer> deletePhones, List<Integer> deleteAttachments) throws ServiceServerException, ServiceClientException {
 		if (!ContactValidator.validate(contact)) {
 			throw new ServiceClientException("Contact parameters for updating are not valid.");
 		}
 		ContactPreparator.prepare(contact);
 
 		try {
-			ContactDao.getInstance().update(contact);
+			ContactDao.getInstance().update(contact, deletePhones, deleteAttachments);
 		} catch (DaoException ex) {
 			throw new ServiceServerException(ex);
 		}
+		FileDeleteManager.deleteFiles(deleteFiles);
 	}
 }

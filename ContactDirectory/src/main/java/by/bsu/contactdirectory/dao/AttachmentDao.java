@@ -75,12 +75,10 @@ public class AttachmentDao extends AbstractDao {
         }
     }
 
-    public void delete(int id) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(DELETE)) {
+    public void delete(int id, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(DELETE)) {
             st.setInt(1, id);
             st.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex);
         }
     }
 

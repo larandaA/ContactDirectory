@@ -1,14 +1,10 @@
 package by.bsu.contactdirectory.action;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import by.bsu.contactdirectory.service.ServiceClientException;
 import by.bsu.contactdirectory.service.ServiceServerException;
 import by.bsu.contactdirectory.servlet.MainServlet;
-import by.bsu.contactdirectory.util.generator.FileNameGenerator;
+import by.bsu.contactdirectory.util.file.FileNameGenerator;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -44,9 +40,10 @@ public class SaveContactAction implements Action {
 		contact.setPhoto(photo);
 		Address address = new Address();
 		contact.setAddress(address);
+		Map<String, String> fileMap = new HashMap<>();
 
 		try {
-			process(request, response, contact);
+			process(request, response, contact, fileMap);
 		} catch (ActionException ex) {
 			logger.error(ex.getMessage());
 			request.setAttribute("errorMessage", "Invalid parameter.");
@@ -57,6 +54,10 @@ public class SaveContactAction implements Action {
 			request.setAttribute("errorMessage", "Internal server error. Sorry.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 			return;
+		}
+
+		for (Attachment att : contact.getAttachments()) {
+			att.setPath(fileMap.get(att.getPath().substring(2)));
 		}
 		
 		try {
@@ -75,7 +76,7 @@ public class SaveContactAction implements Action {
 	}
 
 
-	private void process(HttpServletRequest request, HttpServletResponse response, Contact contact) throws IOException, ActionException {
+	private void process(HttpServletRequest request, HttpServletResponse response, Contact contact, Map<String, String> fileMap) throws IOException, ActionException {
 		if (!ServletFileUpload.isMultipartContent(request)) {
 			return;
 		}
@@ -88,7 +89,7 @@ public class SaveContactAction implements Action {
 					processFormField(item, contact);
 				}
 				else {
-					processFile(item, contact);
+					processFile(item, contact, fileMap);
 				}
 			}
 
@@ -167,25 +168,33 @@ public class SaveContactAction implements Action {
 					contact.getPhones().add(phone);
 				}
 				break;
+			case "createAtt":
+				Attachment att = parseAttachment(value);
+				if (att != null) {
+					contact.getAttachments().add(att);
+				}
+				break;
 		}
 	}
 
-	private void processFile(FileItem item, Contact contact) throws IOException, ActionException {
+	private void processFile(FileItem item, Contact contact, Map<String, String> fileMap) throws IOException, ActionException {
         String paramName = item.getFieldName();
 		if (item.getName() == null || item.getName().isEmpty()) {
 			return;
 		}
 		String extension = FilenameUtils.getExtension(item.getName());
 		String filename = "";
-		String uploadPath = MainServlet.appPath;
-		switch (paramName) {
-			case "photo":
-				filename = FileNameGenerator.generatePhotoFileName(extension);
-				break;
+		if ("photo".equals(paramName)) {
+			filename = FileNameGenerator.generatePhotoFileName(extension);
+
+		} else if (paramName != null && paramName.startsWith("attFile")) {
+			filename = FileNameGenerator.generateAttFileName(extension);
+		} else {
+			return;
 		}
 		if (filename != null && !filename.isEmpty()) {
 			try {
-				File storeFile = new File(uploadPath + filename);
+				File storeFile = new File(filename);
 				logger.debug("NEW FILE: " + storeFile.getAbsolutePath());
 				if (!storeFile.createNewFile()) {
 					throw new IOException("Can't create file: " + filename);
@@ -196,10 +205,11 @@ public class SaveContactAction implements Action {
 			} catch (Exception ex) {
 				throw new IOException(ex);
 			}
-			switch (paramName) {
-				case "photo":
-					contact.getPhoto().setPath(filename);
-					break;
+			if ("photo".equals(paramName)) {
+				contact.getPhoto().setPath(filename);
+
+			} else if (paramName != null && paramName.startsWith("attFile")) {
+				fileMap.put(paramName, filename);
 			}
 		}
 
@@ -253,5 +263,26 @@ public class SaveContactAction implements Action {
 		return phone;
 	}
 
+	private Attachment parseAttachment(String value) throws ActionException {
+		if (value == null || value.isEmpty()) {
+			return null;
+		}
+		String[] params = value.split("\\|");
+		if(params.length != 4) {
+			throw new ActionException(String.format("Invalid attachment parameters: %s", Arrays.deepToString(params)));
+		}
+		Attachment att = new Attachment();
+		if (!params[0].isEmpty()) {
+			try {
+				att.setId(Integer.parseInt(params[0]));
+			} catch (NumberFormatException ex) {
+				throw new ActionException(String.format("Invalid attachment id: %s", params[0]));
+			}
+		}
+		att.setName(params[1]);
+		att.setPath(params[2]);
+		att.setComment(params[3]);
+		return att;
+	}
 
 }
