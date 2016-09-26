@@ -48,6 +48,6 @@ public class FileNameGenerator {
     }
 
     private static int generateInt() {
-        return random.nextInt();
+        return random.nextInt() % 1000000000;
     }
 }

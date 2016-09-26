@@ -51,7 +51,8 @@ public class UpdateContactAction implements Action {
 			return;
 		} catch (IOException ex) {
 			logger.error(ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
+			request.setAttribute("errorMessage", ex.getMessage());
+			//request.setAttribute("errorMessage", "Internal server error. Sorry.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 			return;
 		}

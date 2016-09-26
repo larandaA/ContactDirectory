@@ -20,7 +20,7 @@ public class AttachmentDao extends AbstractDao {
 
     private static final String CREATE = "INSERT INTO `attachment`(`path`, `download_date`, `comment`, `contact_id`, `name`) " +
             "VALUES (?, curdate(), ?, ?, ?);";
-    private static final String UPDATE = "UPDATE `attachment` SET `name` = ?, `comment` = ? WHERE `id` = ?;";
+    private static final String UPDATE = "UPDATE `attachment` SET `name` = ?, `comment` = ?, `path` = ? WHERE `id` = ?;";
     private static final String DELETE = "DELETE FROM `attachment` WHERE `id` = ?;";
     private static final String SELECT = "SELECT `id`, `path`, `download_date`, `comment`, `contact_id`, `name` FROM `attachment`";
     private static final String SELECT_LIST = SELECT + " WHERE `contact_id` = ?;";
@@ -70,6 +70,8 @@ public class AttachmentDao extends AbstractDao {
             } else {
             	st.setString(2, attachment.getComment());
             }
+            st.setString(3, attachment.getPath());
+            st.setInt(4, attachment.getId());
 
             st.executeUpdate();
         }

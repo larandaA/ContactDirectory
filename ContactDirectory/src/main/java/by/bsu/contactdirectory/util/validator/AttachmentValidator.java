@@ -9,10 +9,6 @@ import java.util.regex.Pattern;
  */
 public class AttachmentValidator {
 
-    private static final String PATH_PATTERN = "^(?:[a-zA-Z]\\:)\\\\([\\w-]+\\\\)*\\w([\\w-.])+$";
-
-    private static Pattern pathPattern = Pattern.compile(PATH_PATTERN);
-
     public static boolean validate(Attachment attachment) {
         if (attachment == null) {
             return true;
@@ -37,6 +33,6 @@ public class AttachmentValidator {
         if (path == null || path.isEmpty()) {
             return false;
         }
-        return pathPattern.matcher(path).matches();
+        return true;
     }
 }
