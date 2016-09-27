@@ -28,6 +28,8 @@ import java.util.*;
 
 public class UpdateContactAction implements Action {
 
+	private static final long MAX_FILE_SIZE = 10000000;
+
 	private ContactService contactService = new ContactService();
 	private static Logger logger = LogManager.getLogger(UpdateContactAction.class);
 
@@ -68,13 +70,13 @@ public class UpdateContactAction implements Action {
 			phone.setContactId(contact.getId());
 		}
         for (Attachment att : contact.getAttachments()) {
-            att.setPath(fileMap.get(att.getPath().substring(2)));
+            att.setPath(fileMap.get(att.getPath().substring(att.getPath().indexOf('=') + 1)));
         }
 
 		try {
 			contactService.updateContact(contact, deleteFiles, deletePhones, deleteAttachments);
-			logger.info("Contact updated successfully. Id: " + contact.getId());
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
+			logger.info(String.format("Contact updated successfully. Id: %d", contact.getId()));
+			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to update contact. Id: " + contact.getId(), ex);
 			request.setAttribute("errorMessage", "Internal server error. Sorry.");
@@ -95,6 +97,7 @@ public class UpdateContactAction implements Action {
 		}
 		FileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setSizeMax(MAX_FILE_SIZE);
 		try {
 			List<FileItem> items = upload.parseRequest(request);
 			for (FileItem item : items) {
@@ -240,7 +243,7 @@ public class UpdateContactAction implements Action {
 		if (filename != null && !filename.isEmpty()) {
 			try {
 				File storeFile = new File(filename);
-				logger.debug("NEW FILE: " + storeFile.getAbsolutePath());
+				logger.debug(String.format("NEW FILE: %s", storeFile.getAbsolutePath()));
 				if (!storeFile.createNewFile()) {
 					throw new IOException("Can't create file: " + filename);
 				}

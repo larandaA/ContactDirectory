@@ -1,6 +1,8 @@
 package by.bsu.contactdirectory.util.file;
 
 import by.bsu.contactdirectory.servlet.MainServlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Random;
@@ -14,6 +16,25 @@ public class FileNameGenerator {
 
     private static String contactImagesFolder = MainServlet.appPath + "img/contacts/";
     private static String contactAttsFolder = MainServlet.appPath + "files/";
+
+    private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
+
+    static {
+        try {
+            createFolderIfNotExist(contactImagesFolder);
+            createFolderIfNotExist(contactAttsFolder);
+        } catch (SecurityException ex) {
+            logger.fatal(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void createFolderIfNotExist(String path) {
+        File folder = new File(path);
+        if (!folder.exists() || !folder.isDirectory()) {
+            folder.mkdir();
+        }
+    }
 
     public static String generatePhotoFileName(String fileExtension) {
         String filename = "";

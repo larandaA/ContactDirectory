@@ -51,13 +51,13 @@ public class ContactListAction implements Action {
 				contacts = contactService.getContactList(page);
 				pageAmount = contactService.getPageAmount();
 
-				logger.info("Requesting contact list from page: " + page);
+				logger.info(String.format("Requesting contact list from page: %d", page));
 			} else {
 				SearchObject so = (SearchObject) soObject;
 				contacts = searchService.searchContacts(so, page);
 				pageAmount = searchService.getPageAmount(so);
 
-				logger.info("Requesting for search result from page: " + page);
+				logger.info(String.format("Requesting for search result from page: %d", page));
 			}
 		} catch (ServiceServerException ex) {
 			logger.error("Can't get contact list", ex);

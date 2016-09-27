@@ -20,7 +20,7 @@ public class EmailSender {
     private static String adminEmail;
     private static Properties props;
 
-    private static Logger logger;
+    private static Logger logger = LogManager.getLogger(EmailSender.class);
 
     private static boolean inited = false;
 
@@ -57,7 +57,6 @@ public class EmailSender {
     }
 
     public static void init(String pathToProperties) {
-        logger = LogManager.getLogger(EmailSender.class);
         //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(pathToProperties);
         if (parseProperties(pathToProperties)) {
             EmailSender.inited = true;

@@ -2,6 +2,8 @@ package by.bsu.contactdirectory.dao;
 
 import by.bsu.contactdirectory.connectionpool.ConnectionPool;
 import by.bsu.contactdirectory.connectionpool.ConnectionPoolException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,6 +13,8 @@ import java.sql.Statement;
  * Created by Alexandra on 04.09.2016.
  */
 public abstract class AbstractDao {
+
+    private static Logger logger = LogManager.getLogger(AbstractDao.class);
 
     /*static {
         ConnectionPool.start("src/main/resources/db.properties");
@@ -29,7 +33,7 @@ public abstract class AbstractDao {
             try {
                 st.close();
             } catch (SQLException ex) {
-                //add log
+                logger.error("Cannot close statement.", ex);
             }
         }
     }
@@ -39,7 +43,7 @@ public abstract class AbstractDao {
             try {
                 cn.close();
             } catch (SQLException ex) {
-                //add log
+                logger.error("Cannot close connection.", ex);
             }
         }
     }

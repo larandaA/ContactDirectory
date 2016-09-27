@@ -92,7 +92,7 @@ public class SearchContactsAction implements Action {
 				request.getSession().setAttribute("searchObject", so);
 			}
 			logger.info("Search object successfully created.");
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
+			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to count result amount.", ex);
 			request.setAttribute("errorMessage", "Internal server error.");

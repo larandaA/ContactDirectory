@@ -25,8 +25,8 @@ public class SendMailAction implements Action {
 		String text = request.getParameter("text");
 		try {
 			emailService.sendEmails(emails, topic, text);
-			logger.info("Emais send to contacts: " + emails);
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
+			logger.info(String.format("Emais send to contacts: %s", emails));
+			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to send emails.", ex);
 			request.setAttribute("errorMessage", "Failed to send emails. Sorry.");

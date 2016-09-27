@@ -1,5 +1,8 @@
 package by.bsu.contactdirectory.connectionpool;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,7 +20,9 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  */
 public class ConnectionPool {
-	
+
+    private static Logger logger = LogManager.getLogger(ConnectionPool.class);
+
 	private static final int VALIDATION_TIMEOUT = 1;
 
     private static ConnectionPool instance = null;
@@ -61,7 +66,6 @@ public class ConnectionPool {
                 try {
                     instance = new ConnectionPool(pathToProperties);
                     isCreate.set(true);
-                    System.out.println("create instance");
                 } catch (ConnectionPoolException ex) {
                     throw new RuntimeException(ex);
                 } finally {
@@ -86,6 +90,7 @@ public class ConnectionPool {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             return true;
         } catch (SQLException  ex) {
+            logger.error("Not load jdbc driver.", ex);
             return false;
         }
     }
@@ -100,7 +105,7 @@ public class ConnectionPool {
         connections = new LinkedBlockingDeque<>();
         for (int i = 0; i < minimumConnections; i++) {
             connections.add(createConnection());
-            System.out.println("Create connection");
+            logger.info("Create connection");
         }
         killerThread = new KillerDaemon();
         killerThread.setDaemon(true);
@@ -118,10 +123,9 @@ public class ConnectionPool {
                 try{
                     PoolConnection newConnection = createConnection();
                     createLock.unlock();
-                    System.out.println("Create new specific connection");
                     return newConnection;
                 }catch (SQLException ex){
-                    // add log
+                    logger.error(ex);
                 }
             }
             createLock.unlock();
@@ -136,7 +140,6 @@ public class ConnectionPool {
 	        		cn = createConnection();
 	        	}
         	} catch (SQLException ex) {
-        		//
         		throw new ConnectionPoolException(ex);
         	}
             return cn;
@@ -153,10 +156,8 @@ public class ConnectionPool {
             try {
                 pl = (PoolConnection) getConnection();
                 pl.closeConnection();
-                System.out.println("Close connection");
             }catch (ConnectionPoolException | SQLException ex){
-                //добавить лог
-                System.err.println(ex);
+                logger.error(ex);
             }
             closedConnections ++;
             killerThread.stopKiller();

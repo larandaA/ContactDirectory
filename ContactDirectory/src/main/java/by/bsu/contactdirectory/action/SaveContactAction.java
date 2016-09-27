@@ -63,7 +63,7 @@ public class SaveContactAction implements Action {
 		try {
 			contactService.createContact(contact);
 			logger.info("New contact created successfully.");
-			response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/");
+			response.sendRedirect("");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to create contact.", ex);
 			request.setAttribute("errorMessage", "Internal server error. Sorry.");
@@ -195,7 +195,7 @@ public class SaveContactAction implements Action {
 		if (filename != null && !filename.isEmpty()) {
 			try {
 				File storeFile = new File(filename);
-				logger.debug("NEW FILE: " + storeFile.getAbsolutePath());
+				logger.debug(String.format("NEW FILE: %s", storeFile.getAbsolutePath()));
 				if (!storeFile.createNewFile()) {
 					throw new IOException("Can't create file: " + filename);
 				}

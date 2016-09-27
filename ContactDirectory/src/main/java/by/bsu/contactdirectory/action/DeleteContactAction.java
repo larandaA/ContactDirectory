@@ -28,8 +28,8 @@ public class DeleteContactAction implements Action {
 			try {
 				int id = Integer.parseInt(buf);
 				contactService.deleteContact(id);
-				logger.info("Contact deleted. Id: " + id);
-				response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
+				logger.info(String.format("Contact deleted. Id: %d", id));
+				response.sendRedirect("ContactList");
 			} catch (IllegalArgumentException ex) {
 				logger.error("Illegal id got: " + buf);
 				request.setAttribute("errorMessage", "Invalid parameter.");

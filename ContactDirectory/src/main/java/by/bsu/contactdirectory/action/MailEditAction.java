@@ -50,7 +50,7 @@ public class MailEditAction implements Action {
 		}
 		String emails = String.join(", ", emailList);
 		request.setAttribute("emails", emails);
-		logger.info("Email message form requested for emails: " + emails);
+		logger.info(String.format("Email message form requested for emails: %s", emails));
 		request.getRequestDispatcher("jsp/email.jsp").forward(request, response);
 	}
 

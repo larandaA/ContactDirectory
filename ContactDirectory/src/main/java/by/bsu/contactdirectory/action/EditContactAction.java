@@ -70,7 +70,7 @@ public class EditContactAction implements Action {
 	    request.setAttribute("genders", Gender.values());
 		request.setAttribute("types", PhoneType.values());
 		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
-		logger.info("Contact info requested. Id: " + buf);
+		logger.info(String.format("Contact info requested. Id: %s", buf));
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
 

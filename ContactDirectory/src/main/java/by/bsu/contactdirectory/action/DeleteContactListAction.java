@@ -29,8 +29,8 @@ public class DeleteContactListAction implements Action {
 					ids.add(Integer.parseInt(strIds[i]));
 				}
 				contactService.deleteContactList(ids);
-				logger.info("Contacts deleted: " + Arrays.deepToString(strIds));
-				response.sendRedirect("http://127.0.0.1:8080/ContactDirectory/ContactList");
+				logger.info(String.format("Contacts deleted: %s", Arrays.deepToString(strIds)));
+				response.sendRedirect("ContactList");
 			} catch (NumberFormatException ex) {
 				logger.error("Illegal checked list got.");
 				request.setAttribute("errorMessage", "Invalid parameter.");
