@@ -26,6 +26,9 @@ public class SearchContactsAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		SearchObject so = new SearchObject();
 		so.setFirstName(request.getParameter("firstName"));
 		so.setLastName(request.getParameter("lastName"));

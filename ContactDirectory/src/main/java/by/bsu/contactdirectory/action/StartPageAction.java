@@ -15,6 +15,12 @@ public class StartPageAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
+		request.getSession().removeAttribute("page");
+		request.getSession().removeAttribute("searchObject");
+
 		logger.info("Start page requested.");
 		request.getRequestDispatcher("jsp/start.jsp").forward(request, response);
 	}

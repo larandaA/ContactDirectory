@@ -20,6 +20,9 @@ public class SearchEditAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		try {
 			request.setAttribute("countries", new CountryService().getCountryNames());
 		} catch (ServiceServerException ex) {

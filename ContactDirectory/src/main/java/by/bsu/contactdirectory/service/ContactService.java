@@ -90,11 +90,18 @@ public class ContactService {
 	}
 	
 	public void deleteContact(int id) throws ServiceServerException {
+		List<String> deleteFiles = new LinkedList<>();
 		try {
+			List<Attachment> atts = AttachmentDao.getInstance().findByContact(id);
+			for (Attachment att : atts) {
+				deleteFiles.add(att.getPath());
+			}
+			deleteFiles.add(PhotoDao.getInstance().findById(id).getPath());
 			ContactDao.getInstance().delete(id);
 		} catch (DaoException ex) {
 			throw new ServiceServerException(ex);
 		}
+		FileDeleteManager.deleteFiles(deleteFiles);
 	}
 	
 	public void deleteContactList(List<Integer> ids) throws ServiceServerException {

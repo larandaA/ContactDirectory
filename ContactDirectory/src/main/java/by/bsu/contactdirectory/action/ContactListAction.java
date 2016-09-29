@@ -25,6 +25,9 @@ public class ContactListAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		int page = 1;
 		String buf = request.getParameter("page");
 		if (buf != null && !buf.isEmpty()) {
@@ -73,6 +76,7 @@ public class ContactListAction implements Action {
 
         request.setAttribute("contacts", contacts);
         request.setAttribute("dateFormat", dateFormat);
+		request.setAttribute("pageAmount", pageAmount);
         request.setAttribute("currentPage", page);
         request.setAttribute("nextPage", page + 1);
         request.setAttribute("previousPage", page - 1);

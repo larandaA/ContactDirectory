@@ -22,6 +22,9 @@ public class MailEditAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		String[] strIds = request.getParameterValues("checked");
 		if (strIds == null || strIds.length == 0) {
 			logger.error("Null contact ids got.");

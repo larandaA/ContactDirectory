@@ -1,0 +1,58 @@
+.cont-row, .cont-cell-1, .cont-cell-2, .cont-cell-3, .cont-cell-4,
+.cont-cell-5, .cont-cell-6, .cont-cell-7, .cont-cell-8, .cont-cell-9,
+.cont-cell-10, .cont-cell-11, .cont-cell-12 {
+    position: relative;
+    min-height: 1px;
+}
+.cont-cell-1, .cont-cell-2, .cont-cell-3, .cont-cell-4,
+.cont-cell-5, .cont-cell-6, .cont-cell-7, .cont-cell-8, .cont-cell-9,
+.cont-cell-10, .cont-cell-11, .cont-cell-12 {
+    float: left;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 100%;
+}
+.cont-row {
+    width: 100%;
+}
+.cont-row:before, .cont-row:after {
+    content: "";
+    display: table ;
+    clear: both;
+}
+.cont-cell-1 {
+    width: 8.3333%;
+}
+.cont-cell-2 {
+    width: 16.6666%;
+}
+.cont-cell-3 {
+    width: 25%;
+}
+.cont-cell-4 {
+    width: 33.3333%;
+}
+.cont-cell-5 {
+    width: 41.6666%;
+}
+.cont-cell-6 {
+    width: 50%;
+}
+.cont-cell-7 {
+    width: 58.3333%;
+}
+.cont-cell-8 {
+    width: 66.6666%;
+}
+.cont-cell-9 {
+    width: 75%;
+}
+.cont-cell-10 {
+    width: 83.3333%;
+}
+.cont-cell-11 {
+    width: 91.6666%;
+}
+.cont-cell-12 {
+    width: 100%;
+}

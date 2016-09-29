@@ -1,0 +1,167 @@
+.igroup {
+    position: relative;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+.igroup input, .igroup textarea {
+    font-size: 18px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 300px;
+    border: none;
+    border-bottom: 1px solid #BDBDBD;
+}
+.igroup input:focus, .igroup textarea:focus {
+    outline: none;
+}
+
+.igroup label {
+    color: #757575;
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.igroup input:focus ~ label, .igroup input:valid ~ label,
+.igroup textarea ~ label {
+    top: -20px;
+    font-size: 14px;
+    color: #E040FB;
+}
+
+.igroup .bar {
+    position: relative;
+    display: block;
+    width: 300px;
+}
+.igroup .bar:before, .igroup .bar:after {
+    content: '';
+    height: 2px;
+    width: 0;
+    bottom: 1px;
+    position: absolute;
+    background: #E040FB;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+.igroup .bar:before {
+    left: 50%;
+}
+.igroup .bar:after {
+    right: 50%;
+}
+.igroup input:focus ~ .bar:before, .igroup input:focus ~ .bar:after,
+.igroup textarea:focus ~ .bar:before, .igroup textarea:focus ~ .bar:after {
+    width: 50%;
+}
+.igroup .highlight {
+    position: absolute;
+    height: 60%;
+    width: 100px;
+    top: 25%;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+.igroup input:focus ~ .highlight, .igroup textarea:focus ~ .highlight {
+    -webkit-animation: inputHighlighter 0.3s ease;
+    -moz-animation: inputHighlighter 0.3s ease;
+    animation: inputHighlighter 0.3s ease;
+}
+
+@-webkit-keyframes inputHighlighter {
+    from {
+        background: #E040FB;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+@-moz-keyframes inputHighlighter {
+    from {
+        background: #E040FB;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+@keyframes inputHighlighter {
+    from {
+        background: #E040FB;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+select {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #BDBDBD;
+    border-radius: 2px;
+    height: 2rem;
+    text-transform: none;
+    color: inherit;
+    margin: 0 0 20px;
+    box-sizing: inherit;
+    font-size: inherit;
+}
+
+.file-upload {
+    position: relative;
+    overflow: hidden;
+    /*width: 20%;*/
+    /*height: 20px; */
+    background: #E040FB;
+    border-radius: 2px;
+    padding: 16px 30px;
+    border: 0;
+    margin: 10px 20px;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow: 0 1px 5px rgba(0,0,0,.5);
+    box-sizing: border-box;
+    min-height: 1px;
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    -webkit-transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    -moz-transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    -o-transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+}
+.file-upload:hover {
+    box-shadow: 0 1px 15px rgba(0,0,0,.5);
+}
+.file-upload:after, .file-upload:before {
+    content: "";
+    display: table ;
+    clear: both;
+}
+.file-upload input[type="file"]{
+    display: none;
+}
+.file-upload label {
+    font-size: inherit;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.file-upload span {
+    line-height: 32px;
+    font-size: 0.8em;
+}

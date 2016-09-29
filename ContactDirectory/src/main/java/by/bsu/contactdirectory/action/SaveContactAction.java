@@ -32,6 +32,10 @@ public class SaveContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		request.getSession().removeAttribute("page");
 		request.getSession().removeAttribute("searchObject");
 
@@ -63,7 +67,7 @@ public class SaveContactAction implements Action {
 		try {
 			contactService.createContact(contact);
 			logger.info("New contact created successfully.");
-			response.sendRedirect("");
+			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to create contact.", ex);
 			request.setAttribute("errorMessage", "Internal server error. Sorry.");

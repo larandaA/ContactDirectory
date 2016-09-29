@@ -1,0 +1,25 @@
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: 0
+}
+input[type=checkbox]:after, input[type=radio]:after {
+    padding-right: 3px;
+    top: 1px;
+    font-family: 'Arial' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    content: "O";
+    color: #757575;
+    display:block;
+}
+input[type=checkbox]:checked:after, input[type=radio]:checked:after {
+    content: "X";
+    color: #E040FB;
+}
+input[type=checkbox] + label, input[type=radio] + label {
+    margin: 10px;
+}

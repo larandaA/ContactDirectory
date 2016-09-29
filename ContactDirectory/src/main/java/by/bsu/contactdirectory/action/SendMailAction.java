@@ -20,6 +20,9 @@ public class SendMailAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		String emails = request.getParameter("emails");
 		String topic = request.getParameter("topic");
 		String text = request.getParameter("text");

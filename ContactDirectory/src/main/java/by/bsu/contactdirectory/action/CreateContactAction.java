@@ -23,6 +23,9 @@ public class CreateContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		request.setAttribute("action", Actions.SAVE_CONTACT.substring(1));
         //request.setAttribute("dateFormat", dateFormat);
 		try {

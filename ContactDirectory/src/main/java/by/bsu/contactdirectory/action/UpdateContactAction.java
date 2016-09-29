@@ -36,6 +36,9 @@ public class UpdateContactAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		Contact contact = new Contact();
 		Address address = new Address();
 		contact.setAddress(address);

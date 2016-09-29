@@ -19,6 +19,9 @@ public class DeleteContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		String buf = request.getParameter("id");
 		if (buf == null) {
 			logger.error("Null id got.");
