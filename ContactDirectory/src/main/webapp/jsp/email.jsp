@@ -6,7 +6,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Email</title>
-	<link rel="stylesheet" href="css/general.css">
+	<link rel="stylesheet" href="css/wrap.css">
 	<link rel="stylesheet" href="css/grid.css">
 	<link rel="stylesheet" href="css/inputs.css">
 </head>
@@ -27,7 +27,7 @@
 			</p>
 		</div>
 		<div class="white-block">
-			<form method="post" onsubmit="return validateEmailForm();">
+			<form method="post" id="emailForm">
 				<div class="cont-row">
 					<div class="cont-cell-4"></div>
 					<div class="cont-cell-8">
@@ -105,7 +105,7 @@
 			by Alexandra Ryzhevich
 		</div>
 	</footer>
-<script src="js/validation.js"></script>
-<script src="js/email_validate.js"></script>
+<script src="js/validation_functions.js"></script>
+<script src="js/email_form_validation.js"></script>
 </body>
 </html>

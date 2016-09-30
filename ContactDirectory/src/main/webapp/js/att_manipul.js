@@ -1,6 +1,7 @@
 /**
  * Created by Alexandra on 23.09.2016.
  */
+var overlay = document.getElementById("modalOverlay");
 var attFormDiv = document.getElementById("attFormDiv");
 var attChangesDiv = document.getElementById("attChanges");
 var attTable = document.getElementById("attTable");

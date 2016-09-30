@@ -6,7 +6,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Contact info</title>
-	<link rel="stylesheet" href="css/general.css">
+	<link rel="stylesheet" href="css/wrap.css">
 	<link rel="stylesheet" href="css/grid.css">
 	<link rel="stylesheet" href="css/checkbox.css">
 	<link rel="stylesheet" href="css/inputs.css">
@@ -27,7 +27,7 @@
 			<h1>Contact info</h1>
 		</div>
 		<div class="white-block">
-			<form method="post" accept-charset="UTF-8" onsubmit="return validateContactInfo();" enctype="multipart/form-data">
+			<form method="post" id="infoForm" enctype="multipart/form-data">
 				<div class="cont-row">
 					<div class="cont-cell-6">
 						<div class="cont-row">
@@ -40,18 +40,21 @@
 								</div>
 							</div>
 							<div class="cont-cell-7">
-								<a href="${contact.photo.path}" download=""><button type="button" class="btn">Download</button></a>
+								<jstl:if test="${not empty contact.photo.path}">
+									<a href="${contact.photo.path}" download=""><button type="button" class="btn">Download</button></a>
+								</jstl:if>
 								<button id="deletePhoto" type="button" class="btn">Delete</button>
+								<input type="hidden" id="noPhoto" name="noPhoto" value="">
 								<input type="hidden" id="defaultPhoto" value="${defaultPhoto}">
 								<input type="hidden" id="deletePhotoWithPath" name="deletePhotoWithPath" value="" autocomplete="off">
 							</div>
 						</div>
 						<div class="cont-row">
 							<jstl:if test="${not empty contact.photo.path}">
-								<img id="photoPreview photo-preview" src="${contact.photo.path}" />
+								<img id="photo-preview" src="${contact.photo.path}" />
 							</jstl:if>
 							<jstl:if test="${empty contact.photo.path}">
-								<img id="photoPreview photo-preview" src="${defaultPhoto}" />
+								<img id="photo-preview" src="${defaultPhoto}" />
 							</jstl:if>
 						</div>
 					</div>
@@ -337,60 +340,65 @@
 			by Alexandra Ryzhevich
 		</div>
 	</footer>
-	<div class="modal-overlay"></div>
-	<div class="modal-window" id="phones">
+	<div class="modal-overlay" id="modalOverlay"></div>
+	<div class="modal-window" id="phoneFormDiv">
 		<div class="modal-header">
 			<div class="modal-title">Phone info</div>
 		</div>
-		<div class="modal-row">
-			<select>
-				<option>Choose country code</option>
-				<option>375</option>
-				<option>44</option>
-				<option>7</option>
-			</select>
-		</div>
-		<div class="modal-row">
-			<div class="igroup">
-				<input type="text">
-				<span class="highlight"></span>
-				<span class="bar"></span>
-				<label>Operator code</label>
+		<form id="phoneForm">
+			<div class="modal-row">
+				<select name="countryCode">
+					<option value=""> Choose country code </option>
+					<jstl:forEach items="${codes}" var="code">
+						<option value="${code}"> ${code} </option>
+					</jstl:forEach>
+				</select>
 			</div>
-		</div>
-		<div class="modal-row">
-			<div class="igroup">
-				<input type="text" required>
-				<span class="highlight"></span>
-				<span class="bar"></span>
-				<label>Phone number</label>
+			<div class="modal-row">
+				<div class="igroup">
+					<input type="text" name="operatorCode" value="" autocomplete="off">
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label>Operator code</label>
+				</div>
 			</div>
-		</div>
-		<div class="modal-row">
-			<input name="type" type="radio" id="rhome" />
-			<label for="rhome">Home</label>
-
-			<input name="type" type="radio" id="rwork" />
-			<label for="rwork">Work</label>
-
-			<input name="type" type="radio" id="rmobile" />
-			<label for="rmobile">Mobile</label>
-		</div>
-		<div class="modal-row">
-			<div class="igroup">
-				<textarea cols="40" rows="5"></textarea>
-				<span class="highlight"></span>
-				<span class="bar"></span>
-				<label>Comment</label>
+			<div class="modal-row">
+				<div class="igroup">
+					<input type="text" name="phoneNumber" value="" autocomplete="off" required>
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label>Phone number</label>
+				</div>
 			</div>
-		</div>
-		<div class="modal-row">
-			<div class="cont-cell-2"></div>
-			<div class="cont-cell-10">
-				<button type="button" class="btn">Cancel</button>
-				<button type="button" class="btn">Save</button>
+			<div class="modal-row">
+				<jstl:forEach items="${types}" var="type">
+					<input type="radio" name="phoneType" id="r${type.toString()}" value="${type.toString()}"/>
+					<label for="r${type.toString()}"> ${type.toString()} </label>
+				</jstl:forEach>
 			</div>
-		</div>
+			<div class="modal-row">
+				<div class="igroup">
+					<textarea cols="40" rows="5" name="phoneComment"></textarea>
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label>Comment</label>
+				</div>
+			</div>
+			<div class="modal-row">
+				<div class="cont-cell-2"></div>
+				<div class="cont-cell-2">
+					<div class="error-message" id="phoneFormErrorMes"></div>
+				</div>
+				<div class="cont-cell-2"></div>
+			</div>
+			<div class="modal-row">
+				<div class="cont-cell-2"></div>
+				<div class="cont-cell-10">
+					<button type="button" id="cancelPhoneForm" class="btn">Cancel</button>
+					<button type="button" id="savePhone" class="btn">Save</button>
+				</div>
+			</div>
+		</form>
 	</div>
 	<div class="modal-window" id="atts">
 		<div class="modal-header">
@@ -433,30 +441,7 @@
 
 
 
-<div id="phoneFormDiv">
-	<form id="phoneForm">
-		<h4 id="phoneFormErrorMes"></h4>
-		Country code: <br />
-		<select name="countryCode">
-			<option value=""> Choose country code </option>
-			<jstl:forEach items="${codes}" var="code">
-				<option value="${code}"> ${code} </option>
-			</jstl:forEach>
-		</select> <br />
-		Operator code: <br />
-		<input type="text" name="operatorCode" value="" autocomplete="off"> <br />
-		Phone number: <br />
-		<input type="text" name="phoneNumber" value="" autocomplete="off"> <br />
-		Type:
-		<jstl:forEach items="${types}" var="type">
-			<input type="radio" name="phoneType" id="r${type.toString()}" value="${type.toString()}"/><label for="r${type.toString()}"> ${type.toString()} </label>
-		</jstl:forEach> <br />
-		Comment: <br />
-		<textarea cols="30" rows="3" name="phoneComment"></textarea> <br />
-		<button type="button" id="cancelPhoneForm">Cancel</button>
-		<button type="button" id="savePhone">Save</button>
-	</form>
-</div>
+
 <div id="attFormDiv">
 	<form id="attForm">
 		<h4 id="attFormErrorMes"></h4>
@@ -470,10 +455,10 @@
 		<button type="button" id="saveAtt">Save</button>
 	</form>
 </div>
-<script src="js/validation.js"></script>
-<script src="js/contact_info_validate.js"></script>
-<script src="js/photo_manipul.js"></script>
+<script src="js/validation_functions.js"></script>
+<script src="js/contact_info_validation.js"></script>
+<script src="js/photo_manipulation.js"></script>
 <script src="js/phone_manipul.js"></script>
-<script src="js/att_man4.js"></script>
+<script src="js/att_manipul.js"></script>
 </body>
 </html>

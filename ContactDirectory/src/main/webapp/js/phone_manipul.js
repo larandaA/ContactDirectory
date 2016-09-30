@@ -1,6 +1,7 @@
 /**
  * Created by Alexandra on 22.09.2016.
  */
+var overlay = document.getElementById("modalOverlay");
 var phoneFormDiv = document.getElementById("phoneFormDiv");
 var phoneChangesDiv = document.getElementById("phoneChanges");
 var phoneTable = document.getElementById("phoneTable");
@@ -79,6 +80,7 @@ function createNewPhone(evt) {
     }
     countryCodeSelect.selectedIndex = 0;
 
+    overlay.style.display = "block";
     phoneFormDiv.style.display = "block";
 }
 
@@ -108,6 +110,7 @@ function editPhone(evt) {
 
     phoneCommentArea.value = trToEdit.cells[3].textContent;
 
+    overlay.style.display = "block";
     phoneFormDiv.style.display = "block";
 }
 
@@ -190,7 +193,7 @@ function savePhone(evt) {
         inputCreate.setAttribute("type", "hidden");
         inputCreate.setAttribute("name", "createPhone");
         inputCreate.setAttribute("value", '|' + countryCodeSelect.options[countryCodeSelect.selectedIndex].value +
-                '|' + operatorCodeInput.value + '|' + phoneNumberInput.value + '|' + type + '|' + phoneCommentArea.value);
+                '|' + operatorCodeInput.value + '|' + phoneNumberInput.value + '|' + type + '|' + phoneCommentArea.value + '|');
         td4.appendChild(inputCreate);
         var inputId = document.createElement("input");
         inputId.setAttribute("type", "hidden");
@@ -199,13 +202,17 @@ function savePhone(evt) {
         td4.appendChild(inputId);
         var editBt = document.createElement("button");
         editBt.setAttribute("type", "button");
-        editBt.className = "editPhone";
+        editBt.setAttribute("class", "btn");
+        editBt.className = editBt.className + " list-btn";
+        editBt.className = editBt.className + "editPhone";
         editBt.textContent = "Edit";
         editBt.addEventListener('click', editPhone);
         td4.appendChild(editBt);
         var delBt = document.createElement("button");
         delBt.setAttribute("type", "button");
-        delBt.className = "deletePhone";
+        delBt.setAttribute("class", "btn");
+        delBt.className = delBt.className + " list-btn";
+        delBt.className = delBt.className + "deletePhone";
         delBt.textContent = "Delete";
         delBt.addEventListener('click', deletePhone);
         td4.appendChild(delBt);
@@ -214,9 +221,11 @@ function savePhone(evt) {
         phoneTable.appendChild(tr);
     }
     phoneFormDiv.style.display = "none";
+    overlay.style.display = "none";
 }
 
 function cancelPhoneForm(evt) {
+    overlay.style.display = "none";
     phoneFormDiv.style.display = "none";
 }
 

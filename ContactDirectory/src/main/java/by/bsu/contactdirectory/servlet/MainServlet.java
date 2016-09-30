@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 //@WebServlet("/")
 public class MainServlet extends HttpServlet {
 
-    public static String appPath ="";
+    public static String appPath = "";
     Logger logger = LogManager.getLogger(MainServlet.class);
 
     @Override

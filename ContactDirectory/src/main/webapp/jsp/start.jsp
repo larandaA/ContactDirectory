@@ -6,7 +6,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Contact Directory</title>
-    <link rel="stylesheet" href="css/general.css">
+    <link rel="stylesheet" href="css/wrap.css">
     <link rel="stylesheet" href="css/grid.css">
 </head>
 <body>

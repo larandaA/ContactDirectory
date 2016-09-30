@@ -202,7 +202,8 @@ public class SaveContactAction implements Action {
 		}
 		if (filename != null && !filename.isEmpty()) {
 			try {
-				File storeFile = new File(filename);
+				logger.debug(String.format("NEW FILE: %s", MainServlet.appPath + filename));
+				File storeFile = new File(MainServlet.appPath + filename);
 				logger.debug(String.format("NEW FILE: %s", storeFile.getAbsolutePath()));
 				if (!storeFile.createNewFile()) {
 					throw new IOException("Can't create file: " + filename);

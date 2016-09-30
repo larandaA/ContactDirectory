@@ -14,8 +14,8 @@ public class FileNameGenerator {
 
     private static Random random = new Random();
 
-    private static String contactImagesFolder = MainServlet.appPath + "img/contacts/";
-    private static String contactAttsFolder = MainServlet.appPath + "files/";
+    private static String contactImagesFolder = "img/contacts/";
+    private static String contactAttsFolder = "files/";
 
     private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
 
@@ -44,7 +44,7 @@ public class FileNameGenerator {
         boolean exists = true;
         while(exists) {
             filename = contactImagesFolder + generateInt() + fileExtension;
-            File file = new File(filename);
+            File file = new File(MainServlet.appPath + filename);
             if(!file.exists()) {
                 exists = false;
             }
@@ -60,7 +60,7 @@ public class FileNameGenerator {
         boolean exists = true;
         while(exists) {
             filename = contactAttsFolder + generateInt() + fileExtension;
-            File file = new File(filename);
+            File file = new File(MainServlet.appPath + filename);
             if(!file.exists()) {
                 exists = false;
             }

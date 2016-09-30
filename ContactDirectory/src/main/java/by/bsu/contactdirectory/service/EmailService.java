@@ -25,8 +25,9 @@ public class EmailService {
             throw new ServiceClientException();
         }
         String[] emailArray = emails.split(", ");
-        for (String email : emailArray) {
-            if (!ContactValidator.validateEmail(email)) {
+        for (int i = 0; i < emailArray.length; i++) {
+            emailArray[i] = emailArray[i].trim();
+            if (!ContactValidator.validateEmail(emailArray[i])) {
                 throw new ServiceClientException("One of emails is not valid.");
             }
         }

@@ -4,9 +4,9 @@
 var photoWasDefault = false;
 var photoIsChosen = false;
 var photoIsDeleted = false;
-var errMsg = document.getElementById("errorMessage");
 var uploadPhoto = document.getElementById("uploadPhoto");
-var photoPreview = document.getElementById("photoPreview");
+var photoPreview = document.getElementById("photo-preview");
+var noPhoto = document.getElementById("noPhoto");
 var firstImg = photoPreview.src;
 var defaultImg = document.getElementById("defaultPhoto").value;
 var deletePhotoWithPath = document.getElementById("deletePhotoWithPath");
@@ -15,6 +15,7 @@ if (firstImg == null || firstImg.length == 0 || firstImg.indexOf(defaultImg) !==
     firstImg = "";
     photoPreview.src = defaultImg;
     photoWasDefault = true;
+    noPhoto.value = "true;"
 }
 
 deletePhotoButton.addEventListener('click', deletePhoto);
@@ -28,6 +29,7 @@ function previewImage(evt) {
             photoPreview.src = event.target.result;
         };
         photoIsChosen = true;
+        noPhoto.value = "";
         if(!photoWasDefault && !photoIsDeleted) {
             deletePhotoWithPath.value = firstImg;
         }
@@ -42,12 +44,12 @@ function deletePhoto(evt) {
     }
 
     if((photoWasDefault || photoIsDeleted) && !photoIsChosen) {
-        errMsg.textContent = "You can't delete default photo!";
         return;
     }
     if(photoWasDefault && photoIsChosen) {
         photoPreview.src = defaultImg;
         photoIsChosen = false;
+        noPhoto.value = "true";
         if (uploadPhoto.files[0] != undefined) {
             //clean upload
             uploadPhoto.value = "";
@@ -58,8 +60,10 @@ function deletePhoto(evt) {
         if(!photoIsDeleted) {
             photoPreview.src = firstImg;
             deletePhotoWithPath.value = "";
+            noPhoto.value = "";
         } else {
             photoPreview.src = defaultImg;
+            noPhoto.value = "true";
         }
         photoIsChosen = false;
         if (uploadPhoto.files[0] != undefined) {
@@ -72,5 +76,6 @@ function deletePhoto(evt) {
         photoIsDeleted = true;
         photoPreview.src = defaultImg;
         deletePhotoWithPath.value = firstImg;
+        noPhoto.value = "true";
     }
 }
