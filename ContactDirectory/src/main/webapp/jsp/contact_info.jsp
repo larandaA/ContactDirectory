@@ -27,7 +27,7 @@
 			<h1>Contact info</h1>
 		</div>
 		<div class="white-block">
-			<form method="post" onsubmit="return validateContactInfo();" enctype="multipart/form-data">
+			<form method="post" accept-charset="UTF-8" onsubmit="return validateContactInfo();" enctype="multipart/form-data">
 				<div class="cont-row">
 					<div class="cont-cell-6">
 						<div class="cont-row">

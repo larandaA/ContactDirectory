@@ -2,6 +2,8 @@ package by.bsu.contactdirectory.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -105,7 +107,9 @@ public class SaveContactAction implements Action {
 	private void processFormField(FileItem item, Contact contact) throws IOException, ActionException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		String name = item.getFieldName();
-		String value = Streams.asString(item.getInputStream());
+		String value = Streams.asString(item.getInputStream(), "UTF-8");
+		/*value = URLEncoder.encode(value, "CP1251");
+		value = URLDecoder.decode(value, "UTF-8");*/
 		switch (name) {
 			case "firstName":
 				contact.setFirstName(value);

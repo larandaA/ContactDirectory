@@ -32,6 +32,7 @@ public class SearchContactsAction implements Action {
 		SearchObject so = new SearchObject();
 		so.setFirstName(request.getParameter("firstName"));
 		so.setLastName(request.getParameter("lastName"));
+		logger.debug(String.format("LastName: %s", so.getLastName()));
 		so.setPatronymic(request.getParameter("patronymic"));
 		String buf = request.getParameter("gender");
 		if (buf != null && !buf.isEmpty()) {
