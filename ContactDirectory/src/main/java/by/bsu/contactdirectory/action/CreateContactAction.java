@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.entity.PhoneType;
+import by.bsu.contactdirectory.util.file.FileNameGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +28,6 @@ public class CreateContactAction implements Action {
 		response.setCharacterEncoding("UTF-8");
 
 		request.setAttribute("action", Actions.SAVE_CONTACT.substring(1));
-        //request.setAttribute("dateFormat", dateFormat);
 		try {
 			request.setAttribute("countries", countryService.getCountryNames());
 			request.setAttribute("codes", countryService.getCountryCodes());
@@ -41,7 +41,7 @@ public class CreateContactAction implements Action {
         request.setAttribute("marital", MaritalStatus.values());
         request.setAttribute("genders", Gender.values());
 		request.setAttribute("types", PhoneType.values());
-		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
+		request.setAttribute("defaultPhoto", FileNameGenerator.BASE_FOLDER + FileNameGenerator.photosPath + FileNameGenerator.defaultPhotoPath);
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
 

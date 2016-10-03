@@ -302,7 +302,7 @@
 							<tr>
 								<td><input type="checkbox" name="attChecked"></td>
 								<td>${attachment.name}</td>
-								<td>${dateFormat.format(attachment.downloadDate.getTime())}</td>
+								<td>${timeFormat.format(attachment.downloadDate.getTime())}</td>
 								<td>${attachment.comment}</td>
 								<td>
 									<input type="hidden" name="updateAtt" value="" autocomplete="off">

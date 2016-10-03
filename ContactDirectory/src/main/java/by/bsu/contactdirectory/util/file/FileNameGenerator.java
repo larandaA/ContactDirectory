@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -14,19 +15,36 @@ public class FileNameGenerator {
 
     private static Random random = new Random();
 
-    private static String contactImagesFolder = "img/contacts/";
-    private static String contactAttsFolder = "files/";
+    public static String defaultPhotoPath;
+    public static String filesPath;
+    public static String photosPath;
+    public static final String BASE_FOLDER = "files/";
+    private static final String PROPERTIES_PATH = "file.properties";
 
     private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
 
     static {
         try {
-            createFolderIfNotExist(MainServlet.appPath + contactImagesFolder);
-            createFolderIfNotExist(MainServlet.appPath + contactAttsFolder);
-        } catch (SecurityException ex) {
+            FilePropertiesParser.parse(PROPERTIES_PATH);
+            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER);
+            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER + photosPath);
+            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER + filesPath);
+        } catch (SecurityException | IOException ex) {
             logger.fatal(ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    static void setFilesPath(String path) {
+        filesPath = path;
+    }
+
+    static void setPhotosPath(String path) {
+        photosPath = path;
+    }
+
+    static void setDefaultPhotoPath(String path) {
+        defaultPhotoPath = path;
     }
 
     private static void createFolderIfNotExist(String path) {
@@ -43,7 +61,7 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = contactImagesFolder + generateInt() + fileExtension;
+            filename = BASE_FOLDER + photosPath + generateInt() + fileExtension;
             File file = new File(MainServlet.appPath + filename);
             if(!file.exists()) {
                 exists = false;
@@ -59,7 +77,7 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = contactAttsFolder + generateInt() + fileExtension;
+            filename = BASE_FOLDER + filesPath + generateInt() + fileExtension;
             File file = new File(MainServlet.appPath + filename);
             if(!file.exists()) {
                 exists = false;

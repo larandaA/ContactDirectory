@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.entity.PhoneType;
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.util.file.FileNameGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,9 +59,11 @@ public class EditContactAction implements Action {
 			return;
 		}
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 	    request.setAttribute("contact", contact);
 	    request.setAttribute("action", Actions.UPDATE_CONTACT.substring(1));
 	    request.setAttribute("dateFormat", dateFormat);
+		request.setAttribute("timeFormat", timeFormat);
 		try {
 			request.setAttribute("countries", countryService.getCountryNames());
 			request.setAttribute("codes", countryService.getCountryCodes());
@@ -72,7 +75,7 @@ public class EditContactAction implements Action {
 	    request.setAttribute("marital", MaritalStatus.values());
 	    request.setAttribute("genders", Gender.values());
 		request.setAttribute("types", PhoneType.values());
-		request.setAttribute("defaultPhoto", "img/contacts/default.jpg");
+		request.setAttribute("defaultPhoto", FileNameGenerator.BASE_FOLDER + FileNameGenerator.photosPath + FileNameGenerator.defaultPhotoPath);
 		logger.info(String.format("Contact info requested. Id: %s", buf));
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}

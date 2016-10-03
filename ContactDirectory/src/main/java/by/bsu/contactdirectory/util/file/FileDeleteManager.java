@@ -23,14 +23,12 @@ public class FileDeleteManager {
             String newFn = "";
             try {
                 int pos;
-                if ((pos = fn.indexOf("files")) >= 0) {
-                    newFn = fn.substring(pos);
-                } else if ((pos = fn.indexOf("img/contacts")) >= 0) {
+                if ((pos = fn.indexOf(FileNameGenerator.BASE_FOLDER)) >= 0) {
                     newFn = fn.substring(pos);
                 } else {
                     continue;
                 }
-                if (newFn.endsWith("default.jpg")) {
+                if (newFn.endsWith(FileNameGenerator.defaultPhotoPath)) {
                     continue;
                 }
                 File file = new File(MainServlet.appPath + newFn);

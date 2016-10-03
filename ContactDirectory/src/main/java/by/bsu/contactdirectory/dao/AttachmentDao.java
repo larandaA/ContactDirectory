@@ -19,7 +19,7 @@ public class AttachmentDao extends AbstractDao {
     private static AttachmentDao instance = new AttachmentDao();
 
     private static final String CREATE = "INSERT INTO `attachment`(`path`, `download_date`, `comment`, `contact_id`, `name`) " +
-            "VALUES (?, curdate(), ?, ?, ?);";
+            "VALUES (?, current_timestamp(), ?, ?, ?);";
     private static final String UPDATE = "UPDATE `attachment` SET `name` = ?, `comment` = ?, `path` = ? WHERE `id` = ?;";
     private static final String DELETE = "DELETE FROM `attachment` WHERE `id` = ?;";
     private static final String SELECT = "SELECT `id`, `path`, `download_date`, `comment`, `contact_id`, `name` FROM `attachment`";
@@ -37,7 +37,7 @@ public class AttachmentDao extends AbstractDao {
         attachment.setPath(rs.getString(2));
 
         Calendar downloadDate = Calendar.getInstance();
-        downloadDate.setTimeInMillis(rs.getDate(3).getTime());
+        downloadDate.setTimeInMillis(rs.getTimestamp(3).getTime());
         attachment.setDownloadDate(downloadDate);
 
         attachment.setComment(rs.getString(4));

@@ -124,7 +124,7 @@ DROP TABLE IF EXISTS `alexandra_ryzhevich_db`.`attachment` ;
 CREATE TABLE IF NOT EXISTS `alexandra_ryzhevich_db`.`attachment` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `download_date` DATE NULL,
+  `download_date` TIMESTAMP NULL,
   `comment` VARCHAR(300) NULL,
   `contact_id` INT UNSIGNED NOT NULL,
   `path` VARCHAR(255) NOT NULL,
@@ -159,3 +159,19 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+------------add user------------------------
+
+CREATE USER 'alex_ryzhevich'@'localhost' IDENTIFIED BY 'password';
+GRANT SELECT ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
+GRANT DELETE ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
+GRANT UPDATE ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
+GRANT INSERT ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
+FLUSH PRIVILEGES;
+
+-----------fill countries--------------------
+
+INSERT INTO `country`(`name`, `code`) VALUES ('Russia', 7);
+INSERT INTO `country`(`name`, `code`) VALUES ('GB', 44);
+INSERT INTO `country`(`name`, `code`) VALUES ('Germany', 49);
+INSERT INTO `country`(`name`, `code`) VALUES ('Belarus', 375);

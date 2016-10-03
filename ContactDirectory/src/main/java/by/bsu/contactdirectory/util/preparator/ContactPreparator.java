@@ -1,6 +1,7 @@
 package by.bsu.contactdirectory.util.preparator;
 
 import by.bsu.contactdirectory.entity.*;
+import by.bsu.contactdirectory.util.file.FileNameGenerator;
 
 /**
  * Created by Alexandra on 16.09.2016.
@@ -48,7 +49,9 @@ public class ContactPreparator {
             return;
         }
         if (photo.getPath() == null || photo.getPath().isEmpty()) {
-            photo.setPath("img/contacts/default.jpg");
+            photo.setPath(FileNameGenerator.BASE_FOLDER
+                    + FileNameGenerator.photosPath
+                    + FileNameGenerator.defaultPhotoPath);
         }
     }
 
