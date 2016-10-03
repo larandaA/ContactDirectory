@@ -23,14 +23,14 @@ public class AttachmentValidator {
     }
 
     public static boolean validateName(String name) {
-        if(name == null || name.isEmpty()) {
+        if(name == null || name.trim().isEmpty()) {
             return false;
         }
         return true;
     }
 
     public static boolean validatePath(String path) {
-        if (path == null || path.isEmpty()) {
+        if (path == null || path.trim().isEmpty()) {
             return false;
         }
         return true;

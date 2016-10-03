@@ -38,6 +38,9 @@ public class PhoneValidator {
         if (code >= 100000) {
             return false;
         }
+        if (code == 0) {
+            return false;
+        }
         return true;
     }
 
@@ -46,6 +49,9 @@ public class PhoneValidator {
             return true;
         }
         if (code >= 10000) {
+            return false;
+        }
+        if (code == 0) {
             return false;
         }
         return true;

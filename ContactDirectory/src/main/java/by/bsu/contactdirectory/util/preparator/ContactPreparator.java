@@ -53,9 +53,9 @@ public class ContactPreparator {
     }
 
     private static String prepareString(String string) {
-        if (string == null || string.isEmpty()) {
+        if (string == null || string.trim().isEmpty()) {
             return null;
         }
-        return string;
+        return string.trim();
     }
 }

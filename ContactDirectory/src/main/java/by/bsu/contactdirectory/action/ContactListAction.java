@@ -45,6 +45,12 @@ public class ContactListAction implements Action {
 				page = (Integer) pageObj;
 			}
 		}
+		Object errMsgObj = request.getSession().getAttribute("errorMessage");
+		String errorMessage = null;
+		if (errMsgObj != null) {
+			request.getSession().removeAttribute("errorMessage");
+			errorMessage = (String) errMsgObj;
+		}
 
 		int pageAmount = 0;
 		List<Contact> contacts = null;
@@ -66,6 +72,7 @@ public class ContactListAction implements Action {
 			logger.error("Can't get contact list", ex);
 			request.setAttribute("errorMessage", "Server internal error, sorry.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			return;
 		}
 
 
@@ -74,6 +81,16 @@ public class ContactListAction implements Action {
 		request.getSession().removeAttribute("page");
 		request.getSession().setAttribute("page", page);
 
+		if (contacts.isEmpty()) {
+			if (page == 1) {
+				page = 0;
+				errorMessage = "There's no contacts in directory.";
+			} else {
+				errorMessage = "This page is empty.";
+			}
+		}
+
+		request.setAttribute("errorMessage", errorMessage);
         request.setAttribute("contacts", contacts);
         request.setAttribute("dateFormat", dateFormat);
 		request.setAttribute("pageAmount", pageAmount);

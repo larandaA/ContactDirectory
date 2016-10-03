@@ -94,9 +94,23 @@ public class SearchContactsAction implements Action {
 		try {
 			if (!searchService.isResultEmpty(so)) {
 				request.getSession().setAttribute("searchObject", so);
+				logger.info("Search object successfully created.");
+				response.sendRedirect("ContactList");
+			} else {
+				String errorMessage = "No result found.";
+				int page = 0;
+				int pageAmount = 0;
+				request.setAttribute("errorMessage", errorMessage);
+				request.setAttribute("dateFormat", dateFormat);
+				request.setAttribute("pageAmount", pageAmount);
+				request.setAttribute("currentPage", page);
+				request.setAttribute("nextPage", page + 1);
+				request.setAttribute("previousPage", page - 1);
+				request.setAttribute("availableNext", page < pageAmount);
+				request.setAttribute("availablePrevious", page > 1);
+				request.getRequestDispatcher("jsp/contact_list.jsp").forward(request, response);
 			}
-			logger.info("Search object successfully created.");
-			response.sendRedirect("ContactList");
+
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to count result amount.", ex);
 			request.setAttribute("errorMessage", "Internal server error.");

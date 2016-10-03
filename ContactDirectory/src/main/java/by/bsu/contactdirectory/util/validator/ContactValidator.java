@@ -11,7 +11,7 @@ import by.bsu.contactdirectory.entity.Contact;
 
 public class ContactValidator {
 	
-	private static final String NAME_PATTERN = "^[a-zA-z]+([ '-][a-zA-Z]+)*$";
+	private static final String NAME_PATTERN = "^\\p{L}+([ '-]\\p{L}+)*$";
 	
 	private static Pattern namePattern = Pattern.compile(NAME_PATTERN);
 	private static UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
@@ -57,50 +57,50 @@ public class ContactValidator {
 	}
 	
 	public static boolean validateRequiredName(String name) {
-		if (name == null || name.isEmpty()) {
+		if (name == null || name.trim().isEmpty()) {
 			return false;
 		}
-		if (name.length() > 40) {
+		if (name.trim().length() > 40) {
 			return false;
 		}
-		return namePattern.matcher(name).matches();
+		return namePattern.matcher(name.trim()).matches();
 	}
 	
 	public static boolean validateNotRequiredName(String name) {
-		if (name == null || name.isEmpty()) {
+		if (name == null || name.trim().isEmpty()) {
 			return true;
 		}
-		if (name.length() > 40) {
+		if (name.trim().length() > 40) {
 			return false;
 		}
-		return namePattern.matcher(name).matches();
+		return namePattern.matcher(name.trim()).matches();
 	}
 	
 	public static boolean validateWebSite(String webSite) {
-		if (webSite == null || webSite.isEmpty()) {
+		if (webSite == null || webSite.trim().isEmpty()) {
 			return true;
 		}
-		if (webSite.length() > 200) {
+		if (webSite.trim().length() > 200) {
 			return false;
 		}
-		return urlValidator.isValid(webSite) || urlValidator.isValid("https://" + webSite);
+		return urlValidator.isValid(webSite.trim()) || urlValidator.isValid("https://" + webSite.trim());
 	}
 	
 	public static boolean validateEmail(String email) {
-		if (email == null || email.isEmpty()) {
+		if (email == null || email.trim().isEmpty()) {
 			return true;
 		}
-		if (email.length() > 100) {
+		if (email.trim().length() > 100) {
 			return false;
 		}
-		return EmailValidator.getInstance().isValid(email);
+		return EmailValidator.getInstance().isValid(email.trim());
 	}
 	
 	public static boolean validatePlaceOfWork(String work) {
-		if (work == null || work.isEmpty()) {
+		if (work == null || work.trim().isEmpty()) {
 			return true;
 		}
-		if (work.length() > 100) {
+		if (work.trim().length() > 100) {
 			return false;
 		}
 		return true;

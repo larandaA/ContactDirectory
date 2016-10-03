@@ -18,6 +18,9 @@ var downloadAttHref = document.getElementById("downloadAttFile");
 var deleteAttFileBut = document.getElementById("deleteAttFile");
 var saveAttBut = document.getElementById("saveAtt");
 var cancelAttFormBut = document.getElementById("cancelAttForm");
+var fileUploadDiv = document.getElementById("fileUploadDiv");
+var fileUploadLabel = document.getElementById("fileUploadLabel");
+var fileUploadSpan = document.getElementById("fileUploadSpan");
 
 var aisNew = true;
 var atrToEdit = null;
@@ -27,6 +30,7 @@ var isFileDeleted = false;
 
 attFormDiv.style.display = "none";
 downloadAttHref.style.display = "none";
+fileUploadDiv.style.display = "none";
 createNewAttBut.addEventListener('click', createNewAtt);
 saveAttBut.addEventListener('click', saveAtt);
 cancelAttFormBut.addEventListener('click',cancelAttForm);
@@ -39,6 +43,10 @@ for (var i = 0; i < editAttButs.length; i++) {
     editAttButs[i].addEventListener('click', editAtt);
 }
 
+function buildAttRepresentation(id, prefix, postPrefix) {
+    return id + '|' +  attNameInput.value +
+        '|' + prefix + postPrefix + '|'  + attCommentArea.value;
+}
 
 function deleteAttFile(evt) {
     if ((isFileDeleted || aisNew) && inputFile.files[0] == undefined) {
@@ -49,7 +57,7 @@ function deleteAttFile(evt) {
     }
     if (!isFileDeleted) {
         isFileDeleted = true;
-        inputFile.style.display = "block";
+        fileUploadDiv.style.display = "block";
     }
 }
 
@@ -76,18 +84,10 @@ function deleteCheckedAtts(evt) {
             }
 
             if (id.length > 0) {
-                var input = document.createElement("input");
-                input.setAttribute("type", "hidden");
-                input.setAttribute("name", "deleteAttWithId");
-                input.setAttribute("value", id);
-                attChangesDiv.appendChild(input);
+                attChangesDiv.appendChild(createInputElement("hidden", "deleteAttWithId", id));
             }
             if (path.length > 0) {
-                var input = document.createElement("input");
-                input.setAttribute("type", "hidden");
-                input.setAttribute("name", "deleteFileWithPath");
-                input.setAttribute("value", path);
-                attChangesDiv.appendChild(input);
+                attChangesDiv.appendChild(createInputElement("hidden", "deleteFileWithPath", path));
             }
             var par = tr.parentNode;
             par.removeChild(tr);
@@ -102,12 +102,13 @@ function createNewAtt(evt) {
     aisNew = true;
     isFileDeleted = false;
     attCommentArea.value = "";
-    inputFile = document.createElement("input");
-    inputFile.setAttribute("type", "file");
-    inputFile.setAttribute("name", "attFileN" + nextId);
+    inputFile = createInputElement("file", "attFileN" + nextId, "");
+    inputFile.style.display = "none";
     nextId++;
-    attFormDiv.appendChild(inputFile);
+    fileUploadLabel.insertBefore(inputFile, fileUploadSpan);
     downloadAttHref.style.display = "none";
+    fileUploadDiv.style.display = "block";
+    overlay.style.display = "block";
     attFormDiv.style.display = "block";
 }
 
@@ -126,23 +127,23 @@ function editAtt(evt) {
     }
     if (path.length > 0) {
         isFileDeleted = false;
-        inputFile.style.display = "none";
         downloadAttHref.href = path;
         downloadAttHref.style.display = "block";
     } else {
         isFileDeleted = true;
-        inputFile.style.display = "block";
+        fileUploadDiv.style.display = "block";
         downloadAttHref.href = "";
         downloadAttHref.style.display = "none";
     }
     attNameInput.value = atrToEdit.cells[1].textContent;
     attCommentArea.value = atrToEdit.cells[3].textContent;
-    attFormDiv.appendChild(inputFile);
+    fileUploadLabel.insertBefore(inputFile, fileUploadSpan);
+    overlay.style.display = "block";
     attFormDiv.style.display = "block";
 }
 
 function saveAtt(evt) {
-    if (!validateRequiredCombinedText(attNameInput.value)) {
+    if (!validateRequiredText(attNameInput.value)) {
         attFormErrorMes.textContent = "Attachment name is not correct!";
         return;
     }
@@ -174,38 +175,26 @@ function saveAtt(evt) {
             }
         }
         if (isFileDeleted && path != null) {
-            var input = document.createElement("input");
-            input.setAttribute("type", "hidden");
-            input.setAttribute("name", "deleteFileWithPath");
-            input.setAttribute("value", path.value);
-            attChangesDiv.appendChild(input);
+            attChangesDiv.appendChild(createInputElement("hidden", "deleteFileWithPath", path.value));
             atrToEdit.cells[4].removeChild(path)
 
         }
         if (id.length > 0) {
             if (isFileDeleted) {
-                updateInput.value = id + '|' +  attNameInput.value +
-                    '|f=' + inputFile.name + '|'  + attCommentArea.value;
+                updateInput.value = buildAttRepresentation(id, "f=", inputFile.name);
             } else {
-                updateInput.value = id + '|' +  attNameInput.value +
-                    '|p=' + path.value + '|'  + attCommentArea.value;
+                updateInput.value = buildAttRepresentation(id, "p=", path.value);
             }
         } else {
-            createInput.value = '|' + attNameInput.value +
-                '|f=' + inputFile.name + '|'  + attCommentArea.value;
+            createInput.value = buildAttRepresentation("", "f=", inputFile.name);
         }
         atrToEdit.cells[4].appendChild(inputFile);
-        inputFile.style.display = "none";
 
     } else {
         var tr = document.createElement("tr");
 
         var td0 = document.createElement("td");
-        var chbox = document.createElement("input");
-        chbox.setAttribute("type", "checkbox");
-        chbox.setAttribute("name", "attChecked");
-        td0.appendChild(chbox);
-        tr.appendChild(td0);
+        td0.appendChild(createInputElement("checkbox", "attChecked", ""));
 
         var td1 = document.createElement("td");
         td1.textContent = attNameInput.value;
@@ -220,41 +209,22 @@ function saveAtt(evt) {
         tr.appendChild(td3);
 
         var td4 = document.createElement("td");
-        var inputCreate = document.createElement("input");
-        inputCreate.setAttribute("type", "hidden");
-        inputCreate.setAttribute("name", "createAtt");
-        inputCreate.setAttribute("value", '|' + attNameInput.value +
-            '|f=' + inputFile.name + '|'  + attCommentArea.value);
-        td4.appendChild(inputCreate);
-        var inputId = document.createElement("input");
-        inputId.setAttribute("type", "hidden");
-        inputId.setAttribute("name", "attId");
-        inputId.setAttribute("value", "");
-        td4.appendChild(inputId);
-        var editBt = document.createElement("button");
-        editBt.setAttribute("type", "button");
-        editBt.className = "editAtt";
-        editBt.textContent = "Edit";
-        editBt.addEventListener('click', editAtt);
-        td4.appendChild(editBt);
-        var delBt = document.createElement("button");
-        delBt.setAttribute("type", "button");
-        delBt.className = "deleteAtt";
-        delBt.textContent = "Delete";
-        delBt.addEventListener('click', deleteAtt);
-        td4.appendChild(delBt);
+        td4.appendChild(createInputElement("hidden", "createAtt", buildAttRepresentation("","f=", inputFile.name)));
+        td4.appendChild(createInputElement("hidden", "attId", ""));
+        td4.appendChild(createButtonElement("button", "btn list-btn editAtt", "Edit", editAtt));
+        td4.appendChild(createButtonElement("button", "btn list-btn deleteAtt", "Delete", deleteAtt));
         td4.appendChild(inputFile);
-        inputFile.style.display = "none";
         tr.appendChild(td4);
 
         attTable.appendChild(tr);
     }
     attFormDiv.style.display = "none";
+    overlay.style.display = "none";
 }
 
 function cancelAttForm(evt) {
     if (aisNew) {
-        attFormDiv.removeChild(inputFile);
+        fileUploadLabel.removeChild(inputFile);
     } else {
         inputFile.style.display = "none";
         if (!isFileDeleted) {
@@ -263,6 +233,7 @@ function cancelAttForm(evt) {
         atrToEdit.cells[4].appendChild(inputFile);
     }
     attFormDiv.style.display = "none";
+    overlay.style.display = "none";
 }
 
 function deleteAtt(evt) {
@@ -278,18 +249,10 @@ function deleteAtt(evt) {
         }
     }
     if (id.length > 0) {
-        var input = document.createElement("input");
-        input.setAttribute("type", "hidden");
-        input.setAttribute("name", "deleteAttWithId");
-        input.setAttribute("value", id);
-        attChangesDiv.appendChild(input);
+        attChangesDiv.appendChild(createInputElement("hidden", "deleteAttWithId", id));
     }
     if (path.length > 0) {
-        var input = document.createElement("input");
-        input.setAttribute("type", "hidden");
-        input.setAttribute("name", "deleteFileWithPath");
-        input.setAttribute("value", path);
-        attChangesDiv.appendChild(input);
+        attChangesDiv.appendChild(createInputElement("hidden", "deleteFileWithPath", path));
     }
     var tr = evt.target.parentNode.parentNode;
     var trPar = tr.parentNode;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.util.template.STRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,11 +34,13 @@ public class MailEditAction implements Action {
 			return;
 		}
 		LinkedList<String> emailList = new LinkedList<>();
+		LinkedList<Integer> idList = new LinkedList<>();
 		try {
 			for(int i = 0; i < strIds.length; i++) {
 				Contact contact = new ContactService().getContact(Integer.parseInt(strIds[i]));
 				if(contact != null && contact.getEmail() != null && !contact.getEmail().isEmpty()) {
 					emailList.add(contact.getEmail());
+					idList.add(contact.getId());
 				}
 			}
 		} catch (IllegalArgumentException ex) {
@@ -51,10 +54,19 @@ public class MailEditAction implements Action {
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 			return;
 		}
-		String emails = String.join(", ", emailList);
-		request.setAttribute("emails", emails);
-		logger.info(String.format("Email message form requested for emails: %s", emails));
-		request.getRequestDispatcher("jsp/email.jsp").forward(request, response);
+		if (emailList.size() > 0) {
+			String emails = String.join(", ", emailList);
+			request.setAttribute("emails", emails);
+			request.setAttribute("ids", idList);
+			request.setAttribute("templates", STRenderer.templates);
+			logger.info(String.format("Email message form requested for emails: %s", emails));
+			request.getRequestDispatcher("jsp/email.jsp").forward(request, response);
+		} else {
+			String errorMessage = "No one from chosen contacts has an email.";
+			request.getSession().setAttribute("errorMessage", errorMessage);
+			logger.info("Sending email can't be performed. No one from chosen contacts has an email.");
+			response.sendRedirect("ContactList");
+		}
 	}
 
 }

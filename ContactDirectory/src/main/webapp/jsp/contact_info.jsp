@@ -255,7 +255,7 @@
 						<jstl:forEach items="${contact.phones}" var="phone">
 							<tr>
 								<td><input type="checkbox" name="phoneChecked"></td>
-								<td>${phone.countryCode} (${phone.operatorCode}) ${phone.phoneNumber}</td>
+								<td><jstl:if test="${not empty phone.countryCode}">${phone.countryCode}</jstl:if> (<jstl:if test="${not empty phone.operatorCode}">${phone.operatorCode}</jstl:if>) ${phone.phoneNumber}</td>
 								<td>${phone.type.toString()}</td>
 								<td>${phone.comment}</td>
 								<td>
@@ -386,7 +386,7 @@
 			</div>
 			<div class="modal-row">
 				<div class="cont-cell-2"></div>
-				<div class="cont-cell-2">
+				<div class="cont-cell-8">
 					<div class="error-message" id="phoneFormErrorMes"></div>
 				</div>
 				<div class="cont-cell-2"></div>
@@ -400,62 +400,61 @@
 			</div>
 		</form>
 	</div>
-	<div class="modal-window" id="atts">
+	<div class="modal-window" id="attFormDiv">
 		<div class="modal-header">
 			<div class="modal-title">Attachment info</div>
 		</div>
-		<div class="modal-row">
-			<div class="igroup">
-				<input type="text">
-				<span class="highlight"></span>
-				<span class="bar"></span>
-				<label>Name</label>
+		<form id="attForm">
+			<div class="modal-row">
+				<div class="igroup">
+					<input type="text" name="attName" value="" autocomplete="off">
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label>Name</label>
+				</div>
 			</div>
-		</div>
-		<div class="modal-row">
-			<div class="file-upload">
-				<label>
-					<input type="file" name="file">
-					<span>Change file</span>
-				</label>
+			<div class="modal-row">
+				<div class="cont-cell-1"></div>
+				<div class="cont-cell-4">
+					<a id="downloadAttFile" href="" download="">
+						<button type="button" class="btn">Download</button>
+					</a>
+					<button type="button" class="btn" id="deleteAttFile">Delete</button>
+				</div>
+				<div class="cont-cell-7">
+					<div class="file-upload" id="fileUploadDiv">
+						<label id="fileUploadLabel">
+							<span id="fileUploadSpan">Change file</span>
+						</label>
+					</div>
+				</div>
 			</div>
-			<div>filename.txt</div>
-		</div>
-
-		<div class="modal-row">
-			<div class="igroup">
-				<textarea cols="40" rows="5"></textarea>
-				<span class="highlight"></span>
-				<span class="bar"></span>
-				<label>Comment</label>
+			<div class="modal-row">
+				<div class="igroup">
+					<textarea cols="40" rows="5" name="attComment"></textarea>
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label>Comment</label>
+				</div>
 			</div>
-		</div>
-		<div class="modal-row">
-			<div class="cont-cell-2"></div>
-			<div class="cont-cell-10">
-				<button type="button" class="btn">Cancel</button>
-				<button type="button" class="btn">Save</button>
+			<div class="modal-row">
+				<div class="cont-cell-2"></div>
+				<div class="cont-cell-8">
+					<div class="error-message" id="attFormErrorMes"></div>
+				</div>
+				<div class="cont-cell-2"></div>
 			</div>
-		</div>
+			<div class="modal-row">
+				<div class="cont-cell-2"></div>
+				<div class="cont-cell-10">
+					<button type="button" id="cancelAttForm" class="btn">Cancel</button>
+					<button type="button" id="saveAtt" class="btn">Save</button>
+				</div>
+			</div>
+		</form>
 	</div>
-
-
-
-
-<div id="attFormDiv">
-	<form id="attForm">
-		<h4 id="attFormErrorMes"></h4>
-		Name: <br />
-		<input type="text" name="attName" value="" autocomplete="off"> <br />
-		<a id="downloadAttFile" href="" download=""><button type="button">Download</button> </a> <br />
-		<button type="button" id="deleteAttFile">Delete</button> <br />
-		Comment: <br />
-		<textarea cols="30" rows="3" name="attComment"></textarea> <br />
-		<button type="button" id="cancelAttForm">Cancel</button>
-		<button type="button" id="saveAtt">Save</button>
-	</form>
-</div>
 <script src="js/validation_functions.js"></script>
+<script src="js/elem_create_functions.js"></script>
 <script src="js/contact_info_validation.js"></script>
 <script src="js/photo_manipulation.js"></script>
 <script src="js/phone_manipul.js"></script>

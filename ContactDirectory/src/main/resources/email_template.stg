@@ -1,0 +1,23 @@
+
+
+hello(name,text) ::= <<
+Hello, <name>!
+<text>
+>>
+
+happy_bd(name,text) ::= <<
+Dear <name>!
+Happy Birthday!
+<text>
+>>
+
+sorry(name,text) ::= <<
+<name>, I'm so sorry.
+<text>
+>>
+
+busy(name,text) ::= <<
+Hello, <name>.
+Sorry, I'm busy now. Let me call later.
+Your <text>.
+>>

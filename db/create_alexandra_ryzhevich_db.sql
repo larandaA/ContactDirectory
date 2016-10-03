@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `alexandra_ryzhevich_db`.`phone` (
   `type` ENUM('HOME', 'MOBILE', 'WORK') NULL,
   `comment` VARCHAR(300) NULL,
   `contact_id` INT UNSIGNED NOT NULL,
-  `country_id` INT UNSIGNED NOT NULL,
+  `country_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_phone_contact1_idx` (`contact_id` ASC),
   INDEX `fk_phone_country1_idx` (`country_id` ASC),

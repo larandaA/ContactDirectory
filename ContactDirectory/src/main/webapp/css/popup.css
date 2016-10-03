@@ -64,6 +64,13 @@
     text-align: center;
     width: 70%;
     min-width: 200px;
+    min-height: 1px;
     margin: 0 auto;
     padding: 10px 0 0;
+}
+
+.modal-row:before, .modal-row:after {
+    content: "";
+    display: table ;
+    clear: both;
 }

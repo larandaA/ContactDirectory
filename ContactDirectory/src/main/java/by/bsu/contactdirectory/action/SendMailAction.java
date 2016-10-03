@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,19 +24,20 @@ public class SendMailAction implements Action {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
-		String emails = request.getParameter("emails");
+		String[] ids = request.getParameterValues("id");
 		String topic = request.getParameter("topic");
 		String text = request.getParameter("text");
+		String template = request.getParameter("template");
 		try {
-			emailService.sendEmails(emails, topic, text);
-			logger.info(String.format("Emais send to contacts: %s", emails));
+			emailService.sendEmails(ids, topic, text, template);
+			logger.info(String.format("Emais send to contacts: %s", Arrays.deepToString(ids)));
 			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to send emails.", ex);
 			request.setAttribute("errorMessage", "Failed to send emails. Sorry.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		} catch(ServiceClientException ex) {
-			logger.error("Invalid parameters got." + emails, ex);
+			logger.error(String.format("Invalid parameters got: %s", Arrays.deepToString(ids)), ex);
 			request.setAttribute("errorMessage", "Invalid parameters.");
 			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
 		}

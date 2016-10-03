@@ -36,8 +36,18 @@ public class PhoneDao extends AbstractDao {
         Phone phone = new Phone();
 
         phone.setId(rs.getInt(1));
-        phone.setCountryCode(rs.getInt(2));
-        phone.setOperatorCode(rs.getInt(3));
+        Integer i = rs.getInt(2);
+        if (i == null || i == 0) {
+            phone.setCountryCode(null);
+        } else {
+            phone.setCountryCode(i);
+        }
+        i = rs.getInt(3);
+        if (i == null || i == 0) {
+            phone.setOperatorCode(null);
+        } else {
+            phone.setOperatorCode(i);
+        }
         phone.setPhoneNumber(rs.getInt(4));
         
         String buf = rs.getString(5);

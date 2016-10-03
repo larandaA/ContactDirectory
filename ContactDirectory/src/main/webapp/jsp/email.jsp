@@ -37,6 +37,9 @@
 							<span class="bar"></span>
 							<label>Emails</label>
 						</div>
+						<jstl:forEach var="id" items="${ids}">
+							<input type="hidden" name="id" value="${id}">
+						</jstl:forEach>
 					</div>
 				</div>
 				<div class="cont-row">
@@ -53,19 +56,22 @@
 				<div class="cont-row">
 					<div class="cont-cell-4"></div>
 					<div class="cont-cell-3">
-						<select>
-							<option disabled selected>Choose template</option>
-							<option>Happy birthday</option>
-							<option>Hello</option>
-							<option>Empty</option>
+						<select name="template">
+							<option value="" selected>Choose template</option>
+							<jstl:forEach var="entry" items="${templates}">
+								<option value="${entry.key}">${entry.key}</option>
+							</jstl:forEach>
 						</select>
+						<jstl:forEach var="entry" items="${templates}">
+							<input type="hidden" name="template${entry.key}" value="${entry.value}">
+						</jstl:forEach>
 					</div>
 				</div>
 				<div class="cont-row">
 					<div class="cont-cell-4"></div>
 					<div class="cont-cell-8">
 						<div class="igroup">
-							<textarea cols="40" rows="5" readonly></textarea>
+							<textarea cols="40" rows="5" id="templateText" readonly></textarea>
 							<span class="highlight"></span>
 							<span class="bar"></span>
 							<label>Template text</label>
@@ -107,5 +113,6 @@
 	</footer>
 <script src="js/validation_functions.js"></script>
 <script src="js/email_form_validation.js"></script>
+	<script src="js/template_email.js"></script>
 </body>
 </html>

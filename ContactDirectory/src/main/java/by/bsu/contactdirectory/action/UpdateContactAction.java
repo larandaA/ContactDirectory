@@ -280,7 +280,7 @@ public class UpdateContactAction implements Action {
 		if (value == null || value.isEmpty()) {
 			return null;
 		}
-		String[] params = value.split("\\|");
+		String[] params = value.split("\\|", 6);
 		if(params.length != 6) {
 			throw new ActionException(String.format("Invalid phone parameters: %s", Arrays.deepToString(params)));
 		}
@@ -328,7 +328,7 @@ public class UpdateContactAction implements Action {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        String[] params = value.split("\\|");
+        String[] params = value.split("\\|", 4);
         if(params.length != 4) {
             throw new ActionException(String.format("Invalid attachment parameters: %s", Arrays.deepToString(params)));
         }

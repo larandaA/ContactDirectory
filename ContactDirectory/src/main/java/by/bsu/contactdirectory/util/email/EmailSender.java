@@ -135,4 +135,27 @@ public class EmailSender {
         }
     }
 
+    public static void sendEmailToContact(String to, String text, String topic) throws EmailSenderException {
+        if (!inited) {
+            throw new EmailSenderException("Email configurations are not set.");
+        }
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try{
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject(topic);
+            message.setText(text);
+
+            Transport.send(message);
+        }catch (MessagingException mex) {
+            throw new EmailSenderException(mex);
+        }
+    }
+
 }
