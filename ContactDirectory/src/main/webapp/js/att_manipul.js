@@ -195,6 +195,7 @@ function saveAtt(evt) {
 
         var td0 = document.createElement("td");
         td0.appendChild(createInputElement("checkbox", "attChecked", ""));
+        tr.appendChild(td0);
 
         var td1 = document.createElement("td");
         td1.textContent = attNameInput.value;

@@ -21,8 +21,8 @@ public class FileNameGenerator {
 
     static {
         try {
-            createFolderIfNotExist(contactImagesFolder);
-            createFolderIfNotExist(contactAttsFolder);
+            createFolderIfNotExist(MainServlet.appPath + contactImagesFolder);
+            createFolderIfNotExist(MainServlet.appPath + contactAttsFolder);
         } catch (SecurityException ex) {
             logger.fatal(ex);
             throw new RuntimeException(ex);
