@@ -31,7 +31,8 @@
 				<div class="cont-row">
 					<div class="cont-cell-6">
 						<div class="cont-row">
-							<div class="cont-cell-5">
+							<div class="cont-cell-1"></div>
+							<div class="cont-cell-4">
 								<div class="file-upload">
 									<label>
 										<input type="file" name="photo" id="uploadPhoto" accept="image/*">
@@ -416,12 +417,12 @@
 			<div class="modal-row">
 				<div class="cont-cell-1"></div>
 				<div class="cont-cell-4">
-					<a id="downloadAttFile" href="" download="">
-						<button type="button" class="btn">Download</button>
-					</a>
-					<button type="button" class="btn" id="deleteAttFile">Delete</button>
+					<button type="button" class="btn list-btn" id="deleteAttFile">Delete</button>
 				</div>
 				<div class="cont-cell-7">
+					<a id="downloadAttFile" href="" download="">
+						<button type="button" class="btn list-btn">Download</button>
+					</a>
 					<div class="file-upload" id="fileUploadDiv">
 						<label id="fileUploadLabel">
 							<span id="fileUploadSpan">Change file</span>

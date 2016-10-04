@@ -2,7 +2,13 @@
     position: relative;
     margin-top: 15px;
     margin-bottom: 20px;
+    width: 300px;
 }
+
+.modal-window .igroup {
+    margin: 15px auto 20px;
+}
+
 .igroup input, .igroup textarea {
     font-size: 18px;
     padding: 10px 10px 10px 5px;
@@ -11,6 +17,7 @@
     border: none;
     border-bottom: 1px solid #BDBDBD;
 }
+
 .igroup input:focus, .igroup textarea:focus {
     outline: none;
 }

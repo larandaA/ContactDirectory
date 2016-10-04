@@ -58,6 +58,7 @@ function deleteAttFile(evt) {
     if (!isFileDeleted) {
         isFileDeleted = true;
         fileUploadDiv.style.display = "block";
+        downloadAttHref.style.display = "none";
     }
 }
 

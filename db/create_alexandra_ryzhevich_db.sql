@@ -160,7 +160,7 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-------------add user------------------------
+-- ------------add user------------------------
 
 CREATE USER 'alex_ryzhevich'@'localhost' IDENTIFIED BY 'password';
 GRANT SELECT ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
@@ -169,7 +169,7 @@ GRANT UPDATE ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
 GRANT INSERT ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
 FLUSH PRIVILEGES;
 
------------fill countries--------------------
+-- -----------fill countries--------------------
 
 INSERT INTO `country`(`name`, `code`) VALUES ('Russia', 7);
 INSERT INTO `country`(`name`, `code`) VALUES ('GB', 44);
