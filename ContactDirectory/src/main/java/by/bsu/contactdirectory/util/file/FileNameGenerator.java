@@ -18,7 +18,8 @@ public class FileNameGenerator {
     public static String defaultPhotoPath;
     public static String filesPath;
     public static String photosPath;
-    public static final String BASE_FOLDER = "/files/";
+    public static final String BASE_FOLDER = "files/";
+    public static final String DELIMETER = "/";
     private static final String PROPERTIES_PATH = "file.properties";
 
     private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
@@ -26,9 +27,9 @@ public class FileNameGenerator {
     static {
         try {
             FilePropertiesParser.parse(PROPERTIES_PATH);
-            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER);
-            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER + photosPath);
-            createFolderIfNotExist(MainServlet.appPath + BASE_FOLDER + filesPath);
+            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER);
+            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER + photosPath);
+            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER + filesPath);
         } catch (SecurityException | IOException ex) {
             logger.fatal(ex);
             throw new RuntimeException(ex);
@@ -62,7 +63,7 @@ public class FileNameGenerator {
         boolean exists = true;
         while(exists) {
             filename = BASE_FOLDER + photosPath + generateInt() + fileExtension;
-            File file = new File(MainServlet.appPath + filename);
+            File file = new File(MainServlet.appPath + DELIMETER + filename);
             if(!file.exists()) {
                 exists = false;
             }
@@ -78,7 +79,7 @@ public class FileNameGenerator {
         boolean exists = true;
         while(exists) {
             filename = BASE_FOLDER + filesPath + generateInt() + fileExtension;
-            File file = new File(MainServlet.appPath + filename);
+            File file = new File(MainServlet.appPath + DELIMETER + filename);
             if(!file.exists()) {
                 exists = false;
             }
