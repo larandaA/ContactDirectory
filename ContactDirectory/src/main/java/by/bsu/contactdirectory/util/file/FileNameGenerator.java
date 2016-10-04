@@ -18,7 +18,7 @@ public class FileNameGenerator {
     public static String defaultPhotoPath;
     public static String filesPath;
     public static String photosPath;
-    public static final String BASE_FOLDER = "files/";
+    public static final String BASE_FOLDER = "/files/";
     private static final String PROPERTIES_PATH = "file.properties";
 
     private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
