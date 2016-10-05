@@ -16,7 +16,7 @@ public class AttachmentValidator {
         if (!validateName(attachment.getName())) {
             return false;
         }
-        if (!validatePath(attachment.getPath())) {
+        if (attachment.getId() > 0 && !validatePath(attachment.getPath())) {
             return false;
         }
         return true;

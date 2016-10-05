@@ -40,6 +40,9 @@ function validateDate(date) {
     var day = parseInt(buf[0], 10);
     var month = parseInt(buf[1], 10);
     var year = parseInt(buf[2], 10);
+    if (!isDateValid(year, month, day)) {
+        return false;
+    }
     if (day > 0 && day <= days[month]) {
         return true;
     }
@@ -52,6 +55,26 @@ function validateDate(date) {
         }
     }
     return false;
+}
+
+function isDateValid(year, month, day) {
+    var curdate = new Date();
+    if (year < curdate.getFullYear()) {
+        return true;
+    }
+    if (year > curdate.getFullYear()) {
+        return false;
+    }
+    if (month > 0 && month < curdate.getMonth() + 1) {
+        return true;
+    }
+    if (month > curdate.getMonth() + 1) {
+        return false;
+    }
+    if(day > curdate.getDate()) {
+        return false;
+    }
+    return true;
 }
 
 function validateRequiredSymbolText(text) {

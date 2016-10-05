@@ -15,7 +15,6 @@ var createNewAttBut = document.getElementById("createNewAtt");
 var attNameInput = document.getElementsByName("attName")[0];
 var attCommentArea = document.getElementsByName("attComment")[0];
 var downloadAttHref = document.getElementById("downloadAttFile");
-var deleteAttFileBut = document.getElementById("deleteAttFile");
 var saveAttBut = document.getElementById("saveAtt");
 var cancelAttFormBut = document.getElementById("cancelAttForm");
 var fileUploadDiv = document.getElementById("fileUploadDiv");
@@ -26,7 +25,6 @@ var aisNew = true;
 var atrToEdit = null;
 var inputFile = null;
 var nextId = 1;
-var isFileDeleted = false;
 
 attFormDiv.style.display = "none";
 downloadAttHref.style.display = "none";
@@ -35,7 +33,6 @@ createNewAttBut.addEventListener('click', createNewAtt);
 saveAttBut.addEventListener('click', saveAtt);
 cancelAttFormBut.addEventListener('click',cancelAttForm);
 deleteAttsBut.addEventListener('click', deleteCheckedAtts);
-deleteAttFileBut.addEventListener('click', deleteAttFile);
 for (var i = 0; i < deleteAttButs.length; i++) {
     deleteAttButs[i].addEventListener('click', deleteAtt);
 }
@@ -43,23 +40,9 @@ for (var i = 0; i < editAttButs.length; i++) {
     editAttButs[i].addEventListener('click', editAtt);
 }
 
-function buildAttRepresentation(id, prefix, postPrefix) {
+function buildAttRepresentation(id, fileInputName) {
     return id + '|' +  attNameInput.value +
-        '|' + prefix + postPrefix + '|'  + attCommentArea.value;
-}
-
-function deleteAttFile(evt) {
-    if ((isFileDeleted || aisNew) && inputFile.files[0] == undefined) {
-        return;
-    }
-    if ((isFileDeleted || aisNew) && inputFile.files[0] != undefined) {
-        inputFile.value = "";
-    }
-    if (!isFileDeleted) {
-        isFileDeleted = true;
-        fileUploadDiv.style.display = "block";
-        downloadAttHref.style.display = "none";
-    }
+        '|' + fileInputName + '|'  + attCommentArea.value;
 }
 
 function deleteCheckedAtts(evt) {
@@ -101,7 +84,6 @@ function deleteCheckedAtts(evt) {
 function createNewAtt(evt) {
     attFormErrorMes.textContent = "";
     aisNew = true;
-    isFileDeleted = false;
     attCommentArea.value = "";
     inputFile = createInputElement("file", "attFileN" + nextId, "");
     inputFile.style.display = "none";
@@ -122,23 +104,11 @@ function editAtt(evt) {
         if (atrToEdit.cells[4].children[i].getAttribute("name") === "attPath") {
             path = atrToEdit.cells[4].children[i].value;
         }
-        if (atrToEdit.cells[4].children[i].getAttribute("type") === "file") {
-            inputFile = atrToEdit.cells[4].children[i];
-        }
     }
-    if (path.length > 0) {
-        isFileDeleted = false;
-        downloadAttHref.href = path;
-        downloadAttHref.style.display = "block";
-    } else {
-        isFileDeleted = true;
-        fileUploadDiv.style.display = "block";
-        downloadAttHref.href = "";
-        downloadAttHref.style.display = "none";
-    }
+    downloadAttHref.href = path;
+    downloadAttHref.style.display = "block";
     attNameInput.value = atrToEdit.cells[1].textContent;
     attCommentArea.value = atrToEdit.cells[3].textContent;
-    fileUploadLabel.insertBefore(inputFile, fileUploadSpan);
     overlay.style.display = "block";
     attFormDiv.style.display = "block";
 }
@@ -148,7 +118,7 @@ function saveAtt(evt) {
         attFormErrorMes.textContent = "Attachment name is not correct!";
         return;
     }
-    if ((isFileDeleted || aisNew) && inputFile.files[0] == undefined) {
+    if (aisNew && inputFile.files[0] == undefined) {
         attFormErrorMes.textContent = "Attachment must have a file!";
         return;
     }
@@ -175,20 +145,7 @@ function saveAtt(evt) {
                 path = atrToEdit.cells[4].children[i];
             }
         }
-        if (isFileDeleted && path != null) {
-            attChangesDiv.appendChild(createInputElement("hidden", "deleteFileWithPath", path.value));
-            atrToEdit.cells[4].removeChild(path)
-
-        }
-        if (id.length > 0) {
-            if (isFileDeleted) {
-                updateInput.value = buildAttRepresentation(id, "f=", inputFile.name);
-            } else {
-                updateInput.value = buildAttRepresentation(id, "p=", path.value);
-            }
-        } else {
-            createInput.value = buildAttRepresentation("", "f=", inputFile.name);
-        }
+        updateInput.value = buildAttRepresentation(id, "");
         atrToEdit.cells[4].appendChild(inputFile);
 
     } else {
@@ -211,14 +168,15 @@ function saveAtt(evt) {
         tr.appendChild(td3);
 
         var td4 = document.createElement("td");
-        td4.appendChild(createInputElement("hidden", "createAtt", buildAttRepresentation("","f=", inputFile.name)));
+        td4.appendChild(createInputElement("hidden", "createAtt", buildAttRepresentation("", inputFile.name)));
         td4.appendChild(createInputElement("hidden", "attId", ""));
-        td4.appendChild(createButtonElement("button", "btn list-btn editAtt", "Edit", editAtt));
         td4.appendChild(createButtonElement("button", "btn list-btn deleteAtt", "Delete", deleteAtt));
         td4.appendChild(inputFile);
         tr.appendChild(td4);
 
         attTable.appendChild(tr);
+
+        inputFile = null;
     }
     attFormDiv.style.display = "none";
     overlay.style.display = "none";
@@ -227,13 +185,8 @@ function saveAtt(evt) {
 function cancelAttForm(evt) {
     if (aisNew) {
         fileUploadLabel.removeChild(inputFile);
-    } else {
-        inputFile.style.display = "none";
-        if (!isFileDeleted) {
-            inputFile.value = "";
-        }
-        atrToEdit.cells[4].appendChild(inputFile);
     }
+    inputFile = null;
     attFormDiv.style.display = "none";
     overlay.style.display = "none";
 }

@@ -23,7 +23,7 @@ public class FileDeleteManager {
             String newFn = "";
             try {
                 int pos;
-                if ((pos = fn.indexOf(FileNameGenerator.BASE_FOLDER)) >= 0) {
+                if ((pos = fn.indexOf(FileNameGenerator.filesPath)) >= 0 || (pos = fn.indexOf(FileNameGenerator.photosPath)) >= 0) {
                     newFn = fn.substring(pos);
                 } else {
                     continue;

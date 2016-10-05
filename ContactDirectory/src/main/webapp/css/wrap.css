@@ -269,26 +269,54 @@ table a:hover {
     margin: 2px;
 }
 
+.page-div {
+    text-align: center;
+    padding: 8px;
+    margin: 0;
+}
+
+.page-form {
+    width: 100%;
+    height: 40px;
+    position: relative;
+}
+
+.next-page-btn {
+    margin: 0 0 0 10% !important;
+    float: left;
+}
+.prev-page-btn {
+    margin: 0 10% !important;
+    float: right;
+}
+
+#pre-footer {
+    width: 100%;
+    height: 50px;
+}
 
 footer {
     /*margin-top: 40px;*/
     background-color: #E1BEE7;
-    position: relative;
-    padding: 40px 0;
+   /* position: relative;*/
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 20px 0;
     color: #212121;
     display: block;
     box-sizing: border-box;
     font-size: 14px;
     z-index: 0;
 }
-footer:before, footer:after {
+/*footer:before, footer:after {
     content: "";
     display: table;
     box-sizing: border-box;
 }
 footer:after {
     clear: both;
-}
+}*/
 .footer-info {
     padding-right: 10%;
     padding-left: 15px;

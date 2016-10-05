@@ -1,6 +1,5 @@
 package by.bsu.contactdirectory.util.file;
 
-import by.bsu.contactdirectory.servlet.MainServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,18 +17,18 @@ public class FileNameGenerator {
     public static String defaultPhotoPath;
     public static String filesPath;
     public static String photosPath;
-    public static final String BASE_FOLDER = "files/";
-    public static final String DELIMETER = "/";
     private static final String PROPERTIES_PATH = "file.properties";
 
     private static Logger logger = LogManager.getLogger(FileNameGenerator.class);
 
     static {
         try {
+            logger.debug("Reading properties.");
             FilePropertiesParser.parse(PROPERTIES_PATH);
-            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER);
-            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER + photosPath);
-            createFolderIfNotExist(MainServlet.appPath + DELIMETER + BASE_FOLDER + filesPath);
+            logger.debug(String.format("Check folder: %s", photosPath));
+            createFolderIfNotExist(photosPath);
+            logger.debug(String.format("Check folder: %s", filesPath));
+            createFolderIfNotExist(filesPath);
         } catch (SecurityException | IOException ex) {
             logger.fatal(ex);
             throw new RuntimeException(ex);
@@ -50,8 +49,11 @@ public class FileNameGenerator {
 
     private static void createFolderIfNotExist(String path) {
         File folder = new File(path);
+        logger.debug(String.format("Checking folder: %s", folder.getAbsolutePath()));
         if (!folder.exists() || !folder.isDirectory()) {
+            logger.debug(String.format("Creating folder: %s", folder.getAbsolutePath()));
             folder.mkdir();
+            logger.debug(String.format("Created folder: %s", folder.getAbsolutePath()));
         }
     }
 
@@ -62,8 +64,8 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = BASE_FOLDER + photosPath + generateInt() + fileExtension;
-            File file = new File(MainServlet.appPath + DELIMETER + filename);
+            filename = photosPath + generateInt() + fileExtension;
+            File file = new File(filename);
             if(!file.exists()) {
                 exists = false;
             }
@@ -78,8 +80,8 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = BASE_FOLDER + filesPath + generateInt() + fileExtension;
-            File file = new File(MainServlet.appPath + DELIMETER + filename);
+            filename = filesPath + generateInt() + fileExtension;
+            File file = new File(filename);
             if(!file.exists()) {
                 exists = false;
             }

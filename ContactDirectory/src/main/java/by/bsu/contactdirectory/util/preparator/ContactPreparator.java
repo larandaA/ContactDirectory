@@ -30,6 +30,7 @@ public class ContactPreparator {
     }
 
     private static void prepareAttachment(Attachment attachment) {
+        attachment.setPath(prepareString(attachment.getPath()));
         attachment.setComment(prepareString(attachment.getComment()));
     }
 
@@ -49,9 +50,7 @@ public class ContactPreparator {
             return;
         }
         if (photo.getPath() == null || photo.getPath().isEmpty()) {
-            photo.setPath(FileNameGenerator.BASE_FOLDER
-                    + FileNameGenerator.photosPath
-                    + FileNameGenerator.defaultPhotoPath);
+            photo.setPath(FileNameGenerator.defaultPhotoPath);
         }
     }
 

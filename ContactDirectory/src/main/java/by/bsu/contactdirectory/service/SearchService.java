@@ -95,21 +95,21 @@ public class SearchService {
         StringBuilder st = new StringBuilder();
 
         if(so.getFirstName() != null) {
-            st.append("`first_name` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`first_name`) LIKE LOWER(?) ESCAPE '!'");
         }
 
         if(so.getLastName() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`last_name` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`last_name`) LIKE LOWER(?) ESCAPE '!'");
         }
 
         if(so.getPatronymic() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`patronymic` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`)patronymic` LIKE LOWER(?) ESCAPE '!'");
         }
 
         if(so.getBirthDateBigger() != null) {
@@ -157,21 +157,21 @@ public class SearchService {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`city` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`city`) LIKE LOWER(?) ESCAPE '!'");
         }
 
         if(so.getLocalAddress() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`local_address` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`local_address`) LIKE LOWER(?) ESCAPE '!'");
         }
 
         if(so.getIndex() != null) {
             if (st.length() != 0) {
                 st.append(" AND ");
             }
-            st.append("`index` LIKE ? ESCAPE '!'");
+            st.append("LOWER(`index`) LIKE LOWER(?) ESCAPE '!'");
         }
 
         System.out.println(st.toString());

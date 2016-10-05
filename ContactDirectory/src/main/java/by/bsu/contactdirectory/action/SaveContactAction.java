@@ -63,7 +63,7 @@ public class SaveContactAction implements Action {
 		}
 
 		for (Attachment att : contact.getAttachments()) {
-			att.setPath(fileMap.get(att.getPath().substring(2)));
+			att.setPath(fileMap.get(att.getPath()));
 		}
 		
 		try {

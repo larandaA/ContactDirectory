@@ -29,6 +29,7 @@
             <br /><br /><br /><br /><br /><br /><br />
         </div>
     </div>
+    <div id="pre-footer"></div>
     <footer>
         <div class="footer-info">
             by Alexandra Ryzhevich

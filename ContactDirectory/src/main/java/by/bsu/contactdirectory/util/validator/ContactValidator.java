@@ -1,5 +1,6 @@
 package by.bsu.contactdirectory.util.validator;
 
+import java.util.Calendar;
 import java.util.regex.Pattern;
 
 import by.bsu.contactdirectory.entity.Attachment;
@@ -25,6 +26,9 @@ public class ContactValidator {
 			return false;
 		}
 		if (!validateNotRequiredName(contact.getPatronymic())) {
+			return false;
+		}
+		if (!validateBirthDate(contact.getBirthDate())) {
 			return false;
 		}
 		if (!validateWebSite(contact.getWebSite())) {
@@ -74,6 +78,29 @@ public class ContactValidator {
 			return false;
 		}
 		return namePattern.matcher(name.trim()).matches();
+	}
+
+	public static boolean validateBirthDate(Calendar date) {
+		if(date == null) {
+			return true;
+		}
+		Calendar currentDate = Calendar.getInstance();
+		if (date.get(Calendar.YEAR) < currentDate.get(Calendar.YEAR)) {
+			return true;
+		}
+		if (date.get(Calendar.YEAR) > currentDate.get(Calendar.YEAR)) {
+			return false;
+		}
+		if (date.get(Calendar.MONTH) < currentDate.get(Calendar.MONTH)) {
+			return true;
+		}
+		if (date.get(Calendar.MONTH) > currentDate.get(Calendar.MONTH)) {
+			return false;
+		}
+		if (date.get(Calendar.DAY_OF_MONTH) > currentDate.get(Calendar.DAY_OF_MONTH)) {
+			return false;
+		}
+		return true;
 	}
 	
 	public static boolean validateWebSite(String webSite) {

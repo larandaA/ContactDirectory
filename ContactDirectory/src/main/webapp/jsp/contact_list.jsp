@@ -95,9 +95,9 @@
 				<div class="cont-cell-4"></div>
 				<div class="cont-cell-4">
 					<div class="cont-cell-4">
-						<form>
+						<form class="page-form">
 							<input type="hidden" name="page" value="${previousPage}">
-							<button class="btn" formaction="ContactList"
+							<button class="btn prev-page-btn" formaction="ContactList"
 									<jstl:if test="${not availablePrevious}">
 										disabled
 									</jstl:if>
@@ -105,12 +105,12 @@
 						</form>
 					</div>
 					<div class="cont-cell-4">
-						${currentPage} of ${pageAmount}
+						<div class="page-div">${currentPage} of ${pageAmount}</div>
 					</div>
 					<div class="cont-cell-4">
-						<form>
+						<form class="page-form">
 							<input type="hidden" name="page" value="${nextPage}">
-							<button class="btn" formaction="ContactList"
+							<button class="btn next-page-btn" formaction="ContactList"
 									<jstl:if test="${not availableNext}">
 										disabled
 									</jstl:if>
@@ -122,6 +122,7 @@
 			</div>
 		</div>
 	</div>
+	<div id="pre-footer"></div>
 	<footer>
 		<div class="footer-info">
 			by Alexandra Ryzhevich

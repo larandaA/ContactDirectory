@@ -137,11 +137,11 @@ function editPhone(evt) {
 
 function savePhone(evt) {
     if (!validatePhoneNumber(phoneNumberInput.value)) {
-        phoneFormErrorMes.textContent = "Phone number is not correct!";
+        phoneFormErrorMes.textContent = "Phone number is not correct! Be sure it's not empty and contains 5-9 digits with no spaces.";
         return;
     }
     if (!validateOperatorCode(operatorCodeInput.value)) {
-        phoneFormErrorMes.textContent = "Operator code is not correct!";
+        phoneFormErrorMes.textContent = "Operator code is not correct! Be sure it's empty or contains 1-5 digits with no spaces.";
         return;
     }
     phoneFormErrorMes.textContent = "";

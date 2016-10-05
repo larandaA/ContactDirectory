@@ -309,7 +309,6 @@
 									<input type="hidden" name="updateAtt" value="" autocomplete="off">
 									<input type="hidden" name="attId" value="${attachment.id}">
 									<input type="hidden" name="attPath" value="${attachment.path}">
-									<input type="file" name="attFile${attachment.id}" style="display:none;">
 									<button type="button" class="btn list-btn editAtt">Edit</button><button type="button" class="btn list-btn deleteAtt">Delete</button>
 								</td>
 							</tr>
@@ -336,6 +335,7 @@
 			</form>
 		</div>
 	</div>
+	<div id="pre-footer"></div>
 	<footer>
 		<div class="footer-info">
 			by Alexandra Ryzhevich
@@ -379,18 +379,16 @@
 			</div>
 			<div class="modal-row">
 				<div class="igroup">
-					<textarea cols="40" rows="5" name="phoneComment"></textarea>
+					<textarea cols="40" rows="3" name="phoneComment"></textarea>
 					<span class="highlight"></span>
 					<span class="bar"></span>
 					<label>Comment</label>
 				</div>
 			</div>
 			<div class="modal-row">
-				<div class="cont-cell-2"></div>
-				<div class="cont-cell-8">
+				<div class="cont-cell-12">
 					<div class="error-message" id="phoneFormErrorMes"></div>
 				</div>
-				<div class="cont-cell-2"></div>
 			</div>
 			<div class="modal-row">
 				<div class="cont-cell-2"></div>
@@ -415,11 +413,8 @@
 				</div>
 			</div>
 			<div class="modal-row">
-				<div class="cont-cell-1"></div>
-				<div class="cont-cell-4">
-					<button type="button" class="btn list-btn" id="deleteAttFile">Delete</button>
-				</div>
-				<div class="cont-cell-7">
+				<div class="cont-cell-3"></div>
+				<div class="cont-cell-9">
 					<a id="downloadAttFile" href="" download="">
 						<button type="button" class="btn list-btn">Download</button>
 					</a>
@@ -439,11 +434,9 @@
 				</div>
 			</div>
 			<div class="modal-row">
-				<div class="cont-cell-2"></div>
-				<div class="cont-cell-8">
+				<div class="cont-cell-12">
 					<div class="error-message" id="attFormErrorMes"></div>
 				</div>
-				<div class="cont-cell-2"></div>
 			</div>
 			<div class="modal-row">
 				<div class="cont-cell-2"></div>

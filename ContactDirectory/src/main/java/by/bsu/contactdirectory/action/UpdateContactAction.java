@@ -75,7 +75,9 @@ public class UpdateContactAction implements Action {
 			phone.setContactId(contact.getId());
 		}
         for (Attachment att : contact.getAttachments()) {
-            att.setPath(fileMap.get(att.getPath().substring(att.getPath().indexOf('=') + 1)));
+            if(att.getPath() != null && !att.getPath().trim().isEmpty()) {
+            	att.setPath(fileMap.get(att.getPath()));
+			}
         }
 
 		try {

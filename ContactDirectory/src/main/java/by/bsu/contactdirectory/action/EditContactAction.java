@@ -75,7 +75,7 @@ public class EditContactAction implements Action {
 	    request.setAttribute("marital", MaritalStatus.values());
 	    request.setAttribute("genders", Gender.values());
 		request.setAttribute("types", PhoneType.values());
-		request.setAttribute("defaultPhoto", FileNameGenerator.BASE_FOLDER + FileNameGenerator.photosPath + FileNameGenerator.defaultPhotoPath);
+		request.setAttribute("defaultPhoto", FileNameGenerator.defaultPhotoPath);
 		logger.info(String.format("Contact info requested. Id: %s", buf));
 		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
