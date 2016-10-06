@@ -14,6 +14,7 @@ import by.bsu.contactdirectory.entity.Contact;
 import by.bsu.contactdirectory.entity.Phone;
 import by.bsu.contactdirectory.entity.Photo;
 import by.bsu.contactdirectory.util.file.FileDeleteManager;
+import by.bsu.contactdirectory.util.file.FileNameGenerator;
 import by.bsu.contactdirectory.util.preparator.ContactPreparator;
 import by.bsu.contactdirectory.util.validator.ContactValidator;
 
@@ -94,9 +95,9 @@ public class ContactService {
 		try {
 			List<Attachment> atts = AttachmentDao.getInstance().findByContact(id);
 			for (Attachment att : atts) {
-				deleteFiles.add(att.getPath());
+				deleteFiles.add(FileNameGenerator.filesPath + att.getPath());
 			}
-			deleteFiles.add(PhotoDao.getInstance().findById(id).getPath());
+			deleteFiles.add(FileNameGenerator.photosPath + PhotoDao.getInstance().findById(id).getPath());
 			ContactDao.getInstance().delete(id);
 		} catch (DaoException ex) {
 			throw new ServiceServerException(ex);

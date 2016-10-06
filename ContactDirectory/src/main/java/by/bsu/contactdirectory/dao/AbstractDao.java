@@ -16,10 +16,6 @@ public abstract class AbstractDao {
 
     private static Logger logger = LogManager.getLogger(AbstractDao.class);
 
-    /*static {
-        ConnectionPool.start("src/main/resources/db.properties");
-    }*/
-
     protected Connection getConnection() throws DaoException {
         try {
             return ConnectionPool.getInstance().getConnection();

@@ -5,6 +5,7 @@ import by.bsu.contactdirectory.service.ContactService;
 
 import by.bsu.contactdirectory.service.ServiceClientException;
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.servlet.Actions;
 import by.bsu.contactdirectory.servlet.MainServlet;
 import by.bsu.contactdirectory.util.file.FileNameGenerator;
 import org.apache.commons.fileupload.FileItem;
@@ -37,63 +38,57 @@ public class UpdateContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("UpdateContact action requested.");
 
 		Contact contact = new Contact();
-		Address address = new Address();
-		contact.setAddress(address);
-		List<Integer> deletePhones = new LinkedList<>();
-		List<String> deleteFiles = new LinkedList<>();
-		List<Integer> deleteAttachments = new LinkedList<>();
-        Map<String, String> fileMap = new HashMap<>();
-
 		try {
+			Address address = new Address();
+			contact.setAddress(address);
+			List<Integer> deletePhones = new LinkedList<>();
+			List<String> deleteFiles = new LinkedList<>();
+			List<Integer> deleteAttachments = new LinkedList<>();
+			Map<String, String> fileMap = new HashMap<>();
+
 			process(request, response, contact, deletePhones, deleteAttachments, deleteFiles, fileMap);
+
+			contact.getAddress().setContactId(contact.getId());
+			if (contact.getPhoto() != null) {
+				contact.getPhoto().setContactId(contact.getId());
+			}
+			for (Attachment attachment : contact.getAttachments()) {
+				attachment.setContactId(contact.getId());
+			}
+			for (Phone phone : contact.getPhones()) {
+				phone.setContactId(contact.getId());
+			}
+			for (Attachment att : contact.getAttachments()) {
+				if(att.getId() == 0) {
+					att.setPath(fileMap.get(att.getPath()));
+				}
+			}
+
+			contactService.updateContact(contact, deleteFiles, deletePhones, deleteAttachments);
+			logger.info(String.format("Contact updated successfully. Id: %d", contact.getId()));
+			response.sendRedirect(Actions.CONTACT_LIST.substring(1));
 		} catch (ActionException ex) {
 			logger.error(ex.getMessage());
-			request.setAttribute("errorMessage", "Invalid parameter.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameter.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 			return;
 		} catch (IOException ex) {
 			logger.error(ex);
-			request.setAttribute("errorMessage", ex.getMessage());
-			//request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 			return;
-		}
-
-		contact.getAddress().setContactId(contact.getId());
-		if (contact.getPhoto() != null) {
-			contact.getPhoto().setContactId(contact.getId());
-		}
-		for (Attachment attachment : contact.getAttachments()) {
-			attachment.setContactId(contact.getId());
-		}
-		for (Phone phone : contact.getPhones()) {
-			phone.setContactId(contact.getId());
-		}
-        for (Attachment att : contact.getAttachments()) {
-            if(att.getPath() != null && !att.getPath().trim().isEmpty()) {
-            	att.setPath(fileMap.get(att.getPath()));
-			}
-        }
-
-		try {
-			contactService.updateContact(contact, deleteFiles, deletePhones, deleteAttachments);
-			logger.info(String.format("Contact updated successfully. Id: %d", contact.getId()));
-			response.sendRedirect("ContactList");
 		} catch (ServiceServerException ex) {
-			logger.error("Failed to update contact. Id: " + contact.getId(), ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			logger.error(String.format("Failed to update contact. Id: %d", contact.getId()), ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		} catch (ServiceClientException ex) {
-			logger.error("Validation failed.");
-			request.setAttribute("errorMessage", "Invalid parameters.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			logger.error("Validation failed.", ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameters.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		}
-
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response, Contact contact,
@@ -123,114 +118,98 @@ public class UpdateContactAction implements Action {
 
 	private void processFormField(FileItem item, Contact contact, List<Integer> deletePhones,
                                   List<Integer> deleteAttachments, List<String> deleteFiles) throws IOException, ActionException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 		String name = item.getFieldName();
 		String value = Streams.asString(item.getInputStream(), "UTF-8");
-		/*value = URLEncoder.encode(value, "CP1251");
-		value = URLDecoder.decode(value, "UTF-8");*/
 		switch (name) {
-			case "id":
+			case ID_ATTRIBUTE:
 				try {
 					contact.setId(Integer.parseInt(value));
 				} catch (NumberFormatException ex) {
 					throw new ActionException(String.format("Invalid contact id got: %s", value));
 				}
 				break;
-			case "firstName":
+			case FIRST_NAME_ATTRIBUTE:
 				contact.setFirstName(value);
 				break;
-			case "lastName":
+			case LAST_NAME_ATTRIBUTE:
 				contact.setLastName(value);
 				break;
-			case "patronymic":
+			case PATRONYMIC_ATTRIBUTE:
 				contact.setPatronymic(value);
 				break;
-			case "gender":
-				if (value != null && !value.isEmpty()) {
-					try {
-						contact.setGender(Gender.valueOf(value.toUpperCase()));
-					} catch (IllegalArgumentException ex) {
-						throw new ActionException("Invalid gender got: " + value);
-					}
-				} break;
-			case "citizenship":
+			case GENDER_ATTRIBUTE:
+				contact.setGender(ActionHelper.getGenderFromString(value));
+				break;
+			case CITIZENSHIP_ATTRIBUTE:
 				contact.setCitizenship(value);
 				break;
-			case "maritalStatus":
-				if (value != null && !value.isEmpty()) {
-					try {
-						contact.setMaritalStatus(MaritalStatus.valueOf(value.toUpperCase()));
-					} catch (IllegalArgumentException ex) {
-						throw new ActionException("Invalid marital status got: " + value);
-					}
-				} break;
-			case "email":
+			case MARITAL_STATUS_ATTRIBUTE:
+				contact.setMaritalStatus(ActionHelper.getMaritalStatusFromString(value));
+				break;
+			case EMAIL_ATTRIBUTE:
 				contact.setEmail(value);
 				break;
-			case "webSite":
+			case WEB_SITE_ATTRIBUTE:
 				contact.setWebSite(value);
 				break;
-			case "placeOfWork":
-				logger.debug(String.format("Place OfWork: %s", value));
+			case PLACE_OF_WORK_ATTRIBUTE:
 				contact.setPlaceOfWork(value);
 				break;
-			case "birthDate":
-				if (value != null && !value.isEmpty()) {
-					try{
-						Calendar birthDate = Calendar.getInstance();
-						birthDate.setTime(dateFormat.parse(value));
-						contact.setBirthDate(birthDate);
-					} catch (ParseException ex) {
-						throw new ActionException("Invalid birthDate got: " + value);
-					}
-				} break;
-			case "country":
+			case BIRTH_DATE_ATTRIBUTE:
+				contact.setBirthDate(ActionHelper.getCalendarFromString(value, BIRTH_DATE_ATTRIBUTE));
+				break;
+			case COUNTRY_ATTRIBUTE:
 				contact.getAddress().setCountry(value);
 				break;
-			case "city":
+			case CITY_ATTRIBUTE:
 				contact.getAddress().setCity(value);
 				break;
-			case "localAddress":
+			case LOCAL_ADDRESS_ATTRIBUTE:
 				contact.getAddress().setLocalAddress(value);
 				break;
-			case "index":
+			case INDEX_ATTRIBUTE:
 				contact.getAddress().setIndex(value);
 				break;
-			case "createPhone":
-			case "updatePhone":
-				Phone phone = parsePhone(value);
+			case CREATE_PHONE_ATTRIBUTE:
+			case UPDATE_PHONE_ATTRIBUTE:
+				Phone phone = ActionHelper.parsePhone(value);
 				if (phone != null) {
 					contact.getPhones().add(phone);
 				}
 				break;
-            case "createAtt":
-            case "updateAtt":
-                Attachment att = parseAttachment(value);
+            case CREATE_ATT_ATTRIBUTE:
+            case UPDATE_ATT_ATTRIBUTE:
+                Attachment att = ActionHelper.parseAttachment(value);
                 if (att != null) {
                     contact.getAttachments().add(att);
                 }
                 break;
-			case "deletePhoneWithId":
+			case DELETE_PHONE_ATTRIBUTE:
 				try {
 					deletePhones.add(Integer.parseInt(value));
 				} catch (NumberFormatException ex) {
 					throw new ActionException(String.format("Invalid phone id to delete got: %s", value));
 				}
 				break;
-			case "deletePhotoWithPath":
-			case "deleteFileWithPath":
-				if (value != null && !value.isEmpty()) {
-					deleteFiles.add(value);
+			case DELETE_PHOTO_ATTRIBUTE:
+				if (value != null && !value.trim().isEmpty()) {
+					deleteFiles.add(FileNameGenerator.photosPath + value);
 				}
 				break;
-			case "deleteAttWithId":
+			case DELETE_FILE_ATTRIBUTE:
+				if (value != null && !value.trim().isEmpty()) {
+					deleteFiles.add(FileNameGenerator.filesPath + value);
+				}
+				break;
+			case DELETE_ATT_ATTRIBUTE:
 				try {
 					deleteAttachments.add(Integer.parseInt(value));
 				} catch (NumberFormatException ex) {
 					throw new ActionException(String.format("Invalid attachment id to delete got: %s", value));
 				}
 				break;
-			case "noPhoto":
+			case NO_PHOTO_ATTRIBUTE:
 				logger.debug(String.format("No photo param value: %s", value));
 				if ("true".equals(value)) {
 					contact.setPhoto(new Photo());
@@ -246,21 +225,24 @@ public class UpdateContactAction implements Action {
 		}
 		String extension = FilenameUtils.getExtension(item.getName());
 		String filename = "";
-        if ("photo".equals(paramName)) {
+		String folder = "";
+        if (PHOTO_ATTRIBUTE.equals(paramName)) {
             contact.setPhoto(new Photo());
             filename = FileNameGenerator.generatePhotoFileName(extension);
+			folder = FileNameGenerator.photosPath;
 
-        } else if (paramName != null && paramName.startsWith("attFile")) {
+        } else if (paramName != null && paramName.startsWith(ATT_FILE_ATTRIBUTE)) {
             filename = FileNameGenerator.generateAttFileName(extension);
+			folder = FileNameGenerator.filesPath;
         } else {
             return;
         }
 		if (filename != null && !filename.isEmpty()) {
 			try {
-				File storeFile = new File(MainServlet.appPath + filename);
+				File storeFile = new File(folder, filename);
 				logger.debug(String.format("NEW FILE: %s", storeFile.getAbsolutePath()));
 				if (!storeFile.createNewFile()) {
-					throw new IOException("Can't create file: " + filename);
+					throw new IOException(String.format("Can't create file: %s/%s", folder, filename));
 				}
 				item.write(storeFile);
 			} catch (IOException ex) {
@@ -268,84 +250,13 @@ public class UpdateContactAction implements Action {
 			} catch (Exception ex) {
 				throw new IOException(ex);
 			}
-            if ("photo".equals(paramName)) {
+            if (PHOTO_ATTRIBUTE.equals(paramName)) {
                 contact.getPhoto().setPath(filename);
 
-            } else if (paramName != null && paramName.startsWith("attFile")) {
+            } else if (paramName != null && paramName.startsWith(ATT_FILE_ATTRIBUTE)) {
                 fileMap.put(paramName, filename);
             }
 		}
 
 	}
-
-	private Phone parsePhone(String value) throws ActionException {
-		if (value == null || value.isEmpty()) {
-			return null;
-		}
-		String[] params = value.split("\\|", 6);
-		if(params.length != 6) {
-			throw new ActionException(String.format("Invalid phone parameters: %s", Arrays.deepToString(params)));
-		}
-		Phone phone = new Phone();
-		if (!params[0].isEmpty()) {
-			try {
-				phone.setId(Integer.parseInt(params[0]));
-			} catch (NumberFormatException ex) {
-				throw new ActionException(String.format("Invalid phone id: %s", params[0]));
-			}
-		}
-		if (!params[1].isEmpty()) {
-			try {
-				phone.setCountryCode(Integer.parseInt(params[1]));
-			} catch (NumberFormatException ex) {
-				throw new ActionException(String.format("Invalid country code: %s", params[1]));
-			}
-		}
-		if (!params[2].isEmpty()) {
-			try {
-				phone.setOperatorCode(Integer.parseInt(params[2]));
-			} catch (NumberFormatException ex) {
-				throw new ActionException(String.format("Invalid operator code: %s", params[2]));
-			}
-		}
-		if (!params[3].isEmpty()) {
-			try {
-				phone.setPhoneNumber(Integer.parseInt(params[3]));
-			} catch (NumberFormatException ex) {
-				throw new ActionException(String.format("Invalid phone number: %s", params[3]));
-			}
-		}
-		if (!params[4].isEmpty()) {
-			try {
-				phone.setType(PhoneType.valueOf(params[4].toUpperCase()));
-			} catch (IllegalArgumentException ex) {
-				throw new ActionException(String.format("Invalid phone type: %s", params[4]));
-			}
-		}
-		phone.setComment(params[5]);
-		return phone;
-	}
-
-    private Attachment parseAttachment(String value) throws ActionException {
-        if (value == null || value.isEmpty()) {
-            return null;
-        }
-        String[] params = value.split("\\|", 4);
-        if(params.length != 4) {
-            throw new ActionException(String.format("Invalid attachment parameters: %s", Arrays.deepToString(params)));
-        }
-        Attachment att = new Attachment();
-        if (!params[0].isEmpty()) {
-            try {
-                att.setId(Integer.parseInt(params[0]));
-            } catch (NumberFormatException ex) {
-                throw new ActionException(String.format("Invalid attachment id: %s", params[0]));
-            }
-        }
-        att.setName(params[1]);
-        att.setPath(params[2]);
-        att.setComment(params[3]);
-        return att;
-    }
-
 }

@@ -20,22 +20,18 @@ import org.apache.logging.log4j.Logger;
 //@WebServlet("/")
 public class MainServlet extends HttpServlet {
 
-    public static String appPath = "";
-    Logger logger = LogManager.getLogger(MainServlet.class);
-
     @Override
     public void init()throws ServletException {
         super.init();
-        appPath = getServletContext().getRealPath("");
-        logger.info(String.format("Path to servlet: %s", appPath));
         ConnectionPool.start("db.properties");
         EmailSender.init("email.properties");
         DailyMailingStarter.start();
-
     }
 
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        res.setCharacterEncoding("UTF-8");
    		String action = req.getServletPath();
    		ActionInvoker.invoke(action, req, res);    	
     }

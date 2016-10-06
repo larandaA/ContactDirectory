@@ -46,9 +46,11 @@ public class FilePropertiesParser {
             }
 
         } finally {
-            try {
-                input.close();
-            } catch (IOException e) {}
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {}
+            }
         }
     }
 }

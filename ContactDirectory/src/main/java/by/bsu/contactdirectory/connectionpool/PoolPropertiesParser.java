@@ -28,40 +28,36 @@ class PoolPropertiesParser {
     private static final String DEFAULT_CHARSET_ENCODING = "UTF-8";
 
     static void parse(ConnectionPool cp, String pathToProperties) {
+        InputStream input = null;
         try {
             ClassLoader classLoader = PoolPropertiesParser.class.getClassLoader();
-            InputStream input = classLoader.getResourceAsStream(pathToProperties);
+            input = classLoader.getResourceAsStream(pathToProperties);
             Properties properties = new Properties();
             properties.load(input);
             try {
                 cp.setMinimumConnections(Integer.valueOf(properties.getProperty(MINIMUM_CONNECTIONS_KEY)));
             } catch (IllegalFormatException ex) {
-                System.out.println("!!!error11111");
                 cp.setMinimumConnections(DEFAULT_MINIMUM_CONNECTIONS);
             }
             try {
                 cp.setMaximumConnections(Integer.valueOf(properties.getProperty(MAXIMUM_CONNECTIONS_KEY)));
             } catch (IllegalFormatException ex) {
-                System.out.println("!!!error2222");
                 cp.setMaximumConnections(DEFAULT_MAXIMUM_CONNECTIONS);
             }
 
             String databaseUrl = properties.getProperty(DATABASE_URL_KEY);
             if (databaseUrl != null) {
                 cp.setUrl(FIRST_PART_URL + databaseUrl);
-                //cp.setUrl(FIRST_PART_URL + "localhost:3306/alexandra_ryzhevich_db");
             } else {
-                throw new RuntimeException("Not set database url");
+                throw new RuntimeException("Database url is not set.");
             }
 
             String user = properties.getProperty(USER_KEY);
             if (user == null || user.isEmpty()) {
-                System.out.println("!!!error3333");
                 user = DEFAULT_USER;
             }
             String password = properties.getProperty(PASSWORD_KEY);
             if (password == null || password.isEmpty()) {
-                System.out.println("!!!error4444");
                 password = DEFAULT_PASSWORD;
             }
             String useUnicode = properties.getProperty(USE_UNICODE_KEY);
@@ -74,39 +70,21 @@ class PoolPropertiesParser {
             }
 
             Properties connectionProperties = new Properties();
-            connectionProperties.setProperty(USER_KEY, /*DEFAULT_USER*/user);
-            connectionProperties.setProperty(PASSWORD_KEY, /*DEFAULT_PASSWORD*/password);
-            connectionProperties.setProperty(USE_UNICODE_KEY, /*DEFAULT_USE_UNICODE*/useUnicode);
-            connectionProperties.setProperty(CHARSET_ENCODING_KEY, /*DEFAULT_CHARSET_ENCODING*/charsetEncoding);
+            connectionProperties.setProperty(USER_KEY, user);
+            connectionProperties.setProperty(PASSWORD_KEY, password);
+            connectionProperties.setProperty(USE_UNICODE_KEY, useUnicode);
+            connectionProperties.setProperty(CHARSET_ENCODING_KEY, charsetEncoding);
             cp.setConnectionProperties(connectionProperties);
 
             input.close();
-        } catch (IOException e) {
-
+        } catch (IOException e) { }
+        finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) { }
+            }
         }
 
-    }
-
-    private static boolean validateUser(String user){
-        return true;
-    }
-
-    private static boolean validatePassword(String password){
-        return true;
-    }
-
-    private static boolean validateUseUnicode(String useUnicode){
-        return true;
-    }
-
-    private static boolean validateCharsetEncoding(String charsetEncoding){
-        return true;
-    }
-
-    private static boolean validate(String str, String pattern){
-        if (str == null){
-            return false;
-        }
-        return true;
     }
 }

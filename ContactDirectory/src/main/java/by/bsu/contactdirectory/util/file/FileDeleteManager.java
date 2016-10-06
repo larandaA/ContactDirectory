@@ -1,11 +1,9 @@
 package by.bsu.contactdirectory.util.file;
 
-import by.bsu.contactdirectory.servlet.MainServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,24 +18,17 @@ public class FileDeleteManager {
             if (fn == null) {
                 continue;
             }
-            String newFn = "";
             try {
-                int pos;
-                if ((pos = fn.indexOf(FileNameGenerator.filesPath)) >= 0 || (pos = fn.indexOf(FileNameGenerator.photosPath)) >= 0) {
-                    newFn = fn.substring(pos);
-                } else {
+                if (fn.endsWith(FileNameGenerator.defaultPhotoPath)) {
                     continue;
                 }
-                if (newFn.endsWith(FileNameGenerator.defaultPhotoPath)) {
-                    continue;
-                }
-                File file = new File(MainServlet.appPath + newFn);
+                File file = new File(fn);
                 if (file.exists() && !file.isDirectory()) {
                     file.delete();
                 }
-                logger.info(String.format("Deleted file: %s", newFn));
+                logger.info(String.format("Deleted file: %s", fn));
             } catch (SecurityException ex) {
-                logger.warn(String.format("Can't delete file: %s", newFn));
+                logger.warn(String.format("Can't delete file: %s", fn));
             }
         }
     }

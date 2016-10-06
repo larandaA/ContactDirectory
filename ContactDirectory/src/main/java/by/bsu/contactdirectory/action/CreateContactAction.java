@@ -24,25 +24,22 @@ public class CreateContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("CreateContact action requested.");
 
-		request.setAttribute("action", Actions.SAVE_CONTACT.substring(1));
 		try {
-			request.setAttribute("countries", countryService.getCountryNames());
-			request.setAttribute("codes", countryService.getCountryCodes());
+			request.setAttribute(ACTION_ATTRIBUTE, Actions.SAVE_CONTACT.substring(1));
+			request.setAttribute(COUNTRIES_ATTRIBUTE, countryService.getCountryNames());
+			request.setAttribute(CODES_ATTRIBUTE, countryService.getCountryCodes());
+			request.setAttribute(MARITAL_ATTRIBUTE, MaritalStatus.values());
+			request.setAttribute(GENDERS_ATTRIBUTE, Gender.values());
+			request.setAttribute(TYPES_ATTRIBUTE, PhoneType.values());
+			request.setAttribute(DEFAULT_PHOTO_ATTRIBUTE, FileNameGenerator.defaultPhotoPath);
+			request.getRequestDispatcher(Actions.CONTACT_INFO_JSP).forward(request, response);
 		} catch (ServiceServerException ex) {
-			logger.error("Can't get list of coutries.", ex);
-			request.setAttribute("errorMessage", "Internal server error, sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
+			logger.error("Can't get list of countries.", ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error, sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		}
-		logger.info("Requesting create contact page.");
-        request.setAttribute("marital", MaritalStatus.values());
-        request.setAttribute("genders", Gender.values());
-		request.setAttribute("types", PhoneType.values());
-		request.setAttribute("defaultPhoto", FileNameGenerator.defaultPhotoPath);
-		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
 
 }

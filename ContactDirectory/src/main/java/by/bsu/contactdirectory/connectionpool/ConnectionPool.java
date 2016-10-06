@@ -44,22 +44,21 @@ public class ConnectionPool {
     private KillerDaemon killerThread;
 
     private ConnectionPool(String propertiesPath) throws ConnectionPoolException {
-        if (!loadDriver()){
+        if (!loadDriver()) {
             throw new RuntimeException("Driver is not loaded");
         }
 
-        //ResourceBundle resourceBundle = PropertyResourceBundle.getBundle(propertiesPath);
         parseProperties(propertiesPath);
-        //parseResourceBundle(null);
 
-        try{
+        try {
             initConnections();
-        }catch (SQLException ex){
-            throw new ConnectionPoolException("cannot connect to database");
+        } catch (SQLException ex) {
+            logger.fatal("Cannot connect to database.", ex);
+            throw new ConnectionPoolException("Cannot connect to database");
         }
     }
 
-    public static void start(String pathToProperties){
+    public static void start(String pathToProperties) {
         if (!isCreate.get()) {
             lock.lock();
             if (instance == null) {
@@ -87,25 +86,26 @@ public class ConnectionPool {
 
     private boolean loadDriver() {
         try {
+            logger.debug("Loading jdbc driver.");
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             return true;
         } catch (SQLException  ex) {
-            logger.error("Not load jdbc driver.", ex);
+            logger.error("Cannot load jdbc driver.", ex);
             return false;
         }
     }
 
-    private PoolConnection createConnection() throws SQLException{
+    private PoolConnection createConnection() throws SQLException {
+        logger.info("Create new connection.");
         PoolConnection pl = new PoolConnection(DriverManager.getConnection(url, connectionProperties));
         currentConnections.incrementAndGet();
         return pl;
     }
 
-    private void initConnections() throws SQLException{
+    private void initConnections() throws SQLException {
         connections = new LinkedBlockingDeque<>();
         for (int i = 0; i < minimumConnections; i++) {
             connections.add(createConnection());
-            logger.info("Create connection");
         }
         killerThread = new KillerDaemon();
         killerThread.setDaemon(true);
@@ -116,15 +116,15 @@ public class ConnectionPool {
         connections.add(connection);
     }
 
-    public Connection getConnection() throws ConnectionPoolException{
+    public Connection getConnection() throws ConnectionPoolException {
         if (connections.isEmpty()){
             createLock.lock();
-            if (currentConnections.get() < maximumConnections){
-                try{
+            if (currentConnections.get() < maximumConnections) {
+                try {
                     PoolConnection newConnection = createConnection();
                     createLock.unlock();
                     return newConnection;
-                }catch (SQLException ex){
+                }catch (SQLException ex) {
                     logger.error(ex);
                 }
             }
@@ -143,12 +143,12 @@ public class ConnectionPool {
         		throw new ConnectionPoolException(ex);
         	}
             return cn;
-        }catch (InterruptedException ex){
+        }catch (InterruptedException ex) {
             throw new ConnectionPoolException(ex);
         }
     }
 
-    public void close(){
+    public void close() {
         int closedConnections = 0;
         maximumConnections = 0;
         PoolConnection pl;
@@ -165,6 +165,7 @@ public class ConnectionPool {
     }
 
     public void restart() throws ConnectionPoolException {
+        logger.info("Restarting connection pool.");
         close();
         try {
             initConnections();

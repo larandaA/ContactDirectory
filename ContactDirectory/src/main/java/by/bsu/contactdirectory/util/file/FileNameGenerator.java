@@ -64,8 +64,8 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = photosPath + generateInt() + fileExtension;
-            File file = new File(filename);
+            filename = generateInt() + fileExtension;
+            File file = new File(photosPath, filename);
             if(!file.exists()) {
                 exists = false;
             }
@@ -80,8 +80,8 @@ public class FileNameGenerator {
         }
         boolean exists = true;
         while(exists) {
-            filename = filesPath + generateInt() + fileExtension;
-            File file = new File(filename);
+            filename = generateInt() + fileExtension;
+            File file = new File(filesPath, filename);
             if(!file.exists()) {
                 exists = false;
             }

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.servlet.Actions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,21 +21,18 @@ public class SearchEditAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("SearchEdit action requested.");
 
 		try {
-			request.setAttribute("countries", new CountryService().getCountryNames());
+			request.setAttribute(COUNTRIES_ATTRIBUTE, new CountryService().getCountryNames());
+			request.setAttribute(MARITAL_ATTRIBUTE, MaritalStatus.values());
+			request.setAttribute(GENDERS_ATTRIBUTE, Gender.values());
+			request.getRequestDispatcher(Actions.SEARCH_JSP).forward(request, response);
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to get countries.", ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		}
-        request.setAttribute("marital", MaritalStatus.values());
-        request.setAttribute("genders", Gender.values());
-		logger.info("Search edit page requested.");
-		request.getRequestDispatcher("jsp/search.jsp").forward(request, response);		
 	}
 
 }

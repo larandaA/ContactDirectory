@@ -29,7 +29,7 @@ public class ContactDao extends AbstractDao {
     		"AND EXTRACT(MONTH FROM `birth_date`) = EXTRACT(MONTH FROM curdate());";
     private static final String SELECT_SINGLE = SELECT + " WHERE `contact`.`id` = ? LIMIT 1;";
     private static final String UPDATE = "UPDATE `contact` SET `first_name` = ?, `last_name` = ?, `patronymic` = ?, `birth_date` = ?, " +
-            "`gender` = ?, `country_id` = (SELECT `name` FROM `country` WHERE `id` = ?), `marital_status` = ?, " +
+            "`gender` = ?, `country_id` = (SELECT `id` FROM `country` WHERE `name` = ? LIMIT 1), `marital_status` = ?, " +
             "`web_site` = ?, `email` = ?, `place_of_work` = ? WHERE `id` = ?;";
     private static final String DELETE = "DELETE FROM `contact` WHERE `id` = ?;";
     private static final String SELECT_AMOUNT = "SELECT COUNT(`id`) FROM `contact`;";
@@ -77,63 +77,72 @@ public class ContactDao extends AbstractDao {
         return contact;
     }
 
+    private void createContact(Contact contact, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(CREATE)) {
+            st.setString(1, contact.getFirstName());
+            st.setString(2, contact.getLastName());
+            if (contact.getPatronymic() == null) {
+                st.setNull(3, Types.VARCHAR);
+            } else {
+                st.setString(3, contact.getPatronymic());
+            }
+            if (contact.getBirthDate() == null) {
+                st.setNull(4, Types.DATE);
+            } else {
+                st.setDate(4, new java.sql.Date(contact.getBirthDate().getTimeInMillis()));
+            }
+            if (contact.getGender() == null) {
+                st.setNull(5, Types.OTHER);
+            } else {
+                st.setString(5, contact.getGender().toString());
+            }
+            if (contact.getCitizenship() == null) {
+                st.setNull(6, Types.VARCHAR);
+            } else {
+                st.setString(6, contact.getCitizenship());
+            }
+            if (contact.getMaritalStatus() == null) {
+                st.setNull(7, Types.OTHER);
+            } else {
+                st.setString(7, contact.getMaritalStatus().toString());
+            }
+            if (contact.getWebSite() == null) {
+                st.setNull(8, Types.VARCHAR);
+            } else {
+                st.setString(8, contact.getWebSite());
+            }
+            if (contact.getEmail() == null) {
+                st.setNull(9, Types.VARCHAR);
+            } else {
+                st.setString(9, contact.getEmail());
+            }
+            if (contact.getPlaceOfWork() == null) {
+                st.setNull(10, Types.VARCHAR);
+            } else {
+                st.setString(10, contact.getPlaceOfWork());
+            }
+            st.executeUpdate();
+        }
+    }
+
+    private int getLastId(Connection cn) throws SQLException {
+        int id = 0;
+        try (PreparedStatement st = cn.prepareStatement(LAST_ID)) {
+            ResultSet rs = st.executeQuery();
+            rs.next();
+            id = rs.getInt(1);
+        }
+        return id;
+    }
+
     public int create(Contact contact) throws DaoException {
         int id = 0;
         Connection cn = null;
-        PreparedStatement st = null;
-        PreparedStatement st2 = null;
         try {
             cn = getConnection();
             cn.setAutoCommit(false);
-            st = cn.prepareStatement(CREATE);
-            st2 = cn.prepareStatement(LAST_ID);
-            st.setString(1, contact.getFirstName());
-            st.setString(2, contact.getLastName());
-            System.out.println(contact.getPatronymic());
-            if (contact.getPatronymic() == null) {
-            	st.setNull(3, Types.VARCHAR);
-            } else {
-            	 st.setString(3, contact.getPatronymic());
-            }
-            if (contact.getBirthDate() == null) {
-            	st.setNull(4, Types.DATE);
-            } else {
-            	st.setDate(4, new java.sql.Date(contact.getBirthDate().getTimeInMillis()));
-            }
-            if (contact.getGender() == null) {
-            	st.setNull(5, Types.OTHER);
-            } else {
-            	st.setString(5, contact.getGender().toString());
-            }
-            if (contact.getCitizenship() == null) {
-            	st.setNull(6, Types.VARCHAR);
-            } else {
-            	 st.setString(6, contact.getCitizenship());
-            }
-            if (contact.getMaritalStatus() == null) {
-            	st.setNull(7, Types.OTHER);
-            } else {
-            	st.setString(7, contact.getMaritalStatus().toString());
-            }            
-            if (contact.getWebSite() == null) {
-            	st.setNull(8, Types.VARCHAR);
-            } else {
-            	 st.setString(8, contact.getWebSite());
-            }
-            if (contact.getEmail() == null) {
-            	st.setNull(9, Types.VARCHAR);
-            } else {
-            	 st.setString(9, contact.getEmail());
-            }
-            if (contact.getPlaceOfWork() == null) {
-            	st.setNull(10, Types.VARCHAR);
-            } else {
-            	 st.setString(10, contact.getPlaceOfWork());
-            }
-            st.executeUpdate();
-            ResultSet rs = st2.executeQuery();
-            rs.next();
-            id = rs.getInt(1);
+            createContact(contact, cn);
+            id = getLastId(cn);
 
             if (contact.getAddress() != null) {
                 contact.getAddress().setContactId(id);
@@ -163,13 +172,10 @@ public class ContactDao extends AbstractDao {
                 cn.rollback();
                 cn.setAutoCommit(true);
             } catch (SQLException ex2) {}
-        	ex.printStackTrace();
             throw new DaoException(ex);
         }
         finally {
             try {
-                st.close();
-                st2.close();
                 cn.close();
             } catch (SQLException ex) {}
         }
@@ -219,58 +225,62 @@ public class ContactDao extends AbstractDao {
         return contactList;
     }
 
-    public void update(Contact contact, List<Integer> deletePhones, List<Integer> deleteAttachments) throws DaoException {
-        Connection cn = null;
-        PreparedStatement st = null;
-        try {
-            cn = getConnection();
-            cn.setAutoCommit(false);
-            st = cn.prepareStatement(UPDATE);
+    private void updateContact(Contact contact, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(UPDATE)) {
             st.setString(1, contact.getFirstName());
             st.setString(2, contact.getLastName());
             if (contact.getPatronymic() == null) {
-            	st.setNull(3, Types.VARCHAR);
+                st.setNull(3, Types.VARCHAR);
             } else {
-            	 st.setString(3, contact.getPatronymic());
+                st.setString(3, contact.getPatronymic());
             }
             if (contact.getBirthDate() == null) {
-            	st.setNull(4, Types.DATE);
+                st.setNull(4, Types.DATE);
             } else {
-            	st.setDate(4, new java.sql.Date(contact.getBirthDate().getTimeInMillis()));
+                st.setDate(4, new java.sql.Date(contact.getBirthDate().getTimeInMillis()));
             }
             if (contact.getGender() == null) {
-            	st.setNull(5, Types.OTHER);
+                st.setNull(5, Types.OTHER);
             } else {
-            	st.setString(5, contact.getGender().toString());
+                st.setString(5, contact.getGender().toString());
             }
             if (contact.getCitizenship() == null) {
-            	st.setNull(6, Types.VARCHAR);
+                st.setNull(6, Types.VARCHAR);
             } else {
-            	 st.setString(6, contact.getCitizenship());
+                st.setString(6, contact.getCitizenship());
             }
             if (contact.getMaritalStatus() == null) {
-            	st.setNull(7, Types.OTHER);
+                st.setNull(7, Types.OTHER);
             } else {
-            	st.setString(7, contact.getMaritalStatus().toString());
-            }            
+                st.setString(7, contact.getMaritalStatus().toString());
+            }
             if (contact.getWebSite() == null) {
-            	st.setNull(8, Types.VARCHAR);
+                st.setNull(8, Types.VARCHAR);
             } else {
-            	 st.setString(8, contact.getWebSite());
+                st.setString(8, contact.getWebSite());
             }
             if (contact.getEmail() == null) {
-            	st.setNull(9, Types.VARCHAR);
+                st.setNull(9, Types.VARCHAR);
             } else {
-            	 st.setString(9, contact.getEmail());
+                st.setString(9, contact.getEmail());
             }
             if (contact.getPlaceOfWork() == null) {
-            	st.setNull(10, Types.VARCHAR);
+                st.setNull(10, Types.VARCHAR);
             } else {
-            	 st.setString(10, contact.getPlaceOfWork());
+                st.setString(10, contact.getPlaceOfWork());
             }
             st.setInt(11, contact.getId());
 
             st.executeUpdate();
+        }
+    }
+
+    public void update(Contact contact, List<Integer> deletePhones, List<Integer> deleteAttachments) throws DaoException {
+        Connection cn = null;
+        try {
+            cn = getConnection();
+            cn.setAutoCommit(false);
+            updateContact(contact, cn);
 
             if (contact.getAddress() != null) {
                 AddressDao.getInstance().update(contact.getAddress(), cn);
@@ -323,7 +333,6 @@ public class ContactDao extends AbstractDao {
         }
         finally {
             try {
-                st.close();
                 cn.close();
             } catch (SQLException ex) {}
         }

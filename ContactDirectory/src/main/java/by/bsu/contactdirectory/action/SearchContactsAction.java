@@ -6,6 +6,7 @@ import by.bsu.contactdirectory.entity.SearchObject;
 import by.bsu.contactdirectory.service.SearchService;
 
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.servlet.Actions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,96 +27,62 @@ public class SearchContactsAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("SearchContacts action requested.");
 
-		SearchObject so = new SearchObject();
-		so.setFirstName(request.getParameter("firstName"));
-		so.setLastName(request.getParameter("lastName"));
-		logger.debug(String.format("LastName: %s", so.getLastName()));
-		so.setPatronymic(request.getParameter("patronymic"));
-		String buf = request.getParameter("gender");
-		if (buf != null && !buf.isEmpty()) {
-			try {
-				so.setGender(Gender.valueOf(buf.toUpperCase()));
-			} catch (IllegalArgumentException ex) {
-				logger.error("Invalid gender got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		so.setCitizenship(request.getParameter("citizenship"));
-		buf = request.getParameter("maritalStatus");
-		if (buf != null && !buf.isEmpty()) {
-			try {
-				so.setMaritalStatus(MaritalStatus.valueOf(buf.toUpperCase()));
-			} catch (IllegalArgumentException ex) {
-				logger.error("Invalid marital status got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		buf = request.getParameter("birthDateBigger");
-		if (buf != null && !buf.isEmpty()) {
-			try{
-				Calendar birthDateBigger = Calendar.getInstance();
-				birthDateBigger.setTime(dateFormat.parse(buf));
-				so.setBirthDateBigger(birthDateBigger);
-			} catch (ParseException ex) {
-				logger.error("Invalid birth date bigger limit got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		buf = request.getParameter("birthDateLess");
-		if (buf != null && !buf.isEmpty()) {
-			try{
-				Calendar birthDateLess = Calendar.getInstance();
-				birthDateLess.setTime(dateFormat.parse(buf));
-				so.setBirthDateLess(birthDateLess);
-			} catch (ParseException ex) {
-				logger.error("Invalid birth date less limit got: " + buf);
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-				return;
-			}
-		}
-		so.setCountry(request.getParameter("country"));
-		so.setCity(request.getParameter("city"));
-		so.setLocalAddress(request.getParameter("localAddress"));
-		so.setIndex(request.getParameter("index"));
-
-		request.getSession().removeAttribute("searchObject");
-		request.getSession().removeAttribute("page");
 		try {
+			SearchObject so = new SearchObject();
+			setSearchObjectParams(request, so);
+
+			request.getSession().removeAttribute(SEARCH_OBJECT_ATTRIBUTE);
+			request.getSession().removeAttribute(PAGE_ATTRIBUTE);
+
 			if (!searchService.isResultEmpty(so)) {
-				request.getSession().setAttribute("searchObject", so);
+				request.getSession().setAttribute(SEARCH_OBJECT_ATTRIBUTE, so);
 				logger.info("Search object successfully created.");
-				response.sendRedirect("ContactList");
+				response.sendRedirect(Actions.CONTACT_LIST.substring(1));
 			} else {
-				String errorMessage = "No result found.";
-				int page = 0;
-				int pageAmount = 0;
-				request.setAttribute("errorMessage", errorMessage);
-				request.setAttribute("dateFormat", dateFormat);
-				request.setAttribute("pageAmount", pageAmount);
-				request.setAttribute("currentPage", page);
-				request.setAttribute("nextPage", page + 1);
-				request.setAttribute("previousPage", page - 1);
-				request.setAttribute("availableNext", page < pageAmount);
-				request.setAttribute("availablePrevious", page > 1);
-				request.getRequestDispatcher("jsp/contact_list.jsp").forward(request, response);
+				setNotFoundAttributes(request);
+				request.getRequestDispatcher(Actions.CONTACT_LIST_JSP).forward(request, response);
 			}
 
 		} catch (ServiceServerException ex) {
 			logger.error("Failed to count result amount.", ex);
-			request.setAttribute("errorMessage", "Internal server error.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
+		} catch(ActionException ex) {
+			logger.error(ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameters.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		}
+	}
+
+	private void setSearchObjectParams(HttpServletRequest request, SearchObject so) throws ActionException {
+		so.setFirstName(request.getParameter("firstName"));
+		so.setLastName(request.getParameter("lastName"));
+		so.setPatronymic(request.getParameter("patronymic"));
+		so.setGender(ActionHelper.getGender(request));
+		so.setCitizenship(request.getParameter("citizenship"));
+		so.setMaritalStatus(ActionHelper.getMaritalStatus(request));
+		so.setBirthDateBigger(ActionHelper.getCalendar(request, BIRTH_DATE_BIGGER_ATTRIBUTE));
+		so.setBirthDateLess(ActionHelper.getCalendar(request, BIRTH_DATE_LESS_ATTRIBUTE));
+		so.setCountry(request.getParameter("country"));
+		so.setCity(request.getParameter("city"));
+		so.setLocalAddress(request.getParameter("localAddress"));
+		so.setIndex(request.getParameter("index"));
+	}
+
+	private void setNotFoundAttributes(HttpServletRequest request) {
+		String errorMessage = "No result found.";
+		int page = 0;
+		int pageAmount = 0;
+		request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, errorMessage);
+		request.setAttribute(DATE_FORMAT_ATTRIBUTE, new SimpleDateFormat(DEFAULT_DATE_FORMAT));
+		request.setAttribute(PAGE_AMOUNT_ATTRIBUTE, pageAmount);
+		request.setAttribute(CURRENT_PAGE_ATTRIBUTE, page);
+		request.setAttribute(NEXT_PAGE_ATTRIBUTE, page + 1);
+		request.setAttribute(PREVIOUS_PAGE_ATTRIBUTE, page - 1);
+		request.setAttribute(AVAILABLE_NEXT_ATTRIBUTE, page < pageAmount);
+		request.setAttribute(AVAILABLE_PREVIOUS_ATTRIBUTE, page > 1);
 	}
 
 }

@@ -85,6 +85,7 @@ function createNewAtt(evt) {
     attFormErrorMes.textContent = "";
     aisNew = true;
     attCommentArea.value = "";
+    attNameInput.value = "";
     inputFile = createInputElement("file", "attFileN" + nextId, "");
     inputFile.style.display = "none";
     nextId++;
@@ -101,7 +102,7 @@ function editAtt(evt) {
     atrToEdit = evt.target.parentNode.parentNode;
     var path = "";
     for (var i = 0; i < atrToEdit.cells[4].children.length; i++) {
-        if (atrToEdit.cells[4].children[i].getAttribute("name") === "attPath") {
+        if (atrToEdit.cells[4].children[i].getAttribute("name") === "attDownloadPath") {
             path = atrToEdit.cells[4].children[i].value;
         }
     }
@@ -130,7 +131,6 @@ function saveAtt(evt) {
         var updateInput;
         var createInput;
         var id = "";
-        var path = null;
         for (var i = 0; i < atrToEdit.cells[4].children.length; i++) {
             if (atrToEdit.cells[4].children[i].getAttribute("name") === "updateAtt") {
                 updateInput = atrToEdit.cells[4].children[i];
@@ -141,12 +141,8 @@ function saveAtt(evt) {
             if (atrToEdit.cells[4].children[i].getAttribute("name") === "attId") {
                 id = atrToEdit.cells[4].children[i].value;
             }
-            if (atrToEdit.cells[4].children[i].getAttribute("name") === "attPath") {
-                path = atrToEdit.cells[4].children[i];
-            }
         }
         updateInput.value = buildAttRepresentation(id, "");
-        atrToEdit.cells[4].appendChild(inputFile);
 
     } else {
         var tr = document.createElement("tr");
@@ -186,6 +182,7 @@ function cancelAttForm(evt) {
     if (aisNew) {
         fileUploadLabel.removeChild(inputFile);
     }
+    downloadAttHref.href = "";
     inputFile = null;
     attFormDiv.style.display = "none";
     overlay.style.display = "none";

@@ -42,20 +42,32 @@
 							</div>
 							<div class="cont-cell-7">
 								<jstl:if test="${not empty contact.photo.path}">
-									<a href="${contact.photo.path}" download=""><button type="button" class="btn">Download</button></a>
+									<jstl:url value="GetFile" var="photoHref">
+										<jstl:param name="photoName" value="${contact.photo.path}"/>
+									</jstl:url>
+									<a href="${photoHref}" download=""><button type="button" class="btn">Download</button></a>
 								</jstl:if>
 								<button id="deletePhoto" type="button" class="btn">Delete</button>
 								<input type="hidden" id="noPhoto" name="noPhoto" value="">
-								<input type="hidden" id="defaultPhoto" value="${defaultPhoto}">
+								<jstl:url value="GetFile" var="defPhotoHref">
+									<jstl:param name="photoName" value="${defaultPhoto}"/>
+								</jstl:url>
+								<input type="hidden" id="defaultPhoto" value="${defPhotoHref}">
 								<input type="hidden" id="deletePhotoWithPath" name="deletePhotoWithPath" value="" autocomplete="off">
 							</div>
 						</div>
 						<div class="cont-row">
 							<jstl:if test="${not empty contact.photo.path}">
-								<img id="photo-preview" src="${contact.photo.path}" />
+								<jstl:url value="GetFile" var="photoHref">
+									<jstl:param name="photoName" value="${contact.photo.path}"/>
+								</jstl:url>
+								<img id="photo-preview" src="${photoHref}" />
 							</jstl:if>
 							<jstl:if test="${empty contact.photo.path}">
-								<img id="photo-preview" src="${defaultPhoto}" />
+								<jstl:url value="GetFile" var="photoHref">
+									<jstl:param name="photoName" value="${defaultPhoto}"/>
+								</jstl:url>
+								<img id="photo-preview" src="${photoHref}" />
 							</jstl:if>
 						</div>
 					</div>
@@ -301,6 +313,9 @@
 						</tr>
 						<jstl:forEach items="${contact.attachments}" var="attachment">
 							<tr>
+								<jstl:url value="GetFile" var="downloadHref">
+									<jstl:param name="fileName" value="${attachment.path}"/>
+								</jstl:url>
 								<td><input type="checkbox" name="attChecked"></td>
 								<td>${attachment.name}</td>
 								<td>${timeFormat.format(attachment.downloadDate.getTime())}</td>
@@ -308,6 +323,7 @@
 								<td>
 									<input type="hidden" name="updateAtt" value="" autocomplete="off">
 									<input type="hidden" name="attId" value="${attachment.id}">
+									<input type="hidden" name="attDownloadPath" value="${downloadHref}">
 									<input type="hidden" name="attPath" value="${attachment.path}">
 									<button type="button" class="btn list-btn editAtt">Edit</button><button type="button" class="btn list-btn deleteAtt">Delete</button>
 								</td>
@@ -413,8 +429,8 @@
 				</div>
 			</div>
 			<div class="modal-row">
-				<div class="cont-cell-3"></div>
-				<div class="cont-cell-9">
+				<div class="cont-cell-2"></div>
+				<div class="cont-cell-8">
 					<a id="downloadAttFile" href="" download="">
 						<button type="button" class="btn list-btn">Download</button>
 					</a>
@@ -424,6 +440,7 @@
 						</label>
 					</div>
 				</div>
+				<div class="cont-cell-2"></div>
 			</div>
 			<div class="modal-row">
 				<div class="igroup">

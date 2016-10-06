@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.action.Action;
+import by.bsu.contactdirectory.action.GetFileAction;
 import by.bsu.contactdirectory.action.StartPageAction;
 
 public class ActionInvoker {
@@ -16,6 +17,7 @@ public class ActionInvoker {
 	
 	static {
 		actions.put(Actions.START_PAGE, new StartPageAction());
+		actions.put(Actions.GET_FILE, new GetFileAction());
 	}
 	
 	public static void invoke(String action, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -28,56 +28,56 @@ public class EditContactAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
-
-		String buf = request.getParameter("id");
-		if (buf == null) {
-			logger.error("Null contact id got.");
-			request.setAttribute("errorMessage", "No contact selected.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		}
-		Contact contact = null;
+		logger.info("EditContact action requested.");
 		try {
-			contact = contactService.getContact(Integer.parseInt(buf));
-		} catch (IllegalArgumentException ex) {
-			logger.error("Invalid contact id got: " + buf);
-			request.setAttribute("errorMessage", "Invalid parameter.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
+			Contact contact = getContact(request);
+			setAttributes(request, contact);
+			logger.info(String.format("Contact info requested. Id: %d", contact.getId()));
+			request.getRequestDispatcher(Actions.CONTACT_INFO_JSP).forward(request, response);
+		} catch (ActionException ex) {
+			logger.error(ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameter.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		} catch (ServiceServerException ex) {
-			logger.error("Can't load contact info.", ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
+			logger.error(ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
 		}
-		if (contact == null) {
-			logger.error("Not existing contact info requested. Id: " + buf);
-			request.setAttribute("errorMessage", "No such contact.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		}
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-	    request.setAttribute("contact", contact);
-	    request.setAttribute("action", Actions.UPDATE_CONTACT.substring(1));
-	    request.setAttribute("dateFormat", dateFormat);
-		request.setAttribute("timeFormat", timeFormat);
-		try {
-			request.setAttribute("countries", countryService.getCountryNames());
-			request.setAttribute("codes", countryService.getCountryCodes());
-		} catch (ServiceServerException ex) {
-			logger.error("Can't get country list.", ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-		}
-	    request.setAttribute("marital", MaritalStatus.values());
-	    request.setAttribute("genders", Gender.values());
-		request.setAttribute("types", PhoneType.values());
-		request.setAttribute("defaultPhoto", FileNameGenerator.defaultPhotoPath);
-		logger.info(String.format("Contact info requested. Id: %s", buf));
-		request.getRequestDispatcher("jsp/contact_info.jsp").forward(request, response);
 	}
 
+	private Contact getContact(HttpServletRequest request) throws ActionException, ServiceServerException {
+		Contact contact;
+		int id = 0;
+		String buf = request.getParameter(ID_ATTRIBUTE);
+		if(buf == null || buf.trim().isEmpty()) {
+			throw new ActionException("No contact selected.");
+		}
+		try {
+			id = Integer.parseInt(buf);
+		} catch (NumberFormatException ex) {
+			throw new ActionException(String.format("Invalid id got: %s", buf));
+		}
+		contact = contactService.getContact(id);
+		if (contact == null) {
+			throw new ActionException(String.format("No such contact: %d", id));
+		}
+		return contact;
+	}
+
+	private void setAttributes(HttpServletRequest request, Contact contact) throws ServiceServerException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+		SimpleDateFormat timeFormat = new SimpleDateFormat(DEFAULT_TIME_FORMAT);
+		request.setAttribute(CONTACT_ATTRIBUTE, contact);
+		request.setAttribute(ACTION_ATTRIBUTE, Actions.UPDATE_CONTACT.substring(1));
+		request.setAttribute(DATE_FORMAT_ATTRIBUTE, dateFormat);
+		request.setAttribute(TIME_FORMAT_ATTRIBUTE, timeFormat);
+
+		request.setAttribute(COUNTRIES_ATTRIBUTE, countryService.getCountryNames());
+		request.setAttribute(CODES_ATTRIBUTE, countryService.getCountryCodes());
+
+		request.setAttribute(MARITAL_ATTRIBUTE, MaritalStatus.values());
+		request.setAttribute(GENDERS_ATTRIBUTE, Gender.values());
+		request.setAttribute(TYPES_ATTRIBUTE, PhoneType.values());
+		request.setAttribute(DEFAULT_PHOTO_ATTRIBUTE, FileNameGenerator.defaultPhotoPath);
+	}
 }

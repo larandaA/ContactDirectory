@@ -3,12 +3,14 @@ package by.bsu.contactdirectory.action;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.servlet.Actions;
 import by.bsu.contactdirectory.util.template.STRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,49 +25,53 @@ public class MailEditAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("MailEdit action requested.");
 
-		String[] strIds = request.getParameterValues("checked");
-		if (strIds == null || strIds.length == 0) {
-			logger.error("Null contact ids got.");
-			request.setAttribute("errorMessage", "No contacts selected.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		}
-		LinkedList<String> emailList = new LinkedList<>();
-		LinkedList<Integer> idList = new LinkedList<>();
+		String[] strIds = request.getParameterValues(CHECKED_ATTRIBUTE);
 		try {
-			for(int i = 0; i < strIds.length; i++) {
-				Contact contact = new ContactService().getContact(Integer.parseInt(strIds[i]));
-				if(contact != null && contact.getEmail() != null && !contact.getEmail().isEmpty()) {
+			LinkedList<String> emailList = new LinkedList<>();
+			LinkedList<Integer> idList = new LinkedList<>();
+			fillLists(strIds, emailList, idList);
+
+			if (emailList.size() > 0) {
+				String emails = String.join(", ", emailList);
+				request.setAttribute(EMAILS_ATTRIBUTE, emails);
+				request.setAttribute(IDS_ATTRIBUTE, idList);
+				request.setAttribute(TEMPLATES_ATTRIBUTE, STRenderer.templates);
+				logger.info(String.format("Email message form requested for emails: %s", emails));
+				request.getRequestDispatcher(Actions.EMAIL_JSP).forward(request, response);
+			} else {
+				String errorMessage = "No one from chosen contacts has an email.";
+				request.getSession().setAttribute(ERROR_MESSAGE_ATTRIBUTE, errorMessage);
+				logger.info("Sending email can't be performed. No one from chosen contacts has an email.");
+				response.sendRedirect(Actions.CONTACT_LIST.substring(1));
+			}
+		} catch (ServiceServerException ex) {
+			logger.error("Can't load contact info.", ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
+		} catch (ActionException ex) {
+			logger.error(ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameters.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
+		}
+
+	}
+
+	private void fillLists(String[] strIds, List<String> emailList, List<Integer> idList) throws ActionException, ServiceServerException {
+		if (strIds == null || strIds.length == 0) {
+			throw new ActionException("No contacts selected.");
+		}
+		try {
+			for (int i = 0; i < strIds.length; i++) {
+				Contact contact = contactService.getContact(Integer.parseInt(strIds[i]));
+				if (contact != null && contact.getEmail() != null && !contact.getEmail().isEmpty()) {
 					emailList.add(contact.getEmail());
 					idList.add(contact.getId());
 				}
 			}
-		} catch (IllegalArgumentException ex) {
-			logger.error("Invalid ids got: " + Arrays.deepToString(strIds));
-			request.setAttribute("errorMessage", "Invalid parameters.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		} catch (ServiceServerException ex) {
-			logger.error("Can't load contact info.", ex);
-			request.setAttribute("errorMessage", "Internal server error. Sorry.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			return;
-		}
-		if (emailList.size() > 0) {
-			String emails = String.join(", ", emailList);
-			request.setAttribute("emails", emails);
-			request.setAttribute("ids", idList);
-			request.setAttribute("templates", STRenderer.templates);
-			logger.info(String.format("Email message form requested for emails: %s", emails));
-			request.getRequestDispatcher("jsp/email.jsp").forward(request, response);
-		} else {
-			String errorMessage = "No one from chosen contacts has an email.";
-			request.getSession().setAttribute("errorMessage", errorMessage);
-			logger.info("Sending email can't be performed. No one from chosen contacts has an email.");
-			response.sendRedirect("ContactList");
+		} catch (NumberFormatException ex) {
+			throw new ActionException(String.format("Invalid id params got: %s", Arrays.deepToString(strIds)));
 		}
 	}
 

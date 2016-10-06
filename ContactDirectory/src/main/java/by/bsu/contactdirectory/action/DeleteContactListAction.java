@@ -3,12 +3,14 @@ package by.bsu.contactdirectory.action;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.bsu.contactdirectory.service.ServiceServerException;
+import by.bsu.contactdirectory.servlet.Actions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,34 +23,40 @@ public class DeleteContactListAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		logger.info("DeleteContactList action requested.");
 
-		String[] strIds = request.getParameterValues("checked");
+		try {
+			List<Integer> idList = getIdList(request);
+			contactService.deleteContactList(idList);
+			logger.info(String.format("Contacts deleted: %s", Arrays.deepToString(idList.toArray())));
+			response.sendRedirect(Actions.CONTACT_LIST.substring(1));
+		} catch (ActionException ex) {
+			logger.error(ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Invalid parameters.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
+		} catch(ServiceServerException ex) {
+			logger.error("Can't delete contact.", ex);
+			request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, "Internal server error. Sorry.");
+			request.getRequestDispatcher(Actions.ERR_JSP).forward(request, response);
+		}
+	}
+
+	private List<Integer> getIdList(HttpServletRequest request) throws ActionException {
+		List<Integer> list = new LinkedList<>();
+		String[] strIds = request.getParameterValues(CHECKED_ATTRIBUTE);
 		if (strIds != null && strIds.length > 0){
 			try {
-				LinkedList<Integer> ids = new LinkedList<>();
 				for (int i = 0; i < strIds.length; i++) {
-					ids.add(Integer.parseInt(strIds[i]));
+					list.add(Integer.parseInt(strIds[i]));
 				}
-				contactService.deleteContactList(ids);
-				logger.info(String.format("Contacts deleted: %s", Arrays.deepToString(strIds)));
-				response.sendRedirect("ContactList");
 			} catch (NumberFormatException ex) {
-				logger.error("Illegal checked list got.");
-				request.setAttribute("errorMessage", "Invalid parameter.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
-			} catch(ServiceServerException ex) {
-				logger.error("Can't delete contact.", ex);
-				request.setAttribute("errorMessage", "Internal server error. Sorry.");
-				request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+				throw new ActionException(String.format("Invalid id list got: %s", Arrays.deepToString(strIds)));
 			}
 		}
 		else {
-			logger.error("Null checked list got.");
-			request.setAttribute("errorMessage", "No contacts selected.");
-			request.getRequestDispatcher("jsp/err.jsp").forward(request, response);
+			throw new ActionException("No contacts selected.");
 		}
+		return list;
 	}
 
 }
