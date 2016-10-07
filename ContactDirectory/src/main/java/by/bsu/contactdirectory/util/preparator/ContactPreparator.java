@@ -42,6 +42,7 @@ public class ContactPreparator {
     }
 
     private static void preparePhone(Phone phone) {
+        phone.setPhoneNumber(prepareString(phone.getPhoneNumber()));
         phone.setComment(prepareString(phone.getComment()));
     }
 

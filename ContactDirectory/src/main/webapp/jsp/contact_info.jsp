@@ -432,7 +432,7 @@
 				<div class="cont-cell-2"></div>
 				<div class="cont-cell-8">
 					<a id="downloadAttFile" href="" download="">
-						<button type="button" class="btn list-btn">Download</button>
+						<button type="button" class="btn margin-auto-btn">Download</button>
 					</a>
 					<div class="file-upload" id="fileUploadDiv">
 						<label id="fileUploadLabel">

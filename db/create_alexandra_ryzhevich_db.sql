@@ -95,7 +95,7 @@ DROP TABLE IF EXISTS `alexandra_ryzhevich_db`.`phone` ;
 CREATE TABLE IF NOT EXISTS `alexandra_ryzhevich_db`.`phone` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operator_code` INT UNSIGNED NULL,
-  `phone_number` INT UNSIGNED NOT NULL,
+  `phone_number` VARCHAR(20) NOT NULL,
   `type` ENUM('HOME', 'MOBILE', 'WORK') NULL,
   `comment` TEXT NULL,
   `contact_id` INT UNSIGNED NOT NULL,
@@ -160,6 +160,12 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
+-- -----------fill countries--------------------
+
+INSERT INTO `country`(`name`, `code`) VALUES ('Russia', 7);
+INSERT INTO `country`(`name`, `code`) VALUES ('GB', 44);
+INSERT INTO `country`(`name`, `code`) VALUES ('Germany', 49);
+INSERT INTO `country`(`name`, `code`) VALUES ('Belarus', 375);
 -- ------------add user------------------------
 
 CREATE USER 'alex_ryzhevich'@'localhost' IDENTIFIED BY 'password';
@@ -169,9 +175,3 @@ GRANT UPDATE ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
 GRANT INSERT ON alexandra_ryzhevich_db.* TO 'alex_ryzhevich'@'localhost';
 FLUSH PRIVILEGES;
 
--- -----------fill countries--------------------
-
-INSERT INTO `country`(`name`, `code`) VALUES ('Russia', 7);
-INSERT INTO `country`(`name`, `code`) VALUES ('GB', 44);
-INSERT INTO `country`(`name`, `code`) VALUES ('Germany', 49);
-INSERT INTO `country`(`name`, `code`) VALUES ('Belarus', 375);

@@ -137,7 +137,7 @@ function editPhone(evt) {
 
 function savePhone(evt) {
     if (!validatePhoneNumber(phoneNumberInput.value)) {
-        phoneFormErrorMes.textContent = "Phone number is not correct! Be sure it's not empty and contains only 5-9 digits with no spaces.";
+        phoneFormErrorMes.textContent = "Phone number is not correct! Be sure it's not empty and contains no more than 20 symbols.";
         return;
     }
     if (!validateOperatorCode(operatorCodeInput.value)) {

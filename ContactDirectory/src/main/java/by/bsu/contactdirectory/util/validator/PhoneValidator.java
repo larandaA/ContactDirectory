@@ -2,10 +2,16 @@ package by.bsu.contactdirectory.util.validator;
 
 import by.bsu.contactdirectory.entity.Phone;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by Alexandra on 15.09.2016.
  */
 public class PhoneValidator {
+
+    private static final String PHONE_PATTERN = "^\\s*[\\\\+]?\\d+(\\s?-?\\s?(\\(\\d+\\)|\\d+))*\\s*$";
+
+    private static Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
 
     public static boolean validate(Phone phone){
         if (phone == null) {
@@ -24,11 +30,11 @@ public class PhoneValidator {
         return true;
     }
 
-    public static boolean validatePhoneNumber(Integer number) {
-        if (number == null || number < 99999) {
+    public static boolean validatePhoneNumber(String number) {
+        if (number == null || number.trim().isEmpty() || number.trim().length() > 20) {
             return false;
         }
-        return true;
+        return phonePattern.matcher(number).matches();
     }
 
     public static boolean validateOperatorCode(Integer code) {

@@ -65,13 +65,7 @@ public class ActionHelper {
                 throw new ActionException(String.format("Invalid operator code: %s", params[2]));
             }
         }
-        if (!params[3].isEmpty()) {
-            try {
-                phone.setPhoneNumber(Integer.parseInt(params[3]));
-            } catch (NumberFormatException ex) {
-                throw new ActionException(String.format("Invalid phone number: %s", params[3]));
-            }
-        }
+        phone.setPhoneNumber(params[3]);
         if (!params[4].isEmpty()) {
             try {
                 phone.setType(PhoneType.valueOf(params[4].toUpperCase()));

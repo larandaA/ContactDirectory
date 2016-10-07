@@ -64,7 +64,11 @@ public class UpdateContactAction implements Action {
 			for (Attachment att : contact.getAttachments()) {
 				if(att.getId() == 0) {
 					att.setPath(fileMap.get(att.getPath()));
+					fileMap.remove(att.getPath());
 				}
+			}
+			for (Map.Entry<String, String> entry : fileMap.entrySet()) {
+				deleteFiles.add(FileNameGenerator.filesPath + entry.getValue());
 			}
 
 			contactService.updateContact(contact, deleteFiles, deletePhones, deleteAttachments);

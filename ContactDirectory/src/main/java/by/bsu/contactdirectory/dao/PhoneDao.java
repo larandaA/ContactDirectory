@@ -48,7 +48,7 @@ public class PhoneDao extends AbstractDao {
         } else {
             phone.setOperatorCode(i);
         }
-        phone.setPhoneNumber(rs.getInt(4));
+        phone.setPhoneNumber(rs.getString(4));
         
         String buf = rs.getString(5);
         if (buf == null) {
@@ -77,7 +77,7 @@ public class PhoneDao extends AbstractDao {
             if (phone.getPhoneNumber() == null) {
             	st.setNull(3, Types.INTEGER);
             } else {
-            	st.setInt(3, phone.getPhoneNumber());
+            	st.setString(3, phone.getPhoneNumber());
             }
             if (phone.getType() == null) {
             	st.setNull(4, Types.OTHER);
@@ -110,7 +110,7 @@ public class PhoneDao extends AbstractDao {
             if (phone.getPhoneNumber() == null) {
             	st.setNull(3, Types.INTEGER);
             } else {
-            	st.setInt(3, phone.getPhoneNumber());
+            	st.setString(3, phone.getPhoneNumber());
             }
             if (phone.getType() == null) {
             	st.setNull(4, Types.OTHER);

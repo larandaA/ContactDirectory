@@ -206,7 +206,6 @@ public class ContactDao extends AbstractDao {
                 contactList.add(parse(rs));
             }
         } catch (SQLException ex) {
-        	ex.printStackTrace();
             throw new DaoException(ex);
         }
         return contactList;
@@ -328,7 +327,6 @@ public class ContactDao extends AbstractDao {
                 cn.rollback();
                 cn.setAutoCommit(true);
             } catch (SQLException ex2) {}
-            ex.printStackTrace();
             throw new DaoException(ex);
         }
         finally {
@@ -338,12 +336,56 @@ public class ContactDao extends AbstractDao {
         }
     }
 
-    public void delete(int id) throws DaoException {
-        try (Connection cn = getConnection(); PreparedStatement st = cn.prepareStatement(DELETE)) {
+    private void deleteContact(int id, Connection cn) throws SQLException {
+        try (PreparedStatement st = cn.prepareStatement(DELETE)) {
             st.setInt(1, id);
             st.executeUpdate();
+        }
+    }
+
+    public void delete(int id) throws DaoException {
+        Connection cn = null;
+        try {
+            cn = getConnection();
+            cn.setAutoCommit(false);
+            deleteContact(id, cn);
+            cn.commit();
+            cn.setAutoCommit(true);
         } catch (SQLException ex) {
+            try {
+                cn.rollback();
+                cn.setAutoCommit(true);
+            } catch (SQLException ex2) {}
             throw new DaoException(ex);
+        }
+        finally {
+            try {
+                cn.close();
+            } catch (SQLException ex) {}
+        }
+    }
+
+    public void deleteContacts(List<Integer> ids) throws DaoException {
+        Connection cn = null;
+        try {
+            cn = getConnection();
+            cn.setAutoCommit(false);
+            for(int id : ids) {
+                deleteContact(id, cn);
+            }
+            cn.commit();
+            cn.setAutoCommit(true);
+        } catch (SQLException ex) {
+            try {
+                cn.rollback();
+                cn.setAutoCommit(true);
+            } catch (SQLException ex2) {}
+            throw new DaoException(ex);
+        }
+        finally {
+            try {
+                cn.close();
+            } catch (SQLException ex) {}
         }
     }
     

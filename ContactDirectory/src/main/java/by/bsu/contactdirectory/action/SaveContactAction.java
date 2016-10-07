@@ -48,12 +48,17 @@ public class SaveContactAction implements Action {
 			contact.setAddress(address);
 			Map<String, String> fileMap = new HashMap<>();
 			process(request, response, contact, fileMap);
+			List<String> deleteFiles = new LinkedList<>();
 
 			for (Attachment att : contact.getAttachments()) {
 				att.setPath(fileMap.get(att.getPath()));
+				fileMap.remove(att.getPath());
+			}
+			for (Map.Entry<String, String> entry : fileMap.entrySet()) {
+				deleteFiles.add(FileNameGenerator.filesPath + entry.getValue());
 			}
 
-			contactService.createContact(contact);
+			contactService.createContact(contact, deleteFiles);
 			logger.info("New contact created successfully.");
 			response.sendRedirect(Actions.CONTACT_LIST.substring(1));
 		} catch (ActionException ex) {

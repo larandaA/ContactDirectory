@@ -8,7 +8,7 @@ public class Phone {
     private int id;
     private Integer countryCode;
     private Integer operatorCode;
-    private Integer phoneNumber;
+    private String phoneNumber;
     private PhoneType type;
     private String comment;
     private int contactId;
@@ -39,11 +39,11 @@ public class Phone {
         this.operatorCode = operatorCode;
     }
 
-    public Integer getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

@@ -106,12 +106,23 @@ public class ContactService {
 	}
 	
 	public void deleteContactList(List<Integer> ids) throws ServiceServerException {
-		for(Integer id : ids) {
-			deleteContact(id);
+		List<String> deleteFiles = new LinkedList<>();
+		try {
+			for(int id : ids) {
+				List<Attachment> atts = AttachmentDao.getInstance().findByContact(id);
+				for (Attachment att : atts) {
+					deleteFiles.add(FileNameGenerator.filesPath + att.getPath());
+				}
+				deleteFiles.add(FileNameGenerator.photosPath + PhotoDao.getInstance().findById(id).getPath());
+			}
+			ContactDao.getInstance().deleteContacts(ids);
+		} catch (DaoException ex) {
+			throw new ServiceServerException(ex);
 		}
+		FileDeleteManager.deleteFiles(deleteFiles);
 	}
 	
-	public void createContact(Contact contact) throws ServiceServerException, ServiceClientException {
+	public void createContact(Contact contact, List<String> deleteFiles) throws ServiceServerException, ServiceClientException {
 		if (!ContactValidator.validate(contact)) {
 			throw new ServiceClientException("Contact parameters for creating are not valid.");
 		}
@@ -123,6 +134,7 @@ public class ContactService {
 		} catch (DaoException ex) {
 			throw new ServiceServerException(ex);
 		}
+		FileDeleteManager.deleteFiles(deleteFiles);
 	}
 
 	public void updateContact(Contact contact, List<String> deleteFiles, List<Integer> deletePhones, List<Integer> deleteAttachments) throws ServiceServerException, ServiceClientException {
