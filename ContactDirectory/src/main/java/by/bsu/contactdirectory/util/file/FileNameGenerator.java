@@ -25,10 +25,10 @@ public class FileNameGenerator {
         try {
             logger.debug("Reading properties.");
             FilePropertiesParser.parse(PROPERTIES_PATH);
-            logger.debug(String.format("Check folder: %s", photosPath));
-            createFolderIfNotExist(photosPath);
             logger.debug(String.format("Check folder: %s", filesPath));
             createFolderIfNotExist(filesPath);
+            logger.debug(String.format("Check folder: %s", photosPath));
+            createFolderIfNotExist(photosPath);
         } catch (SecurityException | IOException ex) {
             logger.fatal(ex);
             throw new RuntimeException(ex);

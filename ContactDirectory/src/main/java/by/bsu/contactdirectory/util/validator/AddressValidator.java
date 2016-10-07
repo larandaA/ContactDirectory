@@ -9,10 +9,6 @@ import java.util.regex.Pattern;
  */
 public class AddressValidator {
 
-    private static final String SYMBOL_PATTERN = "^\\p{L}+([ '-]\\p{L}+)*$";
-
-    private static Pattern symbolPattern = Pattern.compile(SYMBOL_PATTERN);
-
     public static boolean validate(Address address) {
         if (address == null) {
             return true;
@@ -30,6 +26,6 @@ public class AddressValidator {
         if (field == null || field.trim().isEmpty()) {
             return true;
         }
-        return symbolPattern.matcher(field).matches();
+        return true;
     }
 }

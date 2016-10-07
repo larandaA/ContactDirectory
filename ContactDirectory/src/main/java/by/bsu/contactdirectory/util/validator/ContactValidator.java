@@ -11,10 +11,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import by.bsu.contactdirectory.entity.Contact;
 
 public class ContactValidator {
-	
-	private static final String NAME_PATTERN = "^\\p{L}+([ '-]\\p{L}+)*$";
-	
-	private static Pattern namePattern = Pattern.compile(NAME_PATTERN);
+
 	private static UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
 	
 	public static boolean validate(Contact contact) {
@@ -67,7 +64,7 @@ public class ContactValidator {
 		if (name.trim().length() > 40) {
 			return false;
 		}
-		return namePattern.matcher(name.trim()).matches();
+		return true;
 	}
 	
 	public static boolean validateNotRequiredName(String name) {
@@ -77,7 +74,7 @@ public class ContactValidator {
 		if (name.trim().length() > 40) {
 			return false;
 		}
-		return namePattern.matcher(name.trim()).matches();
+		return true;
 	}
 
 	public static boolean validateBirthDate(Calendar date) {

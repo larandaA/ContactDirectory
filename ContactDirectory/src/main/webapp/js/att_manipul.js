@@ -18,8 +18,6 @@ var downloadAttHref = document.getElementById("downloadAttFile");
 var saveAttBut = document.getElementById("saveAtt");
 var cancelAttFormBut = document.getElementById("cancelAttForm");
 var fileUploadDiv = document.getElementById("fileUploadDiv");
-var fileUploadLabel = document.getElementById("fileUploadLabel");
-var fileUploadSpan = document.getElementById("fileUploadSpan");
 
 var aisNew = true;
 var atrToEdit = null;
@@ -81,15 +79,17 @@ function deleteCheckedAtts(evt) {
     }
 }
 
+
 function createNewAtt(evt) {
     attFormErrorMes.textContent = "";
     aisNew = true;
     attCommentArea.value = "";
     attNameInput.value = "";
     inputFile = createInputElement("file", "attFileN" + nextId, "");
-    inputFile.style.display = "none";
+    inputFile.style.display = "block";
+
     nextId++;
-    fileUploadLabel.insertBefore(inputFile, fileUploadSpan);
+    fileUploadDiv.appendChild(inputFile);
     downloadAttHref.style.display = "none";
     fileUploadDiv.style.display = "block";
     overlay.style.display = "block";
@@ -115,8 +115,8 @@ function editAtt(evt) {
 }
 
 function saveAtt(evt) {
-    if (!validateRequiredText(attNameInput.value)) {
-        attFormErrorMes.textContent = "Attachment name is not correct!";
+    if (!validateRequiredText(attNameInput.value) || attNameInput.value.indexOf("|")) {
+        attFormErrorMes.textContent = "Attachment name is not correct! It must not be empty or contain '|'.";
         return;
     }
     if (aisNew && inputFile.files[0] == undefined) {
@@ -167,6 +167,7 @@ function saveAtt(evt) {
         td4.appendChild(createInputElement("hidden", "createAtt", buildAttRepresentation("", inputFile.name)));
         td4.appendChild(createInputElement("hidden", "attId", ""));
         td4.appendChild(createButtonElement("button", "btn list-btn deleteAtt", "Delete", deleteAtt));
+        inputFile.style.display = "none";
         td4.appendChild(inputFile);
         tr.appendChild(td4);
 
@@ -180,7 +181,7 @@ function saveAtt(evt) {
 
 function cancelAttForm(evt) {
     if (aisNew) {
-        fileUploadLabel.removeChild(inputFile);
+        fileUploadDiv.removeChild(inputFile);
     }
     downloadAttHref.href = "";
     inputFile = null;

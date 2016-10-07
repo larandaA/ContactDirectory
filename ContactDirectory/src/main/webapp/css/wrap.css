@@ -221,9 +221,6 @@ tr {
 tr:first-child {
     background-color: #9C27B0;
 }
-tr:last-child {
-    border-bottom: none;
-}
 
 table a {
     text-decoration: none;

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  */
 public class PhoneValidator {
 
-    private static final String PHONE_PATTERN = "^\\s*[\\\\+]?\\d+(\\s?-?\\s?(\\(\\d+\\)|\\d+))*\\s*$";
+    private static final String PHONE_PATTERN = "^[\\d -\\\\(\\\\)]+$";
 
     private static Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
 

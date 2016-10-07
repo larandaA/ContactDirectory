@@ -14,7 +14,7 @@ function photoIsValid(name) {
     return true;
 }
 function firstNameIsValid(elem) {
-    if (!validateRequiredSymbolText(elem.value)) {
+    if (!validateRequiredText(elem.value)) {
         errMsg.textContent = "Complete the first name correctly!";
         return false;
     }
@@ -26,7 +26,7 @@ function firstNameIsValid(elem) {
 }
 
 function lastNameIsValid(elem) {
-    if (!validateRequiredSymbolText(elem.value)) {
+    if (!validateRequiredText(elem.value)) {
         errMsg.textContent = "Complete the last name correctly!";
         return false;
     }
@@ -38,10 +38,6 @@ function lastNameIsValid(elem) {
 }
 
 function patronymicIsValid(elem) {
-    if (!validateNotRequiredSymbolText(elem.value)) {
-        errMsg.textContent = "Complete the patronymic correctly!";
-        return false;
-    }
     if (elem.value.length > 40) {
         errMsg.textContent = "The patronymic is too long!";
         return false;
@@ -74,10 +70,6 @@ function webSiteIsValid(elem) {
 }
 
 function cityIsValid(elem) {
-    if (!validateNotRequiredSymbolText(elem.value)) {
-        errMsg.textContent = "Complete the city name correctly!";
-        return false;
-    }
     if (elem.value.length > 100) {
         errMsg.textContent = "The city name is too long!";
         return false;

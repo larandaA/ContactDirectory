@@ -123,7 +123,10 @@ function editPhone(evt) {
     isNew = false;
     trToEdit = evt.target.parentNode.parentNode;
 
-    var phone = trToEdit.cells[1].textContent.split(' ');
+    var value = trToEdit.cells[1].textContent;
+    var firstSpace = value.indexOf(" ", 0);
+    var lastSpace = value.indexOf(" ", firstSpace + 1);
+    var phone = [value.substr(0, firstSpace), value.substr(firstSpace + 1, lastSpace - firstSpace - 1), value.substr(lastSpace + 1)];
     countryCodeSelect.selectedIndex = 0;
     setCountryCode(phone[0]);
     operatorCodeInput.value = phone[1].substr(1, phone[1].length - 2);

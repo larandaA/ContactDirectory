@@ -51,8 +51,9 @@ public class SaveContactAction implements Action {
 			List<String> deleteFiles = new LinkedList<>();
 
 			for (Attachment att : contact.getAttachments()) {
-				att.setPath(fileMap.get(att.getPath()));
-				fileMap.remove(att.getPath());
+				String buf = att.getPath();
+				att.setPath(fileMap.get(buf));
+				fileMap.remove(buf);
 			}
 			for (Map.Entry<String, String> entry : fileMap.entrySet()) {
 				deleteFiles.add(FileNameGenerator.filesPath + entry.getValue());

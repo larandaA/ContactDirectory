@@ -63,8 +63,9 @@ public class UpdateContactAction implements Action {
 			}
 			for (Attachment att : contact.getAttachments()) {
 				if(att.getId() == 0) {
-					att.setPath(fileMap.get(att.getPath()));
-					fileMap.remove(att.getPath());
+					String buf = att.getPath();
+					att.setPath(fileMap.get(buf));
+					fileMap.remove(buf);
 				}
 			}
 			for (Map.Entry<String, String> entry : fileMap.entrySet()) {
@@ -198,7 +199,7 @@ public class UpdateContactAction implements Action {
 				break;
 			case DELETE_PHOTO_ATTRIBUTE:
 				if (value != null && !value.trim().isEmpty()) {
-					deleteFiles.add(FileNameGenerator.photosPath + value);
+					deleteFiles.add(FileNameGenerator.photosPath + value.substring(value.lastIndexOf("=") + 1));
 				}
 				break;
 			case DELETE_FILE_ATTRIBUTE:
