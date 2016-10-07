@@ -43,7 +43,7 @@
 									<jstl:url value="GetFile" var="photoHref">
 										<jstl:param name="photoName" value="${contact.photo.path}"/>
 									</jstl:url>
-									<a href="${photoHref}" download=""><button type="button" class="btn">Download</button></a>
+									<a href="${photoHref}" download="" target="_blank"><span class="btn">Download</span></a>
 								</jstl:if>
 								<button id="deletePhoto" type="button" class="btn">Delete</button>
 								<input type="hidden" id="noPhoto" name="noPhoto" value="">
@@ -429,8 +429,8 @@
 			<div class="modal-row">
 				<div class="cont-cell-3"></div>
 				<div class="cont-cell-6">
-					<a id="downloadAttFile" href="" download="">
-						<button type="button" class="btn margin-auto-btn">Download</button>
+					<a id="downloadAttFile" href="" download="" target="_blank">
+						<span class="btn">Download</span>
 					</a>
 					<div class="file-upload" id="fileUploadDiv">
 						<span id="fileUploadSpan">Change file</span>
