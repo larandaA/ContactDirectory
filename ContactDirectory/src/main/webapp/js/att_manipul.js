@@ -115,7 +115,7 @@ function editAtt(evt) {
 }
 
 function saveAtt(evt) {
-    if (!validateRequiredText(attNameInput.value) || attNameInput.value.indexOf("|")) {
+    if (!validateRequiredText(attNameInput.value) || attNameInput.value.indexOf("|") >= 0) {
         attFormErrorMes.textContent = "Attachment name is not correct! It must not be empty or contain '|'.";
         return;
     }

@@ -5,7 +5,7 @@ var emailReg = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*
 var urlReg = /^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
 var dateReg = /^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$/;
 
-var phoneNumberReg = /^[\d -\(\)]+$/;
+var phoneNumberReg = /^[\d \-\(\)]+$/;
 var operatorCodeReg = /^[0]*[1-9][0-9]{0,4}$/;
 
 var emptyReg = /^\s*$/;
