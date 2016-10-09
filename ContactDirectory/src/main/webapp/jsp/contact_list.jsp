@@ -67,7 +67,7 @@
 							<jstl:param name="id" value="${contact.id}"/>
 						</jstl:url>
 						<td>
-							<input type="checkbox" form="contactListForm" name="checked" value="${contact.id}">
+							<input type="checkbox" name="checkedId" value="${contact.id}">
 						</td>
 						<td>
 							<a href="${editUrl}">${contact.firstName} ${contact.lastName}</a>
@@ -80,9 +80,9 @@
 						<td>${contact.address.country} ${contact.address.city} ${contact.address.localAddress} ${contact.address.index}</td>
 						<td>${contact.placeOfWork}</td>
 						<td>
+							<a href="${editUrl}"><span class="btn list-btn">Edit</span></a>
 							<form method="post" class="singleContactForm">
 								<input type="hidden" name="id" value="${contact.id}">
-								<button formaction="EditContact" class="btn list-btn">Edit</button>
 								<button formaction="DeleteContact" class="btn list-btn">Delete</button>
 							</form>
 						</td>
@@ -128,6 +128,7 @@
 			by Alexandra Ryzhevich
 		</div>
 	</footer>
+<script src="js/elem_create_functions.js"></script>
 <script src="js/validate_contact_list.js"></script>
 </body>
 </html>

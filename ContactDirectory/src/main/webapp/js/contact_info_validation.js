@@ -6,13 +6,6 @@ var errMsg = document.getElementById("error-message");
 var infoForm = document.getElementById("infoForm");
 infoForm.addEventListener('submit', validateContactInfoForm);
 
-function photoIsValid(name) {
-    if (!name.match(/.*\.jpg/) && !name.match(/.*\.png/)) {
-        errMsg.textContent = "Choose an image for contact photo!";
-        return false;
-    }
-    return true;
-}
 function firstNameIsValid(elem) {
     if (!validateRequiredText(elem.value)) {
         errMsg.textContent = "Complete the first name correctly!";
@@ -80,13 +73,7 @@ function cityIsValid(elem) {
 function validateContactInfoForm(evt) {
     errMsg.textContent = "";
 
-    var elem = document.getElementById("uploadPhoto");
-    if (elem.files[0] != undefined && !photoIsValid(elem.files[0].name)) {
-        evt.preventDefault();
-        return;
-    }
-
-    elem = document.getElementsByName("firstName")[0];
+    var elem = document.getElementsByName("firstName")[0];
     if (!firstNameIsValid(elem)) {
         evt.preventDefault();
         return;

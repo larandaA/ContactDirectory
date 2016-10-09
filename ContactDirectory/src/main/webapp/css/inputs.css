@@ -165,12 +165,14 @@ select {
     font-size: 200px !important;
     display: block;
 }
-.file-upload span {
+.file-upload span, .file-upload div {
     line-height: 32px;
     font-size: 0.8em;
-    margin: 0;
+    margin: 0 auto;
+    text-align: center;
     position: absolute;
     left: 0;
     top: 0;
-    padding: 0 20px;
+    width: 100%;
+    padding: 0;
 }
