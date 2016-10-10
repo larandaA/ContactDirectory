@@ -20,7 +20,7 @@ import by.bsu.contactdirectory.util.validator.ContactValidator;
 
 public class ContactService {
 	
-	public static final int contactAmountPerPage = 2;
+	public static final int contactAmountPerPage = 5;
 
 	public ContactService() {}
 	
